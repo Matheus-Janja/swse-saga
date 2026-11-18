@@ -203,6 +203,26 @@ export class ArmorData extends PhysicalItemData {
       reflexBonus: num(0),
       fortBonus: num(0),
       maxDex: num(5),
+      droid: new fields.BooleanField({ initial: false }),
+      costBase: num(0),
+      special: str()
+    };
+  }
+}
+
+/** Sistema de droide (Cap. 11): locomoção, apêndice, processador, sensores, acessórios. */
+export class DroidSystemData extends PhysicalItemData {
+  static defineSchema() {
+    return {
+      ...super.defineSchema(),
+      category: str("accessory"),
+      costMode: str("flat"),
+      costBase: num(0),
+      minSize: str(),
+      locomotion: new fields.SchemaField({ type: str(), small: num(0), medium: num(0), large: num(0), mult: num(0) }),
+      appendage: str(),
+      shieldRating: num(0),
+      rerolls: new fields.ArrayField(new fields.SchemaField({ skill: str(), keep: str("best"), label: str() })),
       special: str()
     };
   }

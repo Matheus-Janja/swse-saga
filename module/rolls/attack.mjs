@@ -17,7 +17,8 @@ export function weaponCtx(actor) {
     size: actor.derived.size ?? "medium", species: actor.species?.system.key ?? "",
     modifiers: actor.derived.modifiers ?? {}, armorPenalty: actor.derived.armor?.penalty ?? 0,
     features: actor.items.filter(i => ["feat", "talent"].includes(i.type)).map(i => ({ key: i.system.key, choice: i.system.choice?.value })),
-    classLevels: actor.derived.classLevels ?? {}
+    classLevels: actor.derived.classLevels ?? {},
+    droidAppendage: actor.derived.droidAppendage ?? null
   };
 }
 

@@ -138,6 +138,7 @@ export class SWSEActorSheet extends HandlebarsApplicationMixin(foundry.applicati
     });
     context.armors = items.filter(i => i.type === "armor");
     context.equipment = items.filter(i => i.type === "equipment");
+    context.droidSystems = items.filter(i => i.type === "droidSystem").map(i => ({ item: i, category: L(SWSE.droidSystemCategories[i.system.category] ?? i.system.category) }));
     context.totalWeight = items.filter(i => ["weapon", "armor", "equipment"].includes(i.type))
       .reduce((a, i) => a + (Number(i.system.weight) || 0) * (Number(i.system.quantity) || 1), 0).toFixed(1);
     context.hpPct = Math.clamp(Math.round((sys.hp.value / Math.max(sys.hp.max, 1)) * 100), 0, 100);

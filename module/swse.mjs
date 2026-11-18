@@ -3,7 +3,7 @@
  */
 import { SWSE, SYSTEM_ID } from "./config.mjs";
 import { CharacterData, NpcData } from "./data/actor.mjs";
-import { SpeciesData, ClassData, FeatData, TalentData, ForcePowerData, WeaponData, ArmorData, EquipmentData, VehicleWeaponData } from "./data/items.mjs";
+import { SpeciesData, ClassData, FeatData, TalentData, ForcePowerData, WeaponData, ArmorData, EquipmentData, VehicleWeaponData, DroidSystemData } from "./data/items.mjs";
 import { VehicleData } from "./data/vehicle.mjs";
 import { SWSEVehicleSheet } from "./sheets/vehicle-sheet.mjs";
 import { VEHICLE_WEAPON_TYPES } from "./rules/vehicle.mjs";
@@ -28,7 +28,7 @@ Hooks.once("init", () => {
   CONFIG.Item.dataModels = {
     species: SpeciesData, class: ClassData, feat: FeatData, talent: TalentData,
     forcePower: ForcePowerData, weapon: WeaponData, armor: ArmorData, equipment: EquipmentData,
-    vehicleWeapon: VehicleWeaponData
+    vehicleWeapon: VehicleWeaponData, droidSystem: DroidSystemData
   };
   CONFIG.Actor.trackableAttributes = {
     character: { bar: ["hp", "forcePoints"], value: ["destinyPoints.value", "darkSide.value", "condition.step"] },

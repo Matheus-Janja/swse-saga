@@ -1,12 +1,13 @@
 import { SWSE, SYSTEM_ID } from "../config.mjs";
 import { pointBuySpent } from "../rules/calc.mjs";
+import { systemCost, sizeAllowed, locomotionSpeed, BASE_LOCOMOTION, FREE_SYSTEMS, DROID_BUDGET, DROID_POINT_BUY, DROID_ARRAY, COST_FACTOR } from "../rules/droid.mjs";
 import { checkPrereqs } from "../helpers/prereqs.mjs";
 import { promptChoice } from "../helpers/choices.mjs";
 import { loadCompendia, annotate, itemData, abilityMod, babAt, FORCE_TREES, enforcePrereqs, skillLabel } from "./common.mjs";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 const ABIL = ["str", "dex", "con", "int", "wis", "cha"];
-const STEPS = ["abilities", "species", "class", "skills", "feats", "talent", "force", "equipment", "review"];
+const STEPS = ["abilities", "species", "class", "skills", "feats", "talent", "force", "systems", "equipment", "review"];
 const L = k => game.i18n.localize(k);
 
 /**
@@ -36,7 +37,9 @@ export class CharacterCreator extends HandlebarsApplicationMixin(ApplicationV2) 
       creditsRoll: "",
       purchases: [],    // uuids
       featFilter: true,
-      talentFilter: true
+      talentFilter: true,
+      droid: false,
+      droidBuys: []     // ids de sistemas de droide comprados (em ordem)
     };
   }
 
@@ -67,6 +70,8 @@ export class CharacterCreator extends HandlebarsApplicationMixin(ApplicationV2) 
       buy: CharacterCreator.#onBuy,
       unbuy: CharacterCreator.#onUnbuy,
       showItem: CharacterCreator.#onShowItem,
+      addSystem: CharacterCreator.#onAddSystem,
+      removeSystem: CharacterCreator.#onRemoveSystem,
       finish: CharacterCreator.#onFinish
     }
   };
@@ -94,12 +99,17 @@ export class CharacterCreator extends HandlebarsApplicationMixin(ApplicationV2) 
   get species() { return this._data?.species.find(s => s.id === this.wiz.speciesId) ?? null; }
   get cls() { return this._data?.classes.find(c => c.id === this.wiz.classId) ?? null; }
 
+  /** Atributos usados (droides não têm Constituição). */
+  get abil() { return this.wiz.droid ? ABIL.filter(a => a !== "con") : ABIL; }
+  get pbTotal() { return this.wiz.droid ? DROID_POINT_BUY : SWSE.pointBuyTotal; }
+  get stdArray() { return this.wiz.droid ? [...DROID_ARRAY] : [...SWSE.standardArray]; }
+
   /** Valores de atributo antes da espécie. */
   baseScores() {
     const s = this.wiz;
-    if (s.method === "pointBuy") return { ...s.pb };
+    if (s.method === "pointBuy") return Object.fromEntries(this.abil.map(a => [a, s.pb[a]]));
     const out = {};
-    for (const a of ABIL) {
+    for (const a of this.abil) {
       const idx = s.assign[a];
       out[a] = idx === "" || idx === undefined ? null : s.pool[Number(idx)];
     }
@@ -109,7 +119,7 @@ export class CharacterCreator extends HandlebarsApplicationMixin(ApplicationV2) 
   finalScores() {
     const base = this.baseScores();
     const mods = this.species?.system.abilityMods ?? {};
-    return Object.fromEntries(ABIL.map(a => [a, base[a] === null ? null : base[a] + (mods[a] || 0)]));
+    return Object.fromEntries(ABIL.map(a => [a, base[a] === null || base[a] === undefined || (this.wiz.droid && a === "con") ? null : base[a] + (mods[a] || 0)]));
   }
 
   /** Feats automáticos: iniciais da classe (com regras de espécie primitiva e pré-requisito) + espécie + condicionais. */
@@ -166,7 +176,7 @@ export class CharacterCreator extends HandlebarsApplicationMixin(ApplicationV2) 
       if (t) talents.push({ key: t.system.key, choice: this.wiz.talent.choice, tree: t.system.tree, category: t.system.category });
     }
     return {
-      abilities: Object.fromEntries(ABIL.map(a => [a, scores[a] ?? 10])),
+      abilities: Object.fromEntries(ABIL.map(a => [a, scores[a] ?? (this.wiz.droid && a === "con" ? 0 : 10)])),
       bab: cls ? babAt(cls.system.bab, 1) : 0,
       level: 1,
       trained: new Set(this.wiz.trained),
@@ -187,7 +197,7 @@ export class CharacterCreator extends HandlebarsApplicationMixin(ApplicationV2) 
   }
 
   steps() {
-    return STEPS.filter(s => s !== "force" || this.powersAllowed() > 0);
+    return STEPS.filter(s => (s !== "force" || this.powersAllowed() > 0) && (s !== "systems" || this.wiz.droid));
   }
 
   /** Valida o passo atual; retorna mensagem de erro ou null. */
@@ -196,15 +206,16 @@ export class CharacterCreator extends HandlebarsApplicationMixin(ApplicationV2) 
     switch (step) {
       case "abilities": {
         const base = this.baseScores();
-        if (ABIL.some(a => base[a] === null)) return L("SWSE.CG.ErrAssignAll");
+        if (this.abil.some(a => base[a] === null)) return L("SWSE.CG.ErrAssignAll");
         if (s.method !== "pointBuy") {
-          const used = ABIL.map(a => s.assign[a]);
+          const used = this.abil.map(a => s.assign[a]);
           if (new Set(used).size !== used.length) return L("SWSE.CG.ErrDuplicateAssign");
-        } else if (pointBuySpent(s.pb) > SWSE.pointBuyTotal) return L("SWSE.CG.ErrPointBuy");
+        } else if (pointBuySpent(base) > this.pbTotal) return L("SWSE.CG.ErrPointBuy");
         return null;
       }
-      case "species": return this.species ? null : L("SWSE.CG.ErrSpecies");
-      case "class": return this.cls ? null : L("SWSE.CG.ErrClass");
+      case "species": return this.species && !!this.species.system.droid === s.droid ? null : L("SWSE.CG.ErrSpecies");
+      case "systems": return this.droidSpent() > DROID_BUDGET ? L("SWSE.Droid.ErrBudget") : null;
+      case "class": return this.cls && !(s.droid && this.cls.system.key === "jedi") ? null : L("SWSE.CG.ErrClass");
       case "skills": return s.trained.length > this.trainedAllowed() ? L("SWSE.CG.ErrTooManySkills") : (s.trained.length < this.trainedAllowed() ? "warn" : null);
       case "feats": {
         if (s.feats.length !== 1) return L("SWSE.CG.ErrFeat");
@@ -244,20 +255,22 @@ export class CharacterCreator extends HandlebarsApplicationMixin(ApplicationV2) 
 
     const scores = this.finalScores();
     const base = this.baseScores();
-    ctx.abilities = ABIL.map(a => ({
+    ctx.isDroid = s.droid;
+    ctx.pbTotal = this.pbTotal;
+    ctx.abilities = this.abil.map(a => ({
       key: a, label: L(SWSE.abilities[a]), abbr: L(SWSE.abilityAbbr[a]),
       base: base[a], species: this.species?.system.abilityMods?.[a] ?? 0, final: scores[a],
       mod: scores[a] === null ? null : abilityMod(scores[a]), pb: s.pb[a], cost: SWSE.pointBuyCost[s.pb[a]],
       assign: s.assign[a]
     }));
     ctx.pool = s.pool.map((v, i) => ({ index: String(i), value: v }));
-    ctx.pbSpent = pointBuySpent(s.pb);
-    ctx.pbLeft = SWSE.pointBuyTotal - ctx.pbSpent;
-    ctx.canReroll = s.method === "roll" && s.pool.length === 6
+    ctx.pbSpent = pointBuySpent(Object.fromEntries(this.abil.map(a => [a, s.pb[a]])));
+    ctx.pbLeft = this.pbTotal - ctx.pbSpent;
+    ctx.canReroll = s.method === "roll" && s.pool.length === this.abil.length
       && (s.pool.reduce((a, v) => a + abilityMod(v), 0) <= 0 || Math.max(...s.pool) <= 13);
 
     if (s.step === "species") {
-      ctx.speciesList = this._data.species.map(sp => ({
+      ctx.speciesList = this._data.species.filter(sp => !!sp.system.droid === s.droid).map(sp => ({
         id: sp.id, name: sp.name, img: sp.img, selected: sp.id === s.speciesId,
         mods: ABIL.filter(a => sp.system.abilityMods[a]).map(a => `${L(SWSE.abilityAbbr[a])} ${sp.system.abilityMods[a] > 0 ? "+" : ""}${sp.system.abilityMods[a]}`).join(", ") || "—",
         size: L(SWSE.sizes[sp.system.size]?.label), speed: sp.system.speed,
@@ -266,7 +279,7 @@ export class CharacterCreator extends HandlebarsApplicationMixin(ApplicationV2) 
       ctx.selectedSpecies = ctx.speciesList.find(x => x.selected);
     }
     if (s.step === "class") {
-      ctx.classList = this._data.classes.filter(c => c.system.classType === "base").map(c => ({
+      ctx.classList = this._data.classes.filter(c => c.system.classType === "base" && !(s.droid && c.system.key === "jedi")).map(c => ({
         id: c.id, name: c.name, img: c.img, selected: c.id === s.classId,
         hp: c.system.startingHP, hitDie: c.system.hitDie, bab: babAt(c.system.bab, 1),
         defenses: Object.entries(c.system.defenses).filter(([, v]) => v).map(([k, v]) => `${L(SWSE.defenses[k])} +${v}`).join(", "),
@@ -331,6 +344,7 @@ export class CharacterCreator extends HandlebarsApplicationMixin(ApplicationV2) 
         descriptors: p.system.descriptors.map(d => L(`SWSE.Descriptor.${d}`)).join(", "), description: p.system.description
       }));
     }
+    if (s.step === "systems") Object.assign(ctx, this.systemsContext());
     if (s.step === "equipment") {
       ctx.credits = s.credits;
       ctx.creditsFormula = this.cls?.system.credits;
@@ -350,6 +364,73 @@ export class CharacterCreator extends HandlebarsApplicationMixin(ApplicationV2) 
     }
     if (s.step === "review") ctx.review = this.reviewData();
     return ctx;
+  }
+
+  /* ------------------------------------------------------------ */
+  /*  Sistemas de droide                                          */
+  /* ------------------------------------------------------------ */
+
+  get droidSize() { return this.species?.system.size ?? "medium"; }
+
+  /** Sistemas instalados: gratuitos (processador heurístico, 2 mãos, locomoção básica) + comprados, com custo. */
+  droidInstalled() {
+    const size = this.droidSize;
+    const find = key => this._data.droidSystems.find(d => d.system.key === key);
+    const free = [...FREE_SYSTEMS, BASE_LOCOMOTION[size] ?? "walking-locomotion"].map(find).filter(Boolean);
+    const walking = find("walking-locomotion");
+    const walkingCost = walking ? systemCost(walking.system, size, { locomotionIndex: 0 }) : 0;
+    let locoIndex = 1;
+    const out = free.map(doc => ({ doc, cost: 0, free: true }));
+    for (const id of this.wiz.droidBuys) {
+      const doc = this._data.droidSystems.find(d => d.id === id);
+      if (!doc) continue;
+      const loco = doc.system.category === "locomotion";
+      const cost = this.costOf(doc, { locomotionIndex: loco ? locoIndex : 0, walkingCost });
+      if (loco) locoIndex++;
+      out.push({ doc, cost, free: false });
+    }
+    return out;
+  }
+
+  costOf(doc, ctx = {}) {
+    if (doc.type === "armor") return (doc.system.costBase || 0) * (COST_FACTOR[this.droidSize] ?? 1);
+    return systemCost(doc.system, this.droidSize, ctx);
+  }
+
+  droidSpent() { return !this.wiz.droid ? 0 : this.droidInstalled().reduce((a, x) => a + x.cost, 0); }
+
+  systemsContext() {
+    const size = this.droidSize;
+    const installed = this.droidInstalled();
+    const spent = installed.reduce((a, x) => a + x.cost, 0);
+    const left = DROID_BUDGET - spent;
+    const keys = installed.map(x => x.doc.system.key);
+    const hasWalking = keys.includes("walking-locomotion");
+    const locoCount = installed.filter(x => x.doc.system.category === "locomotion").length;
+    const walking = this._data.droidSystems.find(d => d.system.key === "walking-locomotion");
+    const walkingCost = walking ? systemCost(walking.system, size, { locomotionIndex: 0 }) : 0;
+    const hidden = new Set(["basic-processor", "heuristic-processor", "remote-receiver", "backup-processor", "synchronized-fire-circuits", "remote-processor-5", "remote-processor-50", "remote-processor-500", "remote-processor-5000"]);
+    const groups = {};
+    for (const doc of this._data.droidSystems) {
+      const sys = doc.system;
+      if (hidden.has(sys.key)) continue;
+      const loco = sys.category === "locomotion";
+      if (loco && keys.includes(sys.key)) continue;
+      const cost = this.costOf(doc, { locomotionIndex: loco ? locoCount : 0, walkingCost });
+      let allowed = sizeAllowed(sys, size);
+      if (["climbing-claws", "jump-servos", "extra-legs"].includes(sys.key) && !hasWalking) allowed = false;
+      if (doc.type === "armor" && installed.some(x => x.doc.type === "armor")) allowed = false;
+      const group = doc.type === "armor" ? L("SWSE.ArmorLabel") : L(SWSE.droidSystemCategories[sys.category] ?? sys.category);
+      (groups[group] ??= []).push({
+        id: doc.id, uuid: doc.uuid, name: doc.name, img: doc.img, cost, allowed, affordable: cost <= left,
+        speed: loco ? locomotionSpeed(sys, size) : null, note: doc.type === "armor" ? `Ref +${sys.reflexBonus}, Des máx. +${sys.maxDex}` : ""
+      });
+    }
+    return {
+      droidBudget: DROID_BUDGET, droidSpent: spent, droidLeft: left,
+      droidInstalled: installed.map((x, i) => ({ name: x.doc.name, cost: x.cost, free: x.free, index: x.free ? null : this.wiz.droidBuys.indexOf(x.doc.id) })),
+      droidGroups: Object.entries(groups).map(([label, list]) => ({ label, list }))
+    };
   }
 
   findByUuid(uuid) {
@@ -382,14 +463,15 @@ export class CharacterCreator extends HandlebarsApplicationMixin(ApplicationV2) 
     const talent = s.talent ? this._data.talents.find(t => t.id === s.talent.id) : null;
     return {
       name: s.name, species: this.species?.name, cls: this.cls?.name,
-      abilities: ABIL.map(a => `${L(SWSE.abilityAbbr[a])} ${scores[a]} (${abilityMod(scores[a]) >= 0 ? "+" : ""}${abilityMod(scores[a])})`).join(" · "),
-      hp: (this.cls?.system.startingHP ?? 0) + abilityMod(scores.con ?? 10),
+      abilities: this.abil.map(a => `${L(SWSE.abilityAbbr[a])} ${scores[a]} (${abilityMod(scores[a]) >= 0 ? "+" : ""}${abilityMod(scores[a])})`).join(" · "),
+      hp: (this.cls?.system.startingHP ?? 0) + (this.wiz.droid ? 0 : abilityMod(scores.con ?? 10)),
       skills: s.trained.map(skillLabel).join(", "),
       feats: feats.join(", "),
       talent: talent ? talent.name + (s.talent.choice ? ` (${s.talent.choice})` : "") : "—",
       powers: Object.entries(s.powers).map(([id, n]) => `${this._data.powers.find(p => p.id === id)?.name}${n > 1 ? ` ×${n}` : ""}`).join(", ") || "—",
       credits: (s.credits ?? 0) - this.purchaseTotal(),
       items: this.freeItems().map(d => d.name).concat(s.purchases.map(u => this.findByUuid(u)?.name)).join(", "),
+      droidSystems: s.droid ? this.droidInstalled().map(x => x.doc.name).join(", ") : "",
       problems: this.steps().map(st => ({ st, err: this.validate(st) })).filter(x => x.err && x.err !== "warn").map(x => `${L(`SWSE.CG.Step.${x.st}`)}: ${x.err}`)
     };
   }
@@ -401,10 +483,19 @@ export class CharacterCreator extends HandlebarsApplicationMixin(ApplicationV2) 
   static async #onForm(event, form, formData) {
     const d = foundry.utils.expandObject(formData.object);
     const s = this.wiz;
+    if ("droid" in d && !!d.droid !== s.droid) {
+      s.droid = !!d.droid;
+      s.pb = Object.fromEntries(ABIL.map(a => [a, 8]));
+      s.assign = Object.fromEntries(ABIL.map(a => [a, ""]));
+      s.pool = s.method === "array" ? this.stdArray : [];
+      s.speciesId = null;
+      s.classId = null;
+      s.droidBuys = [];
+    }
     if (d.method && d.method !== s.method) {
       s.method = d.method;
       s.assign = Object.fromEntries(ABIL.map(a => [a, ""]));
-      if (s.method === "array") s.pool = [...SWSE.standardArray];
+      if (s.method === "array") s.pool = this.stdArray;
       if (s.method === "roll") s.pool = [];
     }
     if (d.assign) for (const a of ABIL) if (a in d.assign) s.assign[a] = d.assign[a];
@@ -449,7 +540,7 @@ export class CharacterCreator extends HandlebarsApplicationMixin(ApplicationV2) 
     const s = this.wiz;
     if (s.pb[a] >= 18) return;
     s.pb[a]++;
-    if (pointBuySpent(s.pb) > SWSE.pointBuyTotal) s.pb[a]--;
+    if (pointBuySpent(Object.fromEntries(this.abil.map(k => [k, s.pb[k]]))) > this.pbTotal) s.pb[a]--;
     this.render();
   }
 
@@ -463,7 +554,7 @@ export class CharacterCreator extends HandlebarsApplicationMixin(ApplicationV2) 
     const s = this.wiz;
     s.pool = [];
     s.rolledDetail = [];
-    for (let i = 0; i < 6; i++) {
+    for (let i = 0; i < this.abil.length; i++) {
       const r = await new Roll("4d6dl").evaluate();
       s.pool.push(r.total);
       s.rolledDetail.push(r.dice[0].results.map(x => x.result).join(", "));
@@ -477,11 +568,28 @@ export class CharacterCreator extends HandlebarsApplicationMixin(ApplicationV2) 
   }
 
   static #onUseArray() {
-    this.wiz.pool = [...SWSE.standardArray];
+    this.wiz.pool = this.stdArray;
+    this.render();
+  }
+
+  static #onAddSystem(event, target) {
+    const doc = this._data.droidSystems.find(d => d.id === target.dataset.id);
+    if (!doc) return;
+    this.wiz.droidBuys.push(doc.id);
+    if (this.droidSpent() > DROID_BUDGET) {
+      this.wiz.droidBuys.pop();
+      return ui.notifications.warn(L("SWSE.Droid.ErrBudget"));
+    }
+    this.render();
+  }
+
+  static #onRemoveSystem(event, target) {
+    this.wiz.droidBuys.splice(Number(target.dataset.index), 1);
     this.render();
   }
 
   static #onSelectSpecies(event, target) {
+    if (this.wiz.speciesId !== target.dataset.id) this.wiz.droidBuys = [];
     this.wiz.speciesId = target.dataset.id;
     this.wiz.speciesFeats = [];
     this.render();
@@ -593,7 +701,7 @@ export class CharacterCreator extends HandlebarsApplicationMixin(ApplicationV2) 
     let actor = this.actor;
     if (!actor) actor = await Actor.implementation.create({ name: s.name || L("SWSE.CG.NewHero"), type: "character" });
     else {
-      const existing = actor.items.filter(i => ["species", "class", "feat", "talent", "forcePower"].includes(i.type)).map(i => i.id);
+      const existing = actor.items.filter(i => ["species", "class", "feat", "talent", "forcePower", "droidSystem"].includes(i.type)).map(i => i.id);
       if (existing.length) {
         const ok = await foundry.applications.api.DialogV2.confirm({ window: { title: L("SWSE.CharacterCreator") }, content: `<p>${L("SWSE.CG.ConfirmReplace")}</p>` });
         if (!ok) return;
@@ -605,7 +713,7 @@ export class CharacterCreator extends HandlebarsApplicationMixin(ApplicationV2) 
     const updates = { "system.creationComplete": true, "system.credits": (s.credits ?? 0) - this.purchaseTotal() };
     if (s.name) updates.name = s.name;
     for (const a of ABIL) {
-      updates[`system.abilities.${a}.base`] = base[a];
+      updates[`system.abilities.${a}.base`] = base[a] ?? 10;
       updates[`system.abilities.${a}.increase`] = 0;
     }
     for (const k of Object.keys(SWSE.skills)) updates[`system.skills.${k}.trained`] = s.trained.includes(k);
@@ -630,6 +738,9 @@ export class CharacterCreator extends HandlebarsApplicationMixin(ApplicationV2) 
       if (doc) items.push(itemData(doc, { system: { uses: n, spent: 0 } }));
     }
     for (const d of this.freeItems()) items.push(itemData(d, { system: { equipped: true } }));
+    if (s.droid) {
+      for (const x of this.droidInstalled()) items.push(itemData(x.doc, { system: { cost: x.cost, equipped: true } }));
+    }
     for (const u of s.purchases) {
       const d = this.findByUuid(u);
       if (d) items.push(itemData(d));
@@ -642,7 +753,8 @@ export class CharacterCreator extends HandlebarsApplicationMixin(ApplicationV2) 
       "system.forcePoints.value": actor.system.forcePoints.max,
       "system.destinyPoints.value": 1,
       "system.condition.step": 0,
-      "system.secondWind.used": 0
+      "system.secondWind.used": 0,
+      ...(s.droid ? { "system.details.languages": "Binary" } : {})
     });
     ui.notifications.info(game.i18n.format("SWSE.CG.Done", { name: actor.name }));
     this.close();

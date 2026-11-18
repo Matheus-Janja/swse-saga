@@ -44,7 +44,7 @@ export class SWSEItemSheet extends HandlebarsApplicationMixin(foundry.applicatio
     context.system = sys;
     context.config = SWSE;
     context.editable = this.isEditable;
-    context.isType = Object.fromEntries(["species", "class", "feat", "talent", "forcePower", "weapon", "armor", "equipment", "vehicleWeapon"].map(t => [t, item.type === t]));
+    context.isType = Object.fromEntries(["species", "class", "feat", "talent", "forcePower", "weapon", "armor", "equipment", "vehicleWeapon", "droidSystem"].map(t => [t, item.type === t]));
     context.hasModifiers = "modifiers" in sys;
     context.hasChoice = "choice" in sys;
     context.hasPrereqs = "prerequisites" in sys;

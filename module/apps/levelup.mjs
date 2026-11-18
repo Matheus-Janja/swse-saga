@@ -221,6 +221,7 @@ export class LevelUpApp extends HandlebarsApplicationMixin(ApplicationV2) {
       const ownedClasses = this.actor.classes.map(i => ({ id: `owned:${i.id}`, name: i.name, img: i.img, level: i.system.levels, ok: i.system.levels < (i.system.maxLevel || 20), selected: s.classId === `owned:${i.id}` || this.chosen?.owned?.id === i.id, missing: [] }));
       const others = this._data.classes.filter(d => !this.actor.classes.some(i => i.system.key === d.system.key))
         .filter(d => isNPC || d.system.classType !== "nonheroic")
+        .filter(d => !(this.actor.system.derived?.isDroid && d.system.key === "jedi"))
         .map(d => {
           const res = d.system.classType === "prestige" ? checkPrereqs(profileFromActor(this.actor), d.system.prerequisites) : { ok: true, missing: [] };
           return { id: d.id, uuid: d.uuid, name: d.name, img: d.img, type: d.system.classType, ok: res.ok, missing: res.missing, prereq: d.system.prerequisites.text, selected: s.classId === d.id };

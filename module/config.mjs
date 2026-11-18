@@ -250,6 +250,13 @@ SWSE.vehicleCategories = {
   walker: "SWSE.VCat.walker", speeder: "SWSE.VCat.speeder", airspeeder: "SWSE.VCat.airspeeder",
   starfighter: "SWSE.VCat.starfighter", transport: "SWSE.VCat.transport", capital: "SWSE.VCat.capital", station: "SWSE.VCat.station"
 };
+SWSE.droidSystemCategories = {
+  locomotion: "SWSE.DroidCat.locomotion", locoExtra: "SWSE.DroidCat.locoExtra", appendage: "SWSE.DroidCat.appendage",
+  processor: "SWSE.DroidCat.processor", sensor: "SWSE.DroidCat.sensor", communication: "SWSE.DroidCat.communication",
+  shield: "SWSE.DroidCat.shield", translator: "SWSE.DroidCat.translator", storage: "SWSE.DroidCat.storage",
+  hardened: "SWSE.DroidCat.hardened", accessory: "SWSE.DroidCat.accessory"
+};
+SWSE.droidCostModes = { flat: "SWSE.Droid.Cost.flat", factor: "SWSE.Droid.Cost.factor", locomotion: "SWSE.Droid.Cost.locomotion", locoExtra: "SWSE.Droid.Cost.locoExtra", selfDestruct: "SWSE.Droid.Cost.selfDestruct" };
 SWSE.vehicleStations = { pilot: "SWSE.Role.pilot", copilot: "SWSE.Role.copilot", gunner: "SWSE.Role.gunner" };
 
 /** Familiaridade com armas por espécie (errata): chave da espécie -> chave da arma -> grupo. */

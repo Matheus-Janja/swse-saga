@@ -33,7 +33,7 @@ export class SWSEActor extends Actor {
   /** Rerrolagens concedidas (espécie e talentos) para uma perícia. */
   getRerolls(skill) {
     const out = [];
-    const sources = [this.species, ...this.items.filter(i => i.type === "talent")].filter(Boolean);
+    const sources = [this.species, ...this.items.filter(i => ["talent", "droidSystem"].includes(i.type))].filter(Boolean);
     for (const s of sources) {
       for (const r of s.system.rerolls ?? []) {
         if (r.skill === skill || r.skill === "all") out.push({ ...r, source: s.name });

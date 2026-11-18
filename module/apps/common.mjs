@@ -10,6 +10,7 @@ export async function loadCompendia() {
   const get = async name => (await game.packs.get(`${SYSTEM_ID}.${name}`)?.getDocuments()) ?? [];
   const [species, classes, feats, talentsAll, force, weapons, armor, equipment] = await Promise.all(
     ["species", "classes", "feats", "talents", "force-powers", "weapons", "armor", "equipment"].map(get));
+  const droidSystems = await get("droid-systems");
   CACHE = {
     species: species.sort(byName),
     classes: classes.sort(byName),
@@ -20,7 +21,8 @@ export async function loadCompendia() {
     secrets: force.filter(i => i.type === "talent" && i.system.category === "forceSecret").sort(byName),
     weapons: weapons.sort(byName),
     armor: armor.sort(byName),
-    equipment: equipment.sort(byName)
+    equipment: equipment.sort(byName),
+    droidSystems: droidSystems.sort(byName)
   };
   return CACHE;
 }

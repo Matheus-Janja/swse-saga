@@ -158,6 +158,25 @@
     <label class="wide">{{localize "SWSE.Special"}} <input type="text" name="system.special" value="{{system.special}}"></label>
   {{/if}}
 
+  {{#if isType.droidSystem}}
+    <div class="grid-3">
+      <label>{{localize "SWSE.Category"}} <select name="system.category">{{selectOptions config.droidSystemCategories selected=system.category localize=true}}</select></label>
+      <label>{{localize "SWSE.Droid.CostMode"}} <select name="system.costMode">{{selectOptions config.droidCostModes selected=system.costMode localize=true}}</select></label>
+      <label>{{localize "SWSE.Droid.CostBase"}} <input type="number" name="system.costBase" value="{{system.costBase}}"></label>
+      <label>{{localize "SWSE.Droid.MinSize"}} <input type="text" name="system.minSize" value="{{system.minSize}}"></label>
+      <label>{{localize "SWSE.Droid.Appendage"}} <input type="text" name="system.appendage" value="{{system.appendage}}"></label>
+      <label>{{localize "SWSE.ShieldRating"}} <input type="number" name="system.shieldRating" value="{{system.shieldRating}}"></label>
+    </div>
+    {{#if (eq system.category "locomotion")}}
+    <div class="grid-3">
+      <label>{{localize "SWSE.Droid.SpeedSmall"}} <input type="number" name="system.locomotion.small" value="{{system.locomotion.small}}"></label>
+      <label>{{localize "SWSE.Droid.SpeedMedium"}} <input type="number" name="system.locomotion.medium" value="{{system.locomotion.medium}}"></label>
+      <label>{{localize "SWSE.Droid.SpeedLarge"}} <input type="number" name="system.locomotion.large" value="{{system.locomotion.large}}"></label>
+    </div>
+    {{/if}}
+    <label class="wide">{{localize "SWSE.Special"}} <input type="text" name="system.special" value="{{system.special}}"></label>
+  {{/if}}
+
   {{#if isType.armor}}
     <div class="grid-3">
       <label>{{localize "SWSE.Armor.category"}} <select name="system.category"><option value="light" {{#if (eq system.category "light")}}selected{{/if}}>{{localize "SWSE.Armor.light"}}</option><option value="medium" {{#if (eq system.category "medium")}}selected{{/if}}>{{localize "SWSE.Armor.medium"}}</option><option value="heavy" {{#if (eq system.category "heavy")}}selected{{/if}}>{{localize "SWSE.Armor.heavy"}}</option></select></label>
@@ -165,10 +184,11 @@
       <label>{{localize "SWSE.Armor.fortBonus"}} <input type="number" name="system.fortBonus" value="{{system.fortBonus}}"></label>
       <label>{{localize "SWSE.Armor.maxDex"}} <input type="number" name="system.maxDex" value="{{system.maxDex}}"></label>
       <label><input type="checkbox" name="system.equipped" {{checked system.equipped}}> {{localize "SWSE.Equipped"}}</label>
+      <label><input type="checkbox" name="system.droid" {{checked system.droid}}> {{localize "SWSE.Droid.BuiltIn"}}</label>
     </div>
   {{/if}}
 
-  {{#if (or isType.weapon isType.armor isType.equipment)}}
+  {{#if (or isType.weapon isType.armor isType.equipment isType.droidSystem)}}
     <div class="grid-3">
       <label>{{localize "SWSE.Cost"}} <input type="number" name="system.cost" value="{{system.cost}}"></label>
       <label>{{localize "SWSE.Weight"}} <input type="number" step="0.1" name="system.weight" value="{{system.weight}}"></label>

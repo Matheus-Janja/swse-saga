@@ -9,6 +9,7 @@
  * weapon = { name, system }
  */
 import { SWSE } from "../config.mjs";
+import { droidUnarmedDamage } from "./droid.mjs";
 
 const GROUP_FEAT = {
   simple: "weapon-proficiency-simple",
@@ -118,6 +119,8 @@ export function weaponProfileFrom(ctx, weapon) {
 /** Dano desarmado: 1d3 (Pequeno) / 1d4 (Médio), +1 passo por Martial Arts I/II/III. */
 export function unarmedDamageCtx(ctx, weapon) {
   if (!["unarmed", "combat-gloves"].includes(weapon.system.key)) return weapon.system.damage;
+  const martial = ["martial-arts-i", "martial-arts-ii", "martial-arts-iii"].filter(k => ctxHas(ctx, k)).length;
+  if (ctx.droidAppendage) return droidUnarmedDamage(ctx.size ?? "medium", ctx.droidAppendage, martial);
   const steps = ["1d2", "1d3", "1d4", "1d6", "1d8", "1d10", "1d12", "2d8"];
   let idx = Math.max(0, (SWSE.sizes[ctx.size ?? "medium"]?.order ?? 4) - 2);
   idx += ["martial-arts-i", "martial-arts-ii", "martial-arts-iii"].filter(k => ctxHas(ctx, k)).length;

@@ -1,4 +1,25 @@
 <section class="tab {{tab.cssClass}}" data-group="primary" data-tab="gear">
+  {{#if derived.isDroid}}
+  <div class="panel">
+    <h3>{{localize "SWSE.Droid.Systems"}}
+      {{#if editable}}<a class="ctl" data-action="openCompendium" data-pack="droid-systems"><i class="fa-solid fa-book-atlas"></i></a>{{/if}}</h3>
+    <p class="hint">{{localize "SWSE.Droid.SheetHint"}}</p>
+    <table class="item-table">
+      <thead><tr><th></th><th>{{localize "SWSE.Name"}}</th><th>{{localize "SWSE.Category"}}</th><th>{{localize "SWSE.Cost"}}</th><th></th></tr></thead>
+      <tbody>
+      {{#each droidSystems as |e|}}
+        <tr class="item" data-item-id="{{e.item.id}}">
+          <td><img src="{{e.item.img}}"></td>
+          <td><a data-action="itemToChat">{{e.item.name}}</a></td>
+          <td>{{e.category}}</td><td>{{e.item.system.cost}}</td>
+          <td class="ctls"><a data-action="editItem"><i class="fa-solid fa-pen"></i></a>
+            {{#if @root.editable}}<a data-action="deleteItem"><i class="fa-solid fa-trash"></i></a>{{/if}}</td>
+        </tr>
+      {{/each}}
+      </tbody>
+    </table>
+  </div>
+  {{/if}}
   <div class="panel">
     <h3>{{localize "SWSE.Equipment"}}
       {{#if editable}}<a class="ctl" data-action="createItem" data-type="equipment"><i class="fa-solid fa-plus"></i></a>

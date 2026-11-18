@@ -12,6 +12,8 @@
     {{#if isStep.abilities}}
     <h2>{{localize "SWSE.CG.Step.abilities"}}</h2>
     <p class="hint">{{localize "SWSE.CG.AbilitiesHint"}}</p>
+    <label class="droid-toggle"><input type="checkbox" name="droid" {{checked isDroid}}> <i class="fa-solid fa-robot"></i> {{localize "SWSE.Droid.PlayDroid"}}</label>
+    {{#if isDroid}}<p class="hint">{{localize "SWSE.Droid.AbilitiesHint"}}</p>{{/if}}
     <div class="method-select">
       {{#each methods as |m|}}
       <label><input type="radio" name="method" value="{{m.key}}" {{#if (eq m.key @root.state.method)}}checked{{/if}}> {{m.label}}</label>
@@ -19,7 +21,7 @@
     </div>
 
     {{#if (eq state.method "pointBuy")}}
-    <p class="points">{{localize "SWSE.CG.PointsLeft"}}: <strong class="{{#if (lt pbLeft 0)}}warn{{/if}}">{{pbLeft}}</strong> / 25</p>
+    <p class="points">{{localize "SWSE.CG.PointsLeft"}}: <strong class="{{#if (lt pbLeft 0)}}warn{{/if}}">{{pbLeft}}</strong> / {{pbTotal}}</p>
     <table class="wizard-abilities">
       <thead><tr><th></th><th>{{localize "SWSE.Base"}}</th><th>{{localize "SWSE.CG.Cost"}}</th><th>{{localize "SWSE.SpeciesAbbr"}}</th><th>{{localize "SWSE.Total"}}</th><th>{{localize "SWSE.Mod"}}</th></tr></thead>
       <tbody>
@@ -183,6 +185,32 @@
     </ul>
     {{/if}}
 
+    {{!-- SISTEMAS DE DROIDE --}}
+    {{#if isStep.systems}}
+    <h2>{{localize "SWSE.CG.Step.systems"}}</h2>
+    <p class="hint">{{localize "SWSE.Droid.SystemsHint"}}</p>
+    <p class="points">{{localize "SWSE.CG.Spent"}}: {{droidSpent}} / {{droidBudget}} · {{localize "SWSE.CG.Left"}}: <strong class="{{#if (lt droidLeft 0)}}warn{{/if}}">{{droidLeft}}</strong></p>
+    <ul class="cart">
+      {{#each droidInstalled as |x|}}
+      <li>{{x.name}} <small>{{#if x.free}}{{localize "SWSE.Droid.Free"}}{{else}}{{x.cost}} cr{{/if}}</small>
+        {{#unless x.free}}<a data-action="removeSystem" data-index="{{x.index}}"><i class="fa-solid fa-xmark"></i></a>{{/unless}}</li>
+      {{/each}}
+    </ul>
+    {{#each droidGroups as |g|}}
+    <details class="shop"><summary>{{g.label}}</summary>
+      <ul class="pick-list">
+        {{#each g.list as |i|}}
+        <li class="{{#unless i.allowed}}unavailable{{/unless}}{{#unless i.affordable}} unavailable{{/unless}}">
+          <img src="{{i.img}}"> {{i.name}} <small>{{i.cost}} cr{{#if i.speed}} · {{localize "SWSE.Speed"}} {{i.speed}}{{/if}}{{#if i.note}} · {{i.note}}{{/if}}</small>
+          <a class="info" data-action="showItem" data-uuid="{{i.uuid}}"><i class="fa-solid fa-circle-info"></i></a>
+          {{#if i.allowed}}<a data-action="addSystem" data-id="{{i.id}}"><i class="fa-solid fa-cart-plus"></i></a>{{/if}}
+        </li>
+        {{/each}}
+      </ul>
+    </details>
+    {{/each}}
+    {{/if}}
+
     {{!-- 8. EQUIPAMENTO --}}
     {{#if isStep.equipment}}
     <h2>{{localize "SWSE.CG.Step.equipment"}}</h2>
@@ -224,6 +252,7 @@
       <dt>{{localize "SWSE.Feats"}}</dt><dd>{{review.feats}}</dd>
       <dt>{{localize "SWSE.Talents"}}</dt><dd>{{review.talent}}</dd>
       <dt>{{localize "SWSE.ForcePowers"}}</dt><dd>{{review.powers}}</dd>
+      {{#if review.droidSystems}}<dt>{{localize "SWSE.Droid.Systems"}}</dt><dd>{{review.droidSystems}}</dd>{{/if}}
       <dt>{{localize "SWSE.Equipment"}}</dt><dd>{{review.items}}</dd>
       <dt>{{localize "SWSE.Credits"}}</dt><dd>{{review.credits}}</dd>
     </dl>

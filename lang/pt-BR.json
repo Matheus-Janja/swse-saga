@@ -14,7 +14,8 @@
       "weapon": "Arma",
       "armor": "Armadura",
       "equipment": "Equipamento",
-      "vehicleWeapon": "Arma de Veículo"
+      "vehicleWeapon": "Arma de Veículo",
+      "droidSystem": "Sistema de Droide"
     }
   },
   "SWSE": {
@@ -518,7 +519,8 @@
         "talent": "Talento",
         "force": "Poderes da Força",
         "equipment": "Equipamento",
-        "review": "Revisão"
+        "review": "Revisão",
+        "systems": "Sistemas de Droide"
       },
       "AbilitiesHint": "Escolha o método. Os modificadores de espécie são aplicados depois (passo 2).",
       "PointsLeft": "Pontos restantes",
@@ -730,6 +732,43 @@
       "WeaponType": "Tipo de arma",
       "Multiplier": "Multiplicador",
       "Count": "Quantidade"
+    },
+    "DroidCat": {
+      "locomotion": "Locomoção",
+      "locoExtra": "Extras de locomoção",
+      "appendage": "Apêndice",
+      "processor": "Processador",
+      "sensor": "Sensores",
+      "communication": "Comunicação",
+      "shield": "Escudo",
+      "translator": "Tradutor",
+      "storage": "Armazenamento",
+      "hardened": "Sistemas endurecidos",
+      "accessory": "Acessório"
+    },
+    "Droid": {
+      "PlayDroid": "Personagem droide",
+      "Systems": "Sistemas de droide",
+      "Free": "grátis",
+      "BuiltIn": "Armadura embutida de droide",
+      "AbilitiesHint": "Droides não têm Constituição: 5 atributos, compra de 21 pontos, pacote 15/14/13/12/10 ou 5× 4d6. Na espécie, escolha o grau e o tamanho (Médio ou Pequeno). Droides não podem ser Jedi.",
+      "SystemsHint": "Você começa com processador heurístico, duas mãos e a locomoção básica (Médio: andando 6; Pequeno: esteiras 4). Gaste até 1.000 créditos em locomoção, apêndices e acessórios; o que sobrar é perdido (os créditos da classe vêm depois).",
+      "SheetHint": "Sistemas instalados aplicam bônus e deslocamento automaticamente (ex.: melhor locomoção, sensor aprimorado, garra no dano desarmado).",
+      "ErrBudget": "Os sistemas passam de 1.000 créditos.",
+      "CostMode": "Modo de custo",
+      "CostBase": "Custo base",
+      "MinSize": "Tamanho mínimo",
+      "Appendage": "Tipo de apêndice",
+      "SpeedSmall": "Desloc. (Pequeno)",
+      "SpeedMedium": "Desloc. (Médio)",
+      "SpeedLarge": "Desloc. (Grande+)",
+      "Cost": {
+        "flat": "Fixo",
+        "factor": "× fator de custo",
+        "locomotion": "Locomoção (mult × fator × desloc.²)",
+        "locoExtra": "Custo da locomoção andando",
+        "selfDestruct": "Autodestruição (dano máx. × 20)"
+      }
     }
   }
 }

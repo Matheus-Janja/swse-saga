@@ -55,6 +55,14 @@ Novo tipo de ator **Veículo** (Cap. 10):
 - **Ações**: recarregar escudos e redirecionar energia (Mechanics CD 20).
 - **Compêndio "Veículos e Naves"** com os 18 veículos do livro: AT-AT, AT-ST, X-34, speeder bike 74-Z, AAT-1, T-47, LAAT/i, X-wing, Y-wing, TIE fighter, TIE interceptor, Eta-2, ARC-170, Vulture, Tri-Fighter, YT-1300, Corvette Corelliana e Star Destroyer classe Imperial I. Um teste garante que todos batem com o livro.
 
+### Droides jogadores
+Marque **"Personagem droide"** no primeiro passo da criação (Cap. 11):
+- 5 atributos (sem Constituição): compra de 21 pontos, pacote 15/14/13/12/10 ou 5× 4d6.
+- "Espécies" por **grau** (1º a 5º) e **tamanho** (Médio ou Pequeno), com os modificadores das Tabelas 11-1 e 11-2 e os traços de droide. Droides não podem ser Jedi nem pegar Force Sensitivity.
+- Novo passo **Sistemas de Droide**: começa com processador heurístico, duas mãos e locomoção básica, e gasta até 1.000 créditos em locomoção, apêndices, sensores, comunicação, escudos, tradutores, armazenamento e armaduras embutidas — com o custo calculado pelo fator de tamanho (Tabelas 11-3 a 11-6).
+- Na ficha: Fortitude com Força, PV sem Con, deslocamento do melhor sistema de locomoção, armadura embutida sem redução de deslocamento, pacote sensorial (+2 Perception), rerrolagens de garras de escalada e servos de salto, dano desarmado pelo apêndice (Tabela 11-4), processador básico restringindo perícias sem treino, imunidade a atordoamento e vulnerabilidade a íon.
+- Compêndio **Sistemas de Droide** com 59 sistemas e 11 armaduras embutidas.
+
 ### Compêndios
 Espécies (21, incluindo Aqualish, Hutt, Neimoidian e Yuuzhan Vong do Cap. 16), classes heroicas, de prestígio e não heroica, 69 feats, todas as árvores de talento do livro básico (classes, Força e prestígio), 16 poderes da Força, técnicas e segredos, armas, armaduras, equipamentos e macros. Erratas oficiais de out/2008 aplicadas.
 
@@ -71,7 +79,6 @@ Para publicar uma versão: atualize `version` no `system.json`, faça commit e c
 Os dados do compêndio ficam em `tools/data/*.mjs` (um arquivo por tipo); as regras estão em `module/rules/calc.mjs`.
 
 ## Limitações atuais
-- Droides como personagens jogadores (construção por grau/sistemas) ainda não têm assistente próprio; droides PdM usam a ficha de PdM com a opção "É droide".
 - Muitos talentos de uso situacional são descritos no item mas não automatizados (o cartão de chat indica o efeito).
 
 ## Aviso legal

@@ -264,3 +264,5 @@
 .swse.vehicle .crew-slot .ctl { margin-left: auto; color: var(--swse-dim); }
 .swse.vehicle .crew-slot.add { justify-content: center; }
 .swse.vehicle .vehicle-details label { display: flex; flex-direction: column; font-size: 0.85em; color: var(--swse-dim); }
+
+.swse-wizard .droid-toggle { display: inline-flex; gap: 6px; align-items: center; padding: 4px 10px; border: 1px solid var(--swse-blue); border-radius: 12px; margin-bottom: 6px; }

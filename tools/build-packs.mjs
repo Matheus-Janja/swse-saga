@@ -17,6 +17,7 @@ import talents from "./data/talents.mjs";
 import forcePowers from "./data/force-powers.mjs";
 import { weapons, armor, equipment } from "./data/gear.mjs";
 import macros from "./data/macros.mjs";
+import { droidSpecies, droidSystems, DROID_FOLDERS } from "./data/droids.mjs";
 import { buildNpcs } from "./build-npcs.mjs";
 import { buildVehicles } from "./build-vehicles.mjs";
 import { iconFor, ICON } from "./build-packs-icons.mjs";
@@ -37,6 +38,7 @@ const stats = { coreVersion: "14.370", systemId: "swse-saga", systemVersion: "0.
 
 function itemDoc(pack, data, folder = null) {
   delete data.system.img;
+  delete data.folder;
   const _id = makeId(`${pack}:${data.type}:${data.system.tree ?? ""}:${data.name}`);
   return {
     _id, _key: `!items!${_id}`, name: data.name, type: data.type, img: iconFor(data.type, data.system),
@@ -49,7 +51,14 @@ function folderDoc(pack, name, type = "Item", sort = 0) {
 }
 
 const packs = {};
-packs.species = species.map(d => itemDoc("species", d));
+{
+  const fDroid = folderDoc("species", "Droides (heróis)", "Item", 1);
+  packs.species = [fDroid, ...species.map(d => itemDoc("species", d)), ...droidSpecies.map(d => itemDoc("species", d, fDroid._id))];
+}
+{
+  const folders = Object.fromEntries(DROID_FOLDERS.map((n, i) => [n, folderDoc("droid-systems", n, "Item", i)]));
+  packs["droid-systems"] = [...Object.values(folders), ...droidSystems.map(d => itemDoc("droid-systems", d, folders[d.folder]._id))];
+}
 
 // Classes em pastas: Base / Prestígio / Não heroica
 {

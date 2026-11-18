@@ -2,7 +2,8 @@ export const ICON = n => `systems/swse-saga/assets/icons/${n}.svg`;
 /** Ícone do sistema conforme tipo/categoria (os ícones ficam em assets/icons). */
 export function iconFor(type, sys) {
   switch (type) {
-    case "species": return ICON("species");
+    case "species": return ICON(sys.droid ? "npc-droid" : "species");
+    case "droidSystem": return ICON("droid-system");
     case "class": return ICON("class");
     case "feat": return ICON("feat");
     case "talent": return ICON(sys.category === "forceTechnique" ? "technique" : sys.category === "forceSecret" ? "secret" : sys.category === "forceTalent" ? "force" : "talent");

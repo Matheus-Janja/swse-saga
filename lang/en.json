@@ -14,7 +14,8 @@
       "weapon": "Weapon",
       "armor": "Armor",
       "equipment": "Equipment",
-      "vehicleWeapon": "Vehicle Weapon"
+      "vehicleWeapon": "Vehicle Weapon",
+      "droidSystem": "Droid System"
     }
   },
   "SWSE": {
@@ -518,7 +519,8 @@
         "talent": "Talent",
         "force": "Force Powers",
         "equipment": "Equipment",
-        "review": "Review"
+        "review": "Review",
+        "systems": "Droid Systems"
       },
       "AbilitiesHint": "Choose a method. Species modifiers are applied afterwards (step 2).",
       "PointsLeft": "Points left",
@@ -730,6 +732,43 @@
       "WeaponType": "Weapon type",
       "Multiplier": "Multiplier",
       "Count": "Count"
+    },
+    "DroidCat": {
+      "locomotion": "Locomotion",
+      "locoExtra": "Locomotion extras",
+      "appendage": "Appendage",
+      "processor": "Processor",
+      "sensor": "Sensors",
+      "communication": "Communications",
+      "shield": "Shield",
+      "translator": "Translator",
+      "storage": "Storage",
+      "hardened": "Hardened systems",
+      "accessory": "Accessory"
+    },
+    "Droid": {
+      "PlayDroid": "Droid character",
+      "Systems": "Droid systems",
+      "Free": "free",
+      "BuiltIn": "Built-in droid armor",
+      "AbilitiesHint": "Droids have no Constitution: 5 abilities, 21-point buy, 15/14/13/12/10 package or 5× 4d6. In the species step pick degree and size (Medium or Small). Droids can't be Jedi.",
+      "SystemsHint": "You start with a heuristic processor, two hands and basic locomotion (Medium: walking 6; Small: tracked 4). Spend up to 1,000 credits on locomotion, appendages and accessories; leftovers are lost (class credits come later).",
+      "SheetHint": "Installed systems apply bonuses and speed automatically (e.g. best locomotion, improved sensors, claw unarmed damage).",
+      "ErrBudget": "Systems exceed 1,000 credits.",
+      "CostMode": "Cost mode",
+      "CostBase": "Base cost",
+      "MinSize": "Minimum size",
+      "Appendage": "Appendage type",
+      "SpeedSmall": "Speed (Small)",
+      "SpeedMedium": "Speed (Medium)",
+      "SpeedLarge": "Speed (Large+)",
+      "Cost": {
+        "flat": "Flat",
+        "factor": "× cost factor",
+        "locomotion": "Locomotion (mult × factor × speed²)",
+        "locoExtra": "Walking locomotion cost",
+        "selfDestruct": "Self-destruct (max damage × 20)"
+      }
     }
   }
 }

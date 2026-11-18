@@ -160,4 +160,46 @@ t("Veículo: piloto heroico substitui armadura; artilheiro usa BBA próprio e ½
   assert.equal(p.damageBonus, 5);
 });
 
+{
+  const { droidSpecies, droidSystems } = await import("./data/droids.mjs");
+  const { systemCost, droidUnarmedDamage } = await import("../module/rules/droid.mjs");
+  const ds = key => structuredClone(droidSystems.find(s => s.system.key === key));
+  t("Droide herói: cálculo da ficha", () => {
+    const sp = structuredClone(droidSpecies.find(s => s.system.key === "droid-4-medium"));
+    const so = find(classes, "soldier"); so.system.hpRolls = [30];
+    const shell = ds("durasteel-shell"); shell.system.equipped = true;
+    const items = [sp, so, ds("walking-locomotion"), ds("wheeled-locomotion"), ds("improved-sensor-package"), ds("heuristic-processor"), shell,
+      find(feats, "armor-proficiency-light")];
+    const d = computeActor(sys({ str: 14, dex: 14, con: 8, int: 12, wis: 10, cha: 10 }), items);
+    assert.equal(d.isDroid, true);
+    assert.equal(d.abilities.dex.total, 16);
+    assert.equal(d.abilities.con.mod, 0);
+    assert.equal(d.hpMax, 30);
+    assert.equal(d.defenses.fortitude.total, 10 + 1 + 2 + 2); // For 14 (+2)
+    assert.equal(d.speed, 8); // rodas 8 > andando 6; armadura embutida não reduz
+    assert.equal(d.defenses.reflex.parts.level, 4); // max(nível 1, armadura 4)
+    assert.equal(d.skills.perception.parts.mods, 2);
+    assert.equal(d.skills.useTheForce.usable, false);
+  });
+  t("Droide Pequeno soma modificadores de grau e de tamanho", () => {
+    const sp = droidSpecies.find(s => s.system.key === "droid-2-small").system.abilityMods;
+    assert.deepEqual([sp.str, sp.dex, sp.int, sp.cha], [-2, 2, 2, -2]);
+  });
+  t("Droide: processador básico restringe perícias sem treino", () => {
+    const sp = structuredClone(droidSpecies.find(s => s.system.key === "droid-5-small"));
+    const d = computeActor(sys({ str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10 }), [sp, ds("basic-processor")]);
+    assert.equal(d.skills.mechanics.usable, false);
+    assert.equal(d.skills.climb.usable, true);
+    assert.equal(d.speed, 4);
+  });
+  t("Droide: custos e dano desarmado (Tabelas 11-3/11-4/11-5)", () => {
+    assert.equal(systemCost(ds("wheeled-locomotion").system, "medium", { locomotionIndex: 1 }), 5 * 64 + 500);
+    assert.equal(systemCost(ds("flying-locomotion").system, "small", { locomotionIndex: 1 }), 200 * 2 * 81 + 1000);
+    assert.equal(systemCost(ds("hand-appendage").system, "small"), 100);
+    assert.equal(systemCost(ds("self-destruct").system, "medium"), 720);
+    assert.equal(droidUnarmedDamage("medium", "claw", 1), "1d6");
+    assert.equal(droidUnarmedDamage("small", "hand"), "1d2");
+  });
+}
+
 console.log(`\n${n} testes passaram.`);

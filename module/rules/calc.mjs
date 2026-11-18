@@ -3,6 +3,7 @@
  * Não dependem do Foundry, então podem ser testadas em Node (ver tools/test-calc.mjs).
  */
 import { SWSE } from "../config.mjs";
+import { bestAppendage, locomotionSpeed } from "./droid.mjs";
 
 export const abilityMod = score => Math.floor((Number(score) - 10) / 2);
 
@@ -148,6 +149,8 @@ export function computeActor(sys, items, opts = {}) {
   for (const t of talents) pushItemMods(t);
   for (const it of items.filter(i => ["equipment", "weapon"].includes(i.type))) pushItemMods(it, !!it.system.equipped);
   for (const a of armors) pushItemMods(a);
+  const droidSystems = byType("droidSystem");
+  for (const s of droidSystems) pushItemMods(s);
   for (const m of sys.customModifiers ?? []) {
     if (m.disabled) continue;
     rawMods.push({ target: m.target, value: evalModifierValue(m.value, rollData), type: m.type || "untyped", source: m.label || "Custom" });
@@ -246,6 +249,11 @@ export function computeActor(sys, items, opts = {}) {
   d.forceSensitive = forceSensitive;
   d.skills = {};
   const allSkills = mod("skills.all");
+  // Processador básico: perícias sem treino só Acrobatics, Climb, Jump e Perception
+  const sysKeys = new Set(droidSystems.map(s => s.system.key));
+  const basicProcessor = isDroid && sysKeys.has("basic-processor") && !sysKeys.has("heuristic-processor");
+  d.droidAppendage = bestAppendage(droidSystems.map(s => s.system.appendage).filter(Boolean));
+  d.shieldRatingMax = Math.max(0, ...droidSystems.map(s => Number(s.system.shieldRating) || 0));
   const focus = new Set(choicesOf("skill-focus"));
   const training = new Set(choicesOf("skill-training"));
   for (const [key, cfg] of Object.entries(SWSE.skills)) {
@@ -264,7 +272,10 @@ export function computeActor(sys, items, opts = {}) {
       misc: Number(s.misc) || 0,
       condition: d.conditionPenalty
     };
-    d.skills[key] = { total: sum(parts), parts, trained, focus: focus.has(key), ability, usable: !cfg.force || forceSensitive };
+    let usable = !cfg.force || forceSensitive;
+    if (isDroid && cfg.force) usable = false;
+    if (basicProcessor && !trained && !["acrobatics", "climb", "jump", "perception"].includes(key)) usable = false;
+    d.skills[key] = { total: sum(parts), parts, trained, focus: focus.has(key), ability, usable };
   }
 
   // --- Ataque ---
@@ -277,7 +288,11 @@ export function computeActor(sys, items, opts = {}) {
 
   // --- Deslocamento ---
   let speed = Number(species?.system.speed ?? sys.speed?.base ?? 6) || 6;
-  if (d.armor && ["medium", "heavy"].includes(d.armor.category) && !(armorProficient && has("juggernaut"))) {
+  // Droides: o deslocamento vem do melhor sistema de locomoção instalado
+  const locos = droidSystems.filter(s => s.system.category === "locomotion");
+  if (isDroid && locos.length) speed = Math.max(...locos.map(l => locomotionSpeed(l.system, sizeKey)));
+  // Armadura embutida de droide não reduz o deslocamento
+  if (d.armor && !armor.system.droid && ["medium", "heavy"].includes(d.armor.category) && !(armorProficient && has("juggernaut"))) {
     speed = speed >= 6 ? speed - 2 : Math.max(speed - 1, 1);
   }
   if (has("long-stride") && (!d.armor || d.armor.category === "light")) speed += 2;

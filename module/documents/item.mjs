@@ -6,7 +6,7 @@ const ICON = n => `systems/swse-saga/assets/icons/${n}.svg`;
 const DEFAULT_ICONS = {
   species: ICON("species"), class: ICON("class"), feat: ICON("feat"), talent: ICON("talent"),
   forcePower: ICON("force"), weapon: ICON("blaster-pistol"), armor: ICON("armor"), equipment: ICON("equipment"),
-  vehicleWeapon: ICON("vehicle-weapon")
+  vehicleWeapon: ICON("vehicle-weapon"), droidSystem: ICON("droid-system")
 };
 
 export class SWSEItem extends Item {
