@@ -23,6 +23,8 @@ export class SWSEItem extends Item {
     if (this.type === "weapon") return attackWithWeapon(actor, this, options);
     if (this.type === "forcePower") return useForcePower(actor, this);
     if (["feat", "talent"].includes(this.type) && (await useTalent(actor, this))) return;
+    if (this.type === "equipment" && String(this.system.special).startsWith("poison|")) return (await import("../rolls/poison.mjs")).poisonAttack(actor, this);
+    if (this.type === "equipment" && this.system.special === "nyriaanSpice") return (await import("../rolls/poison.mjs")).nyriaanSpice(actor, this);
     return this.toChat();
   }
 

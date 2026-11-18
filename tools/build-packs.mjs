@@ -19,7 +19,18 @@ import { iconFor, ICON } from "./build-packs-icons.mjs";
 import { TALENT_ACTIONS } from "../module/helpers/talent-actions.mjs";
 const TALENT_ACTION_KEYS = new Set(Object.keys(TALENT_ACTIONS));
 const CORE = "Livro Básico";
-const sourceFolder = d => d.folder ?? (d.system.source === "Galaxy at War" ? "Galaxy at War" : CORE);
+const sourceFolder = d => d.folder ?? (d.system.source && d.system.source !== "Saga Edition Core Rulebook" ? d.system.source : CORE);
+/** Distribui documentos em pastas por fonte (Livro Básico primeiro). */
+function bySource(pack, list, extraFolders = []) {
+  const folders = new Map([[CORE, folderDoc(pack, CORE, "Item", 0)]]);
+  for (const f of extraFolders) folders.set(f.name, f);
+  const docs = list.map(d => {
+    const name = sourceFolder(d);
+    if (!folders.has(name)) folders.set(name, folderDoc(pack, name, "Item", folders.size + 1));
+    return itemDoc(pack, d, folders.get(name)._id);
+  });
+  return [...folders.values(), ...docs];
+}
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const SRC = path.join(ROOT, "packs-src");
@@ -40,7 +51,11 @@ const PASSIVE_AUTO = new Set(["force-intuition", "force-perception", "force-pilo
   // Galaxy at War (opções no diálogo de ataque / automáticos)
   "staggering-attack", "echani-training", "teras-kasi-training", "ktara-training", "wrruushi-training", "prime-targets", "bullseye", "draw-a-bead",
   "hijkata-expertise", "backstabber", "reckless", "aquatic-specialists", "ascension-specialists", "covert-operatives", "medical-team", "mounted-regiment",
-  "nimble-team", "slicer-team", "technical-experts", "tireless-squad", "unhindered-approach", "unified-squadron", "wary-sentries", "wilderness-specialists"]);
+  "nimble-team", "slicer-team", "technical-experts", "tireless-squad", "unhindered-approach", "unified-squadron", "wary-sentries", "wilderness-specialists",
+  // Galaxy of Intrigue
+  "cut-the-red-tape", "resolute-stance", "forceful-recovery", "fleche", "grazing-shot", "bone-crusher", "damaging-disarm", "make-an-example",
+  "assured-skill", "exceptional-skill", "reliable-boon", "skill-boon", "skill-confidence", "critical-skill-success", "skillful-recovery",
+  "guaranteed-boon", "leading-skill", "learn-from-mistakes", "try-your-luck", "skill-challenge-catastrophic-avoidance"]);
 function markAutomation(data) {
   const key = data.system.key;
   const d = data.system.description ?? "";
@@ -69,9 +84,7 @@ function folderDoc(pack, name, type = "Item", sort = 0) {
 const packs = {};
 {
   const fDroid = folderDoc("species", "Droides (heróis)", "Item", 1);
-  const fCore = folderDoc("species", CORE, "Item", 0);
-  const fGaw = folderDoc("species", "Galaxy at War", "Item", 2);
-  packs.species = [fCore, fDroid, fGaw, ...species.map(d => itemDoc("species", d, sourceFolder(d) === CORE ? fCore._id : fGaw._id)), ...droidSpecies.map(d => itemDoc("species", d, fDroid._id))];
+  packs.species = [...bySource("species", species, [fDroid]), ...droidSpecies.map(d => itemDoc("species", d, fDroid._id))];
 }
 {
   const folders = Object.fromEntries(DROID_FOLDERS.map((n, i) => [n, folderDoc("droid-systems", n, "Item", i)]));
@@ -86,15 +99,7 @@ const packs = {};
   packs.classes = [fBase, fPrest, fNon, ...classes.map(d => itemDoc("classes", d,
     d.system.classType === "prestige" ? fPrest._id : d.system.classType === "nonheroic" ? fNon._id : fBase._id))];
 }
-{
-  const folders = new Map();
-  const docs = feats.map(d => {
-    const name = sourceFolder(d);
-    if (!folders.has(name)) folders.set(name, folderDoc("feats", name, "Item", folders.size));
-    return itemDoc("feats", d, folders.get(name)._id);
-  });
-  packs.feats = [...folders.values(), ...docs];
-}
+packs.feats = bySource("feats", feats);
 
 // Talentos em pastas por árvore (técnicas e segredos ficam no pack de poderes)
 {
@@ -120,13 +125,9 @@ const packs = {};
   const folders = Object.fromEntries(Object.entries(groups).map(([k, n], i) => [k, folderDoc("weapons", n, "Item", i)]));
   packs.weapons = [...Object.values(folders), ...weapons.map(d => itemDoc("weapons", d, folders[d.system.group]._id))];
 }
+packs.armor = bySource("armor", armor);
 {
-  const fCore = folderDoc("armor", CORE, "Item", 0);
-  const fGaw = folderDoc("armor", "Galaxy at War", "Item", 1);
-  packs.armor = [fCore, fGaw, ...armor.map(d => itemDoc("armor", d, sourceFolder(d) === CORE ? fCore._id : fGaw._id))];
-}
-{
-  const cats = { communication: "Comunicação", computer: "Computadores", detection: "Detecção", lifeSupport: "Suporte de Vida", medical: "Médico", survival: "Sobrevivência", tools: "Ferramentas", accessory: "Acessórios", cybernetic: "Cibernéticos" };
+  const cats = { communication: "Comunicação", computer: "Computadores", detection: "Detecção", lifeSupport: "Suporte de Vida", medical: "Médico", survival: "Sobrevivência", tools: "Ferramentas", accessory: "Acessórios", cybernetic: "Cibernéticos", poison: "Venenos e Doenças" };
   const folders = Object.fromEntries(Object.entries(cats).map(([k, n], i) => [k, folderDoc("equipment", n, "Item", i)]));
   packs.equipment = [...Object.values(folders), ...equipment.map(d => itemDoc("equipment", d, folders[d.system.category]._id))];
 }

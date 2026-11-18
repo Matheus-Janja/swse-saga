@@ -156,7 +156,7 @@ export function computeActor(sys, items, opts = {}) {
   // Status (condições de combate) e efeitos ativos (buffs temporários)
   const statuses = opts.statuses instanceof Set ? opts.statuses : new Set(opts.statuses ?? []);
   const acrobaticsTrained = !!sys.skills?.acrobatics?.trained || choicesOf("skill-training").includes("acrobatics");
-  const st = statusEffects(statuses, { acrobaticsTrained, uncannyDodge: has("uncanny-dodge-i") });
+  const st = statusEffects(statuses, { acrobaticsTrained, uncannyDodge: has("uncanny-dodge-i"), resoluteStance: has("resolute-stance") });
   d.status = { ...st, list: [...statuses] };
   for (const m of st.mods) rawMods.push({ target: m.target, value: Number(m.value), type: m.type, source: m.source });
   // Niman: +1 em Reflexos e Vontade empunhando um sabre de luz
@@ -325,6 +325,18 @@ export function computeActor(sys, items, opts = {}) {
     }
   }
 
+  // Cut the Red Tape (Galaxy of Intrigue): Knowledge (bureaucracy) no lugar de Gather Information
+  if (has("cut-the-red-tape") && d.skills.knowledgeBureaucracy.trained) {
+    const gi = d.skills.gatherInformation;
+    gi.trained = true;
+    gi.usable = true;
+    if (d.skills.knowledgeBureaucracy.total > gi.total) {
+      gi.total = d.skills.knowledgeBureaucracy.total;
+      gi.parts = { knowledgeBureaucracy: gi.total };
+      gi.substitute = "cut-the-red-tape";
+    }
+  }
+
   // Watchful Step (Galaxy at War): Perception no lugar de Initiative
   if (has("watchful-step") && d.skills.perception.total > d.skills.initiative.total) {
     const s = d.skills.initiative;
@@ -367,6 +379,8 @@ export function computeActor(sys, items, opts = {}) {
   d.secondWind = {
     uses: (heroicLevel > 0 ? 1 : 0) + count("extra-second-wind") + count("tough-as-nails") + mod("secondWind.uses"),
     heal: Math.max(Math.floor(d.hpMax / 4), d.abilities.con.total)
+      // Sturdy (Herglic, Galaxy of Intrigue): +5 + ½ nível
+      + (species?.system.key === "herglic" ? 5 + d.halfLevel : 0)
   };
 
   // --- Perícias treinadas permitidas (para validação no assistente) ---

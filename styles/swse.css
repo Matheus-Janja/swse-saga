@@ -290,3 +290,33 @@
 
 .swse .item-list .ctl.use-talent { color: var(--swse-accent); }
 .swse .item-list .ctl.use-talent:hover { text-shadow: 0 0 6px var(--swse-accent); }
+
+/* ---- Desafio de perícia (Galaxy of Intrigue) ---- */
+.swse.skill-challenge .window-content { background: radial-gradient(ellipse at top, #1b2a3c 0%, var(--swse-bg) 70%); color: var(--swse-text); padding: 8px; }
+.skill-challenge .challenge { display: flex; flex-direction: column; gap: 8px; }
+.skill-challenge .sc-toolbar { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
+.skill-challenge .sc-toolbar select { flex: 1; min-width: 160px; }
+.skill-challenge .panel { border: 1px solid var(--swse-border); border-radius: 4px; padding: 6px 8px; background: var(--swse-panel); }
+.skill-challenge .panel h3 { margin: 0 0 4px; font-size: 1em; color: var(--swse-accent); border: none; }
+.skill-challenge .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 4px 8px; }
+.skill-challenge .grid-3 .wide, .skill-challenge label.wide { grid-column: 1 / -1; display: flex; flex-direction: column; }
+.skill-challenge .sc-track { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-top: 6px; }
+.skill-challenge .pips i { margin: 0 1px; }
+.skill-challenge .pips i.ok { color: var(--swse-green); }
+.skill-challenge .pips i.bad { color: var(--swse-red); }
+.skill-challenge .pips i.off { opacity: 0.2; }
+.skill-challenge .sc-track a { margin-left: 4px; }
+.skill-challenge .sc-status.success { border-color: var(--swse-green); }
+.skill-challenge .sc-status.failure { border-color: var(--swse-red); }
+.skill-challenge table.sc-skills { width: 100%; border: none; background: none; }
+.skill-challenge table.sc-skills td { padding: 2px 4px; }
+.skill-challenge table.sc-skills td.dc { color: var(--swse-accent); white-space: nowrap; }
+.skill-challenge .sc-resolve { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
+.skill-challenge .sc-resolve select { flex: 1; min-width: 140px; }
+.skill-challenge .sc-resolve input[type=number] { width: 4em; }
+.skill-challenge .sc-effects { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 2px 8px; }
+.skill-challenge .sc-log ul { margin: 0; padding-left: 16px; max-height: 180px; overflow-y: auto; }
+.skill-challenge .sc-log li.success { color: var(--swse-green); }
+.skill-challenge .sc-log li.failure { color: var(--swse-red); }
+.swse-card.challenge-card .success { color: #2e8b57; }
+.swse-card.challenge-card .failure { color: #c0392b; }

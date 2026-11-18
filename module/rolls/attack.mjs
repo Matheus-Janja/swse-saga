@@ -86,6 +86,9 @@ function dialogContent(actor, weapon, p) {
     ${check("skirmisher", "Skirmisher (+1)", has("skirmisher"))}
     ${p.melee && has("staggering-attack") ? row(`<label>Staggering Attack</label><select name="staggering"><option value="0">—</option><option value="2">−2 ataque / −2 perícias</option><option value="5">−5 ataque / −5 perícias</option></select>`) : ""}
     ${check("primeTarget", "Prime Targets (+1 dado)", p.lightsaber && has("prime-targets"))}
+    ${check("fleche", "Flèche (investida: 17+ natural é crítico)", p.melee && has("fleche"))}
+    ${check("endGame", "End Game (Pistol Duelist: Limiar do alvo ÷2)", p.group === "pistols" && !p.melee && has("pistol-duelist"))}
+    ${check("grazing", "Grazing Shot (marque 2 alvos: dano dividido)", !p.melee && has("grazing-shot"))}
     ${check("echani", "Echani Training (único ataque desarmado: For ×2 no dano)", p.unarmed && has("echani-training"))}
     ${check("terasKasi", "Teräs Käsi Training (−5 no Limiar do alvo)", p.unarmed && has("teras-kasi-training"))}
     ${p.melee && has("melee-defense") ? row(`<label>Melee Defense (0–${bab})</label><input type="number" name="meleeDefense" value="0" min="0" max="${bab}">`) : ""}
@@ -268,6 +271,11 @@ export async function resolveAttack(actor, weapon, p, f) {
     notes.push(L(p.melee && !has("improved-disarm") ? "SWSE.Attack.DisarmNote" : "SWSE.Attack.DisarmNoteSafe"));
   }
   if (f.skirmisher) atk.push(["Skirmisher", 1]);
+  let critRange = p.critRange;
+  if (f.fleche && f.charge) { critRange = Math.min(critRange, 17); notes.push("Flèche"); }
+  if (f.endGame) notes.push("End Game: Limiar do alvo à metade");
+  // Make an Example (Galaxy of Intrigue): dano ≥ Limiar → −5 nos ataques contra você
+  if (has("make-an-example")) effectsOnHit.push({ name: `Make an Example (−5 contra ${actor.name})`, img: "systems/swse-saga/assets/icons/status/debuff.svg", rounds: 1, minDT: true, modifiers: [] });
   const statusOnHit = [];
   if (!p.melee && f.aim && has("knockdown-shot")) { statusOnHit.push("prone"); notes.push(L("SWSE.Talent.KnockdownNote")); }
   if (f.familiarFoe) atk.push(["Familiar Foe", Math.floor(actor.classLevel("bounty-hunter") / 2)]);
@@ -318,7 +326,7 @@ export async function resolveAttack(actor, weapon, p, f) {
     const dmgRoll = await new Roll(dmgFormula).evaluate();
     let sneakRoll = null;
     if (sneakDice) sneakRoll = await new Roll(`${sneakDice}d6`).evaluate();
-    const crit = nat >= p.critRange;
+    const crit = nat >= critRange;
     const autoHit = nat === 20;
     const autoMiss = nat === 1;
     const baseDamage = Math.max(1, dmgRoll.total);
@@ -346,17 +354,30 @@ export async function resolveAttack(actor, weapon, p, f) {
       let amount = isCrit ? critDamage : baseDamage;
       if (hit && sneakRoll) amount += sneakRoll.total;
       if (hit) amount += scourge;
-      if (f.disarm) amount = 0;
+      // Desarmar não causa dano; Damaging Disarm (à distância): metade do dano
+      if (f.disarm) amount = (!p.melee && has("damaging-disarm") && hit) ? Math.floor(amount / 2) : 0;
       const evasion = ta.hasFeature?.("evasion");
       let mult = 1;
       if (area) mult = hit ? (evasion ? 0.5 : 1) : (evasion ? 0 : 0.5);
       else if (!hit) mult = 0;
+      // Bone Crusher: oponente agarrado desce −1 passo ao sofrer dano
+      const extraStep = has("bone-crusher") && (tStatus.grabbed) ? 1 : 0;
+      if (extraStep) adj.notes.push("bone-crusher");
       return {
         uuid: ta.uuid, name: token.name, reflex, hit, crit: isCrit, adjNotes: adj.notes,
-        amount: Math.floor(amount * mult), evasion
+        amount: Math.floor(amount * mult), evasion, extraStep
       };
     });
-    attacks.push({ atkRoll, dmgRoll, sneakRoll, nat, crit: crit && !autoMiss, results, baseDamage, critDamage, formula: dmgFormula });
+    // Grazing Shot: se acertou o 1º alvo, rola contra o 2º; acertando, o dano é dividido; errando, ninguém sofre dano
+    let grazeRoll = null;
+    if (f.grazing && results.length === 2 && results[0].hit) {
+      grazeRoll = await new Roll(`1d20 ${signed(atkTotalBonus)}${miscAtk}`).evaluate();
+      const second = results[1];
+      second.hit = grazeRoll.total >= second.reflex;
+      const half = Math.floor(results[0].amount / 2);
+      for (const r of results) { r.amount = second.hit ? half : 0; r.adjNotes.push("grazing"); }
+    }
+    attacks.push({ atkRoll, dmgRoll, sneakRoll, nat, crit: crit && !autoMiss, results, baseDamage, critDamage, formula: dmgFormula, grazeRoll });
   }
 
   // Tough as Durasteel (Martial Arts Master 2+) e Wrruushi Training: PV temporários ao acertar desarmado (armadura leve/nenhuma)
@@ -381,6 +402,7 @@ export async function resolveAttack(actor, weapon, p, f) {
     bonusSteps: bonusSteps.length,
     statusOnHit,
     effectsOnHit,
+    halveThreshold: !!f.endGame,
     area,
     attacks: attacks.map(a => ({ base: a.baseDamage, crit: a.critDamage, sneak: a.sneakRoll?.total ?? 0, results: a.results }))
   };
@@ -395,6 +417,7 @@ export async function resolveAttack(actor, weapon, p, f) {
       ${await a.atkRoll.render()}
       ${a.nat === 20 ? `<p class="crit">${L("SWSE.Natural20")}${a.crit && !area ? " — " + L("SWSE.Attack.Critical") : ""}</p>` : a.crit && !area ? `<p class="crit">${L("SWSE.Attack.CriticalThreat")}</p>` : ""}
       ${a.nat === 1 ? `<p class="fumble">${L("SWSE.Natural1")}</p>` : ""}
+      ${a.grazeRoll ? `<p><strong>Grazing Shot</strong></p>${await a.grazeRoll.render()}` : ""}
       <div class="damage-roll"><strong>${L("SWSE.Damage")}:</strong> ${await a.dmgRoll.render()}
         ${a.sneakRoll ? `<p>Sneak Attack: +${a.sneakRoll.total}</p>` : ""}
         ${a.crit && !area ? `<p class="crit">${L("SWSE.Attack.CriticalDamage")}: ${a.critDamage} (×${p.critMultiplier})</p>` : ""}
@@ -424,7 +447,7 @@ export async function resolveAttack(actor, weapon, p, f) {
   if (notes.length) html += `<ul class="notes">${notes.map(n => `<li>${n}</li>`).join("")}</ul>`;
   html += `</div>`;
 
-  const rolls = attacks.flatMap(a => [a.atkRoll, a.dmgRoll, a.sneakRoll].filter(Boolean));
+  const rolls = attacks.flatMap(a => [a.atkRoll, a.dmgRoll, a.sneakRoll, a.grazeRoll].filter(Boolean));
   return ChatMessage.create({
     speaker: ChatMessage.getSpeaker({ actor }),
     content: html,

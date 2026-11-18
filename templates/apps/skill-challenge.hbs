@@ -1,0 +1,97 @@
+<div class="challenge">
+  {{#if gm}}
+  <div class="sc-toolbar">
+    <button type="button" data-action="newChallenge"><i class="fa-solid fa-file"></i> {{localize "SWSE.Challenge.New"}}</button>
+    <select name="preset">{{selectOptions presets blank=(localize "SWSE.Challenge.Preset")}}</select>
+    <button type="button" data-action="loadPreset"><i class="fa-solid fa-download"></i> {{localize "SWSE.Challenge.Load"}}</button>
+    {{#if active}}<button type="button" data-action="end"><i class="fa-solid fa-flag-checkered"></i> {{localize "SWSE.Challenge.End"}}</button>{{/if}}
+  </div>
+  {{/if}}
+
+  {{#if active}}
+  <section class="panel sc-status {{s.outcome}}">
+    {{#if gm}}
+    <div class="grid-3">
+      <label class="wide">{{localize "SWSE.Challenge.Name"}} <input type="text" name="name" value="{{s.name}}"></label>
+      <label>ND <input type="number" name="cl" value="{{s.cl}}" min="1" max="20"></label>
+      <label>{{localize "SWSE.Challenge.Complexity"}} <select name="complexity">{{selectOptions complexities selected=s.complexity}}</select></label>
+      {{#unless s.complexity}}<label>{{localize "SWSE.Challenge.SuccessesNeeded"}} <input type="number" name="successesNeeded" value="{{s.successesNeeded}}"></label>{{/unless}}
+      <label>{{localize "SWSE.Challenge.MaxFailures"}} <input type="number" name="maxFailures" value="{{s.maxFailures}}"></label>
+      <label class="checkbox"><input type="checkbox" name="reveal" {{checked s.reveal}}> {{localize "SWSE.Challenge.Reveal"}}</label>
+    </div>
+    {{else}}
+    <h2>{{s.name}} <span class="tag">ND {{s.cl}}</span></h2>
+    {{/if}}
+    <div class="sc-track">
+      <div><strong>{{localize "SWSE.Challenge.Successes"}}</strong>
+        <span class="pips">{{#each successPips}}<i class="fa-solid fa-circle{{#unless this}} off{{/unless}} ok"></i>{{/each}}</span> {{s.successes}}/{{s.successesNeeded}}
+        {{#if gm}}<a data-action="bump" data-field="successes" data-delta="1"><i class="fa-solid fa-plus"></i></a><a data-action="bump" data-field="successes" data-delta="-1"><i class="fa-solid fa-minus"></i></a>{{/if}}
+      </div>
+      <div><strong>{{localize "SWSE.Challenge.Failures"}}</strong>
+        <span class="pips">{{#each failurePips}}<i class="fa-solid fa-circle{{#unless this}} off{{/unless}} bad"></i>{{/each}}</span> {{s.failures}}/{{s.maxFailures}}
+        {{#if gm}}<a data-action="bump" data-field="failures" data-delta="1"><i class="fa-solid fa-plus"></i></a><a data-action="bump" data-field="failures" data-delta="-1"><i class="fa-solid fa-minus"></i></a>{{/if}}
+      </div>
+      {{#if s.effects.timed}}<div><strong>{{localize "SWSE.Challenge.Rounds"}}</strong> {{s.rounds}}{{#if s.timedRounds}}/{{s.timedRounds}}{{/if}}
+        {{#if gm}}<a data-action="round" data-delta="1"><i class="fa-solid fa-plus"></i></a> <input type="number" name="timedRounds" value="{{s.timedRounds}}" title="{{localize 'SWSE.Challenge.TimeLimit'}}">{{/if}}</div>{{/if}}
+      {{#if s.effects.degenerating}}<div><strong>{{localize "SWSE.Challenge.Effect.degenerating"}}</strong> {{swseSigned s.shift}}</div>{{/if}}
+    </div>
+    {{#if outcomeLabel}}<p class="sc-outcome"><strong>{{outcomeLabel}}</strong> — {{#if (swseEq s.outcome "success")}}{{s.success}}{{else}}{{s.failure}}{{/if}}</p>{{/if}}
+    {{#unless gm}}{{#if activeEffects}}<p class="hint">{{localize "SWSE.Challenge.Effects"}}: {{activeEffects}}</p>{{/if}}{{/unless}}
+  </section>
+
+  <section class="panel">
+    <h3>{{localize "SWSE.Challenge.Skills"}}</h3>
+    {{#if showDC}}<p class="hint">{{#each dcTable}}{{this.label}} {{this.dc}}{{#unless @last}} · {{/unless}}{{/each}}</p>{{/if}}
+    <table class="sc-skills">
+      {{#each skills as |r|}}
+      <tr>
+        {{#if @root.gm}}
+        <td><select name="skills.{{r.i}}.skill">{{selectOptions @root.skillOptions selected=r.skill}}</select></td>
+        <td><select name="skills.{{r.i}}.dc">{{selectOptions @root.categories selected=r.dc}}<option value="number" {{#if r.isNumber}}selected{{/if}}>{{localize "SWSE.Challenge.DC.number"}}</option></select>
+          {{#if r.isNumber}}<input type="number" name="skills.{{r.i}}.dcNumber" value="{{r.dc}}">{{/if}}</td>
+        <td class="dc">{{#if r.dcValue}}CD {{r.dcValue}}{{else}}{{localize "SWSE.Challenge.DC.opposed"}}{{/if}}</td>
+        <td><a data-action="removeSkill" data-index="{{r.i}}"><i class="fa-solid fa-trash"></i></a></td>
+        {{else}}
+        <td>{{r.label}}</td><td class="dc">{{#if @root.showDC}}{{#if r.dcValue}}CD {{r.dcValue}}{{else}}{{localize "SWSE.Challenge.DC.opposed"}}{{/if}}{{/if}}</td>
+        {{/if}}
+      </tr>
+      {{/each}}
+    </table>
+    {{#if gm}}<button type="button" data-action="addSkill"><i class="fa-solid fa-plus"></i> {{localize "SWSE.Challenge.AddSkill"}}</button>{{/if}}
+  </section>
+
+  {{#if gm}}
+  <section class="panel">
+    <h3>{{localize "SWSE.Challenge.Resolve"}}</h3>
+    <p class="hint">{{localize "SWSE.Challenge.ResolveHint"}}</p>
+    <div class="sc-resolve">
+      <select name="rollRow">{{#each skills as |r|}}<option value="{{r.i}}">{{r.label}}{{#if r.dcValue}} (CD {{r.dcValue}}){{/if}}</option>{{/each}}</select>
+      <button type="button" data-action="rollSelected"><i class="fa-solid fa-dice-d20"></i> {{localize "SWSE.Challenge.RollSelected"}}</button>
+      <input type="number" name="manualTotal" placeholder="25">
+      <button type="button" data-action="applyManual"><i class="fa-solid fa-check"></i> {{localize "SWSE.Challenge.ApplyManual"}}</button>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h3>{{localize "SWSE.Challenge.Effects"}}</h3>
+    <div class="sc-effects">
+      {{#each effects as |e|}}<label class="checkbox" data-tooltip="{{e.hint}}"><input type="checkbox" name="effects.{{e.k}}" {{checked e.on}}> {{e.label}}</label>{{/each}}
+    </div>
+    <label class="wide">{{localize "SWSE.Challenge.Notes"}}<textarea name="notes" rows="2">{{s.notes}}</textarea></label>
+    <label class="wide">{{localize "SWSE.Challenge.OnSuccess"}}<input type="text" name="success" value="{{s.success}}"></label>
+    <label class="wide">{{localize "SWSE.Challenge.OnFailure"}}<input type="text" name="failure" value="{{s.failure}}"></label>
+    <p class="hint">{{xp}}</p>
+    <button type="button" data-action="toChat"><i class="fa-solid fa-comment"></i> {{localize "SWSE.Challenge.ToChat"}}</button>
+  </section>
+  {{else}}
+  {{#if s.notes}}<section class="panel"><p>{{s.notes}}</p></section>{{/if}}
+  {{/if}}
+
+  <section class="panel sc-log">
+    <h3>{{localize "SWSE.Challenge.Log"}}</h3>
+    <ul>{{#each s.log as |e|}}<li class="{{e.result}}">{{e.actor}} · {{e.skill}}{{#if e.total}}: {{e.total}}{{#if @root.showDC}}{{#if e.dc}} vs {{e.dc}}{{/if}}{{/if}}{{/if}}{{#if e.notes.length}} ({{#each e.notes}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}){{/if}}</li>{{else}}<li class="hint">—</li>{{/each}}</ul>
+  </section>
+  {{else}}
+  <p class="hint">{{localize "SWSE.Challenge.NoneActive"}}</p>
+  {{/if}}
+</div>

@@ -138,7 +138,7 @@ t("Veículos do livro batem com os blocos de estatística", () => {
   let i = 0;
   const { actors, report } = buildVehicles(() => `v${i++}`.padEnd(16, "x"), {});
   assert.deepEqual(report, []);
-  assert.equal(actors.length, 27); // 18 do Livro Básico + 9 do Galaxy at War
+  assert.equal(actors.length, 34); // 18 do Livro Básico + 9 do Galaxy at War + 7 do Galaxy of Intrigue
 });
 
 t("Veículo: piloto heroico substitui armadura; artilheiro usa BBA próprio e ½ nível no dano", () => {
@@ -355,6 +355,58 @@ t("Galaxy at War: armas naturais, feats de arma, Watchful Step, cibernéticos e 
   assert.equal(r.score, 1 + 3 + 1 + 1 + 2 + 2); // BBA, ½ nível, Soldier, K(tactics), OCT, manual
   assert.equal(r.title, "Chief Warrant Officer");
   assert.equal(r.bonus, 2);
+});
+
+/* ================= Galaxy of Intrigue ================= */
+t("Galaxy of Intrigue: Givin, Herglic, Cut the Red Tape e Resolute Stance", () => {
+  const nob = () => { const c = find(classes, "noble"); c.system.hpRolls = [18]; c.system.isStartingClass = true; return c; };
+  const s = sys({ str: 10, dex: 10, con: 10, int: 14, wis: 10, cha: 10 });
+  const hu = computeActor(s, [find(species, "human"), nob()]);
+  const gi = computeActor(s, [find(species, "givin"), nob()]);
+  assert.equal(gi.damageReduction, 2);
+  assert.equal(gi.defenses.fortitude.total - hu.defenses.fortitude.total, 2);
+  const he = computeActor(sys({ str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10 }), [find(species, "herglic"), nob()]);
+  assert.equal(he.secondWind.heal, Math.max(Math.floor(he.hpMax / 4), 10) + 5 + 0);
+  const s2 = sys({ str: 10, dex: 10, con: 10, int: 18, wis: 10, cha: 8 });
+  s2.skills = { knowledgeBureaucracy: { trained: true } };
+  const ct = computeActor(s2, [find(species, "human"), nob(), find(feats, "cut-the-red-tape")]);
+  assert.equal(ct.skills.gatherInformation.total, ct.skills.knowledgeBureaucracy.total);
+  assert.equal(ct.skills.gatherInformation.trained, true);
+  const def = computeActor(s, [find(species, "human"), nob()], { statuses: ["fightDefensive"] });
+  const rs = computeActor(s, [find(species, "human"), nob(), find(feats, "resolute-stance")], { statuses: ["fightDefensive"] });
+  assert.equal(def.defenses.reflex.total - rs.defenses.reflex.total, 2);
+  assert.equal(rs.defenses.will.total - def.defenses.will.total, 2);
+});
+
+t("Galaxy of Intrigue: desafios de perícia (CDs, efeitos e resultado)", async () => {
+  const SC = await import("../module/rules/skill-challenge.mjs");
+  assert.deepEqual(SC.dcRow(8).slice(1), [18, 23, 28, 32, 37]);
+  assert.deepEqual(SC.dcRow(20).slice(1), [26, 31, 36, 41, 46]);
+  let st = SC.newChallenge({ cl: 8, successesNeeded: 2, effects: { closeCall: true, extremeSuccess: true, catastrophic: true } });
+  assert.equal(SC.dcFor(st, "moderate"), 28);
+  const chk = (total, dc, extra = {}) => SC.resolveCheck(st, { total, dc, actorId: "a", skill: "perception", features: new Set(), ...extra }).state;
+  st = chk(15, 18);            // falhou por 3: Close Call, sem falha
+  assert.equal(st.failures, 0);
+  st = chk(8, 18);             // falhou por 10: catastrófica → 2 falhas
+  assert.equal(st.failures, 2);
+  st = chk(30, 18);            // superou por 12: 2 sucessos → vitória
+  assert.equal(st.successes, 2);
+  assert.equal(st.outcome, "success");
+  // Degenerating: falha sobe a CD; Recovery remove falha
+  let dg = SC.newChallenge({ cl: 4, effects: { degenerating: true, recovery: true } });
+  dg = SC.resolveCheck(dg, { total: 5, dc: 16, actorId: "a", skill: "survival", features: new Set() }).state;
+  assert.equal(dg.shift, 1);
+  assert.equal(SC.dcFor(dg, "easy"), 21);
+  let rc = SC.newChallenge({ cl: 1, failures: 1, effects: { recovery: true } });
+  rc = SC.resolveCheck(rc, { total: 25, dc: 18, actorId: "a", skill: "x", features: new Set() }, { recovery: true }).state;
+  assert.equal(rc.failures, 0);
+  assert.equal(rc.successes, 0);
+  // Leading Skill: +2 no próximo teste com outra perícia
+  let ls = SC.newChallenge({ cl: 1 });
+  ls = SC.resolveCheck(ls, { total: 20, dc: 18, actorId: "a", skill: "perception", features: new Set(["leading-skill"]) }).state;
+  const r = SC.resolveCheck(ls, { total: 16, dc: 18, actorId: "a", skill: "stealth", features: new Set() });
+  assert.equal(r.entry.result, "success");
+  assert.equal(SC.presetState("kessel").successesNeeded, 8);
 });
 
 console.log(`\n${n} testes passaram.`);

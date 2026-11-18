@@ -45,6 +45,7 @@ function damageOpts(payload, crit = false) {
     thresholdReduction: payload.thresholdReduction,
     drReduction: payload.drReduction,
     extraSteps: payload.extraSteps,
+    halveThreshold: !!payload.halveThreshold,
     crit
   };
 }
@@ -58,6 +59,8 @@ export function onRenderChatMessage(message, html) {
       ev.preventDefault();
       const action = btn.dataset.swseAction;
       if (action === "reroll") return rerollFromCard(message, btn);
+      if (action === "poison") return (await import("./poison.mjs")).applyPoison(btn);
+      if (action === "challenge") return (await import("../apps/skill-challenge.mjs")).applyCheckToChallenge(message);
       const payload = message.getFlag(SYSTEM_ID, "damage");
       if (!payload) return;
       const attack = payload.attacks[Number(btn.dataset.attack) || 0];
@@ -71,8 +74,16 @@ export function onRenderChatMessage(message, html) {
         for (const s of payload.statusOnHit ?? []) {
           if (target?.hit && !actor.statuses?.has(s)) await requestEffect(actor, { name: game.i18n.localize(`SWSE.Status.${s}`), img: `systems/${SYSTEM_ID}/assets/icons/status/${s}.svg`, statuses: [s] });
         }
-        // Efeitos ao ferir (Staggering Attack, Hijkata Expertise...)
-        for (const e of payload.effectsOnHit ?? []) if (target?.hit) await requestEffect(actor, e);
+        // Efeitos ao ferir (Staggering Attack, Hijkata Expertise...); minDT: só se o dano igualar ou superar o Limiar (Make an Example)
+        const dtNow = (actor.system.damageThreshold?.total ?? 0) - (payload.thresholdReduction || 0);
+        for (const e of payload.effectsOnHit ?? []) {
+          if (!target?.hit) continue;
+          if (e.minDT && amount < (payload.halveThreshold ? Math.floor(dtNow / 2) : dtNow)) continue;
+          const { minDT, ...eff } = e;
+          await requestEffect(actor, eff);
+        }
+        // Bone Crusher: alvo agarrado desce −1 passo
+        if (target?.extraStep) await stepsFor(actor, target.extraStep);
       } else if (action === "apply-selected") {
         const tokens = canvas.tokens?.controlled ?? [];
         if (!tokens.length) return ui.notifications.warn(game.i18n.localize("SWSE.Warn.SelectTokens"));

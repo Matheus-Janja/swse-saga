@@ -16,6 +16,7 @@ import { LevelUpApp } from "./apps/levelup.mjs";
 import { attackWithWeapon } from "./rolls/attack.mjs";
 import { artilleryStrike } from "./rolls/artillery.mjs";
 import { battlefieldEffect } from "./rolls/battlefield.mjs";
+import { registerSkillChallenge, openSkillChallenge, applyResult as applyChallengeResult } from "./apps/skill-challenge.mjs";
 import { onRenderChatMessage, registerSocket, requestDamage } from "./rolls/damage.mjs";
 import * as api from "./helpers/api.mjs";
 import { registerTalentHooks, TALENT_ACTIONS } from "./helpers/talent-actions.mjs";
@@ -65,6 +66,8 @@ Hooks.once("init", () => {
     toggleStatusPrompt,
     artilleryStrike,
     battlefieldEffect,
+    skillChallenge: openSkillChallenge,
+    applyChallengeResult,
     openCharacterCreator: actor => openApp(() => new CharacterCreator({ actor })),
     openLevelUp: (actor, opts = {}) => openApp(() => new LevelUpApp({ actor, ...opts })),
     ...api
@@ -105,6 +108,7 @@ async function openApp(factory) {
 }
 
 function registerSettings() {
+  registerSkillChallenge();
   game.settings.register(SYSTEM_ID, "hpMethod", {
     name: "SWSE.Settings.HpMethod", hint: "SWSE.Settings.HpMethodHint",
     scope: "world", config: true, type: String, default: "roll",

@@ -203,7 +203,9 @@
       "swim": "Swim (Nadar)",
       "treatInjury": "Treat Injury (Tratar Ferimentos)",
       "useComputer": "Use Computer (Usar Computador)",
-      "useTheForce": "Use the Force (Usar a Força)"
+      "useTheForce": "Use the Force (Usar a Força)",
+      "CriticalSuccessNote": "Critical Skill Success: escolha outra perícia; até o fim do seu próximo turno, +5 de competência nela uma vez.",
+      "SkillfulRecoveryNote": "Skillful Recovery: recebe 1 Ponto da Força temporário para esta perícia até o fim do encontro."
     },
     "Defense": {
       "reflex": "Reflexos",
@@ -933,7 +935,13 @@
       "ExtremeEffortNote": "Extreme Effort: +5 no próximo teste de Força ou perícia de Força (Climb, Jump, Swim) nesta rodada.",
       "GaWAfterHit": "(use após acertar o ataque; marque os aliados)",
       "NeedProne": "Precisa estar caído.",
-      "NeedCover": "Precisa estar com cobertura."
+      "NeedCover": "Precisa estar com cobertura.",
+      "NeedInitiative": "Os dois (você e o aliado marcado) precisam estar no combate com Iniciativa rolada.",
+      "ExceptionalControlNote": "Anote o resultado: até o fim do encontro, como reação, substitua por ele o d20 de um inimigo ou aliado em linha de visão.",
+      "WordOfWarningNote": "Escolha um aliado a até 5 quadrados: uma vez neste encontro, como reação, a defesa visada dele usa o valor da sua.",
+      "TakeThePainNote": "Reação: quando o aliado protegido desceria na trilha de condição, você desce os passos no lugar dele (ajuste as trilhas).",
+      "TeamEffortNote": "Até o fim do seu próximo turno, inimigos adjacentes a você e ao aliado protegido contam como flanqueados (marque Flanqueando no ataque).",
+      "EndGameNote": "Marque \"End Game\" no diálogo de ataque: o Limiar do alvo cai à metade para este ataque."
     },
     "Military": {
       "title": "Patente e Privilégio (Galaxy at War)",
@@ -960,6 +968,103 @@
       "Every": "Repete a cada {every} rodadas",
       "TargetsHint": "Quadrado central (◎): dano total se acertar, metade se errar. Splash: metade se acertar, nada se errar. Evasion se aplica."
     },
-    "NaturalWeapon": "Arma natural (dano)"
+    "NaturalWeapon": "Arma natural (dano)",
+    "Challenge": {
+      "Title": "Desafio de Perícia",
+      "New": "Novo",
+      "Preset": "— exemplo do livro —",
+      "Load": "Carregar",
+      "End": "Encerrar",
+      "Name": "Nome",
+      "Complexity": "Complexidade (sucessos)",
+      "Custom": "Personalizada",
+      "SuccessesNeeded": "Sucessos necessários",
+      "MaxFailures": "Falhas máximas",
+      "Reveal": "Mostrar CDs aos jogadores",
+      "Successes": "Sucessos",
+      "Failures": "Falhas",
+      "Rounds": "Rodadas",
+      "TimeLimit": "Limite de rodadas",
+      "Skills": "Perícias sugeridas",
+      "AddSkill": "Adicionar perícia",
+      "Resolve": "Registrar teste",
+      "ResolveHint": "Selecione os tokens e role a perícia, ou digite o resultado. Os jogadores também podem rolar pela ficha: o cartão do teste ganha o botão \"Aplicar ao desafio\" para o Mestre.",
+      "RollSelected": "Rolar (tokens selecionados)",
+      "ApplyManual": "Aplicar resultado",
+      "Effects": "Efeitos do desafio",
+      "Notes": "Notas",
+      "OnSuccess": "Se tiverem sucesso",
+      "OnFailure": "Se falharem",
+      "ToChat": "Resumo no chat",
+      "Log": "Registro",
+      "NoneActive": "Nenhum desafio ativo. O Mestre pode criar um novo ou carregar um exemplo do livro.",
+      "InProgress": "Em andamento",
+      "GMOnly": "Só o Mestre pode alterar o desafio.",
+      "None": "Não há desafio de perícia ativo.",
+      "Over": "O desafio já terminou.",
+      "PickSkill": "Escolha uma perícia do desafio (e um resultado).",
+      "AskDC": "CD resistida ou perícia improvisada: escolha a dificuldade ou digite a CD.",
+      "OrNumber": "ou CD",
+      "RecoveryAsk": "Superou a CD por 5 ou mais: remover uma falha em vez de ganhar o sucesso?",
+      "SecondEffortAsk": "O herói faz um sacrifício (passo na trilha de condição, dano ou Ponto da Força) para converter a falha em sucesso?",
+      "SecondEffortNote": "Segundo esforço: aplique o sacrifício combinado ao herói.",
+      "AlreadyApplied": "Este teste já foi aplicado ao desafio.",
+      "ApplyCheck": "Aplicar ao desafio",
+      "Manual": "ajuste manual",
+      "XP": "XP: igual a {n} oponente(s) de ND {cl}.",
+      "Outcome": {
+        "success": "Sucesso no desafio",
+        "failure": "Falha no desafio"
+      },
+      "DC": {
+        "easy": "Fácil",
+        "medium": "Média",
+        "moderate": "Moderada",
+        "hard": "Difícil",
+        "heroic": "Heroica",
+        "opposed": "Resistida",
+        "number": "Número"
+      },
+      "Effect": {
+        "antagonist": "Antagonista",
+        "catastrophic": "Falha catastrófica",
+        "changingObjectives": "Objetivos mutáveis",
+        "closeCall": "Por um triz",
+        "containment": "Contenção",
+        "degenerating": "Degeneração",
+        "degreesFailure": "Graus de falha",
+        "degreesSuccess": "Graus de sucesso",
+        "extremeSuccess": "Sucesso extremo",
+        "individualEffort": "Esforço individual",
+        "initiative": "Iniciativa",
+        "opposedDC": "CD resistida",
+        "recovery": "Recuperação",
+        "restricted": "Perícias restritas",
+        "secondEffort": "Segundo esforço",
+        "timed": "Tempo limitado"
+      },
+      "EffectHint": {
+        "antagonist": "Falhas não contam; a cada rodada o antagonista testa e cada sucesso dele é uma falha (use o botão +).",
+        "catastrophic": "Falhar por 10 ou mais conta duas falhas.",
+        "changingObjectives": "Os objetivos e as perícias mudam após certo número de sucessos.",
+        "closeCall": "Só conta falha quem falhar por 5 ou mais.",
+        "containment": "Falhas não contam; só há falha quando ninguém obtém sucesso num intervalo de tempo (use o botão +).",
+        "degenerating": "3 falhas não encerram: cada falha sobe as CDs um passo e cada sucesso desce.",
+        "degreesFailure": "Cada falha traz uma consequência, mesmo com sucesso no fim.",
+        "degreesSuccess": "A cada N sucessos os heróis ganham um benefício.",
+        "extremeSuccess": "Superar a CD por 10 ou mais conta dois sucessos.",
+        "individualEffort": "Cada herói precisa de sucessos iguais à complexidade.",
+        "initiative": "Os heróis agem na ordem de Iniciativa.",
+        "opposedDC": "A CD vem do teste ou da defesa de um oponente (o rastreador pergunta).",
+        "recovery": "Quem superar a CD por 5 ou mais pode trocar o sucesso por remover uma falha.",
+        "restricted": "Algumas perícias são proibidas ou limitadas.",
+        "secondEffort": "Quem falhar pode fazer um sacrifício (passo na trilha, dano, Ponto da Força) para converter em sucesso.",
+        "timed": "Falhas não contam; é preciso atingir os sucessos antes do limite de rodadas."
+      }
+    },
+    "Poison": {
+      "Recurring": "Venenos atacam a cada rodada (ou dia, nas doenças) até o tratamento: use o item de novo.",
+      "Spice": "Second wind instantâneo (+{heal} PV), +1 passo na trilha de condição e +5 no Limiar por 1 hora. Depois: −5 em Sabedoria por 4 horas."
+    }
   }
 }

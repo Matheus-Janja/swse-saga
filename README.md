@@ -96,6 +96,16 @@ Conteúdo mecânico dos capítulos 1 a 3 (pastas "Galaxy at War" nos compêndios
 - **Macro "Ataque de Artilharia / Bombardeio"**: observador avançado (Knowledge (tactics) CD 15) com as munições da Tabela 3-3, ou as ordens especiais de bombardeio.
 - Os capítulos 4 a 7 (unidades militares, bases e aventuras) são ambientação/material do Mestre e não entram nos compêndios.
 
+### Suplemento: Galaxy of Intrigue
+Conteúdo mecânico dos capítulos 1 a 3 e da fauna de Nyriaan (pastas "Galaxy of Intrigue" nos compêndios):
+- **Rastreador de Desafios de Perícia** (macro "Desafio de Perícia" ou `game.swse.skillChallenge()`): o Mestre define ND, complexidade e efeitos (Close Call, Catastrophic Failure, Extreme Success, Recovery, Degenerating, Second Effort, Timed etc.), monta as perícias sugeridas com as CDs da Tabela 2-1 e registra os testes — rolando pelos tokens selecionados, digitando o resultado ou pelo botão "Aplicar ao desafio" que aparece nos cartões de teste. Contagem de sucessos/falhas, resultado, registro e XP; os jogadores acompanham em tempo real. Inclui os 16 desafios de exemplo do livro.
+- **9 espécies** (Bith, Defel, Fosh, Givin, Gotal, Herglic, Mrlssi, Neimoidian revisado, Umbaran): RD e Fortitude do Givin, rerrolagem de Knowledge, *Sturdy* do Herglic no second wind, feats condicionais.
+- **29 feats** (listas de feats bônus das classes ampliadas). Automáticos: *Cut the Red Tape*, *Resolute Stance*, *Forceful Recovery*, *Bone Crusher*; opções no ataque para *Flèche* e *Grazing Shot*; botões ⚡ para *Brilliant Defense*, *Indomitable Personality*, *Channel Rage* e *Opportunistic Trickery*.
+- **Talentos**: árvores Master of Intrigue, Skill Challenge e Superior Skills (Noble), Revolutionary (Scoundrel), Espionage (Scout), além de talentos novos em Brawler, Commando, Expert Pilot, Bounty Hunter, Mastermind e Gunslinger. *Assured Skill*, *Exceptional Skill*, *Skill Boon*, *Reliable Boon*, *Critical Skill Success* e *Skill Confidence* funcionam nos testes de perícia; os talentos de desafio funcionam no rastreador; *Make an Example* e *Damaging Disarm* no ataque; botões para *Advanced Planning* (troca a Iniciativa), *Master Manipulator*, *Revolutionary Rhetoric*, *Sizing Up*, *Dedicated Protector/Guardian*, *For the Cause* e *Pistol Duelist*.
+- **Equipamento**: Xerrol Nightstinger, wrist blaster, snare pistol, darter, equipamentos de espionagem e **venenos** (usar o item rola o ataque contra a Fortitude dos alvos marcados e aplica dano e passos na trilha), além do spice de Nyriaan.
+- **PdMs**: 7 droides (5-BT, NR-1100, 3D-4, M4, FIII Footman, BL-Series, B4J4) e a fauna de Nyriaan (lluma, pherin, chlovi cat); **veículos**: PTV-2100, A-24 Sleuth, Ferret, Prowler, Sabaoth, Corona Limited e JG-8.
+- Os capítulos 4, 5, 7 e 8 (campanhas, facções, encontros e aventura) são material do Mestre e não entram nos compêndios.
+
 ### Compêndios
 Espécies (21, incluindo Aqualish, Hutt, Neimoidian e Yuuzhan Vong do Cap. 16), classes heroicas, de prestígio e não heroica, 69 feats, todas as árvores de talento do livro básico (classes, Força e prestígio), 16 poderes da Força, técnicas e segredos, armas, armaduras, equipamentos e macros. Erratas oficiais de out/2008 aplicadas.
 

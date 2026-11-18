@@ -50,9 +50,12 @@ export function statusEffects(statuses, ctx = {}) {
   }
   // Lutar defensivamente: −5 nos ataques, +2 de esquiva (+5 treinado em Acrobatics).
   // Defesa total (sem atacar): +5 (+10 treinado).
-  if (statuses.has("totalDefense")) out.mods.push({ ...mod("defenses.reflex", ctx.acrobaticsTrained ? 10 : 5, "dodge"), source: "totalDefense" });
+  // Resolute Stance (Galaxy of Intrigue): +2/+5 de moral na Vontade em vez da esquiva na Reflexos
+  const defTarget = ctx.resoluteStance ? "defenses.will" : "defenses.reflex";
+  const defType = ctx.resoluteStance ? "morale" : "dodge";
+  if (statuses.has("totalDefense")) out.mods.push({ ...mod(defTarget, ctx.resoluteStance ? 5 : (ctx.acrobaticsTrained ? 10 : 5), defType), source: "totalDefense" });
   else if (statuses.has("fightDefensive")) {
-    out.mods.push({ ...mod("defenses.reflex", ctx.acrobaticsTrained ? 5 : 2, "dodge"), source: "fightDefensive" });
+    out.mods.push({ ...mod(defTarget, ctx.resoluteStance ? 2 : (ctx.acrobaticsTrained ? 5 : 2), defType), source: "fightDefensive" });
     out.mods.push({ ...mod("attack.all", -5), source: "fightDefensive" });
   }
   if (out.cover) out.mods.push({ ...mod("defenses.reflex", out.cover, "cover"), source: "cover" });

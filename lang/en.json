@@ -203,7 +203,9 @@
       "swim": "Swim",
       "treatInjury": "Treat Injury",
       "useComputer": "Use Computer",
-      "useTheForce": "Use the Force"
+      "useTheForce": "Use the Force",
+      "CriticalSuccessNote": "Critical Skill Success: choose another skill; once before the end of your next turn, +5 competence on it.",
+      "SkillfulRecoveryNote": "Skillful Recovery: gain 1 temporary Force Point for this skill until the end of the encounter."
     },
     "Defense": {
       "reflex": "Reflex",
@@ -933,7 +935,13 @@
       "ExtremeEffortNote": "Extreme Effort: +5 on the next Strength check or Strength-based skill (Climb, Jump, Swim) this round.",
       "GaWAfterHit": "(use after the attack hits; target your allies)",
       "NeedProne": "You must be prone.",
-      "NeedCover": "You must have cover."
+      "NeedCover": "You must have cover.",
+      "NeedInitiative": "Both you and the targeted ally must be in combat with Initiative rolled.",
+      "ExceptionalControlNote": "Note the result: until the end of the encounter, as a reaction, replace an enemy's or ally's d20 roll in line of sight with it.",
+      "WordOfWarningNote": "Choose an ally within 5 squares: once this encounter, as a reaction, their targeted defense uses your score.",
+      "TakeThePainNote": "Reaction: when your protected ally would move down the condition track, you move down instead (adjust the tracks).",
+      "TeamEffortNote": "Until the end of your next turn, enemies adjacent to you and your protected ally count as flanked (check Flanking on the attack).",
+      "EndGameNote": "Check \"End Game\" in the attack dialog: the target's Damage Threshold is halved for this attack."
     },
     "Military": {
       "title": "Rank and Privilege (Galaxy at War)",
@@ -960,6 +968,103 @@
       "Every": "Repeats every {every} rounds",
       "TargetsHint": "Center square (◎): full damage on a hit, half on a miss. Splash: half on a hit, none on a miss. Evasion applies."
     },
-    "NaturalWeapon": "Natural weapon (damage)"
+    "NaturalWeapon": "Natural weapon (damage)",
+    "Challenge": {
+      "Title": "Skill Challenge",
+      "New": "New",
+      "Preset": "— book example —",
+      "Load": "Load",
+      "End": "End",
+      "Name": "Name",
+      "Complexity": "Complexity (successes)",
+      "Custom": "Custom",
+      "SuccessesNeeded": "Successes needed",
+      "MaxFailures": "Max failures",
+      "Reveal": "Show DCs to players",
+      "Successes": "Successes",
+      "Failures": "Failures",
+      "Rounds": "Rounds",
+      "TimeLimit": "Round limit",
+      "Skills": "Suggested skills",
+      "AddSkill": "Add skill",
+      "Resolve": "Record a check",
+      "ResolveHint": "Select tokens and roll the skill, or type a result. Players can also roll from their sheet: the check card gets an \"Apply to challenge\" button for the GM.",
+      "RollSelected": "Roll (selected tokens)",
+      "ApplyManual": "Apply result",
+      "Effects": "Challenge effects",
+      "Notes": "Notes",
+      "OnSuccess": "On success",
+      "OnFailure": "On failure",
+      "ToChat": "Summary to chat",
+      "Log": "Log",
+      "NoneActive": "No active challenge. The GM can create a new one or load a book example.",
+      "InProgress": "In progress",
+      "GMOnly": "Only the GM can change the challenge.",
+      "None": "There is no active skill challenge.",
+      "Over": "The challenge has ended.",
+      "PickSkill": "Pick a challenge skill (and a result).",
+      "AskDC": "Opposed DC or improvised skill: pick the difficulty or type the DC.",
+      "OrNumber": "or DC",
+      "RecoveryAsk": "Beat the DC by 5 or more: remove a failure instead of earning the success?",
+      "SecondEffortAsk": "Does the hero make a sacrifice (condition step, damage or Force Point) to turn the failure into a success?",
+      "SecondEffortNote": "Second effort: apply the agreed sacrifice to the hero.",
+      "AlreadyApplied": "This check was already applied to the challenge.",
+      "ApplyCheck": "Apply to challenge",
+      "Manual": "manual adjustment",
+      "XP": "XP: equal to {n} CL {cl} opponent(s).",
+      "Outcome": {
+        "success": "Challenge succeeded",
+        "failure": "Challenge failed"
+      },
+      "DC": {
+        "easy": "Easy",
+        "medium": "Medium",
+        "moderate": "Moderate",
+        "hard": "Hard",
+        "heroic": "Heroic",
+        "opposed": "Opposed",
+        "number": "Number"
+      },
+      "Effect": {
+        "antagonist": "Antagonist",
+        "catastrophic": "Catastrophic failure",
+        "changingObjectives": "Changing objectives",
+        "closeCall": "Close call",
+        "containment": "Containment",
+        "degenerating": "Degenerating",
+        "degreesFailure": "Degrees of failure",
+        "degreesSuccess": "Degrees of success",
+        "extremeSuccess": "Extreme success",
+        "individualEffort": "Individual effort",
+        "initiative": "Initiative",
+        "opposedDC": "Opposed DC",
+        "recovery": "Recovery",
+        "restricted": "Restricted skills",
+        "secondEffort": "Second effort",
+        "timed": "Timed challenge"
+      },
+      "EffectHint": {
+        "antagonist": "Failed checks don't count; each round the antagonist rolls and each success is a failure (use the + button).",
+        "catastrophic": "Failing by 10 or more counts as two failures.",
+        "changingObjectives": "Objectives and skills change after a number of successes.",
+        "closeCall": "Only failing by 5 or more counts as a failure.",
+        "containment": "Failed checks don't count; a failure happens only if nobody succeeds in a time increment (use the + button).",
+        "degenerating": "3 failures don't end it: each failure raises DCs one step, each success lowers them.",
+        "degreesFailure": "Each failure has a consequence even if the challenge succeeds.",
+        "degreesSuccess": "Every N successes grants a benefit.",
+        "extremeSuccess": "Beating the DC by 10 or more counts as two successes.",
+        "individualEffort": "Each hero must earn successes equal to the complexity.",
+        "initiative": "Heroes act in Initiative order.",
+        "opposedDC": "The DC comes from an opponent's check or defense (the tracker asks).",
+        "recovery": "Beating the DC by 5 or more may remove a failure instead of earning a success.",
+        "restricted": "Some skills are forbidden or limited.",
+        "secondEffort": "A failing hero may make a sacrifice (condition step, damage, Force Point) to turn it into a success.",
+        "timed": "Failed checks don't count; successes must be earned before the round limit."
+      }
+    },
+    "Poison": {
+      "Recurring": "Poisons attack every round (or day, for diseases) until treated: use the item again.",
+      "Spice": "Instant second wind (+{heal} HP), +1 condition step and +5 Damage Threshold for 1 hour. Afterward: −5 Wisdom for 4 hours."
+    }
   }
 }

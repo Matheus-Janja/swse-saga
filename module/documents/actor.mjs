@@ -144,6 +144,19 @@ export class SWSEActor extends Actor {
       extra += " · Tested in Battle: +2 passos";
     }
     await this.update(upd);
+    // Forceful Recovery (Galaxy of Intrigue): recupera um poder da Força gasto
+    if (this.hasFeature("forceful-recovery")) {
+      const spent = this.items.filter(i => i.type === "forcePower" && i.system.spent > 0);
+      if (spent.length) {
+        const id = spent.length === 1 ? spent[0].id : await foundry.applications.api.DialogV2.wait({
+          window: { title: "Forceful Recovery" },
+          content: `<div class="swse-dialog"><div class="form-group"><select name="p">${spent.map(p => `<option value="${p.id}">${p.name}</option>`).join("")}</select></div></div>`,
+          buttons: [{ action: "ok", label: "OK", default: true, callback: (e, b) => b.form.elements.p.value }], rejectClose: false
+        });
+        const pw = this.items.get(id);
+        if (pw) { await pw.update({ "system.spent": pw.system.spent - 1 }); extra += ` · Forceful Recovery: ${pw.name}`; }
+      }
+    }
     ChatMessage.create({
       speaker: ChatMessage.getSpeaker({ actor: this }),
       content: `<div class="swse-card"><h3>${game.i18n.localize("SWSE.SecondWind")}</h3><p>${game.i18n.format("SWSE.HealedFor", { amount: heal })}${extra} → ${newHp}/${hp.max}</p></div>`
@@ -193,7 +206,9 @@ export class SWSEActor extends Actor {
     const isDroid = !!this.system.derived?.isDroid;
     // Partes cibernéticas (Galaxy at War) tornam o ser vulnerável a íons como um droide
     const ionAsDroid = isDroid || !!this.system.derived?.cybernetic;
-    const dt = this.system.damageThreshold.total - (opts.thresholdReduction || 0);
+    let dt = this.system.damageThreshold.total - (opts.thresholdReduction || 0);
+    // End Game (Pistol Duelist): Limiar à metade
+    if (opts.halveThreshold) dt = Math.floor(dt / 2);
     // Shield Rating: reduz o dano; dano >= SR reduz o SR em 5
     const sr = this.system.shieldRating || 0;
     let srUpdate = null;

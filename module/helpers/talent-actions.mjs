@@ -326,11 +326,93 @@ export const TALENT_ACTIONS = {
     if (c === "guarded") return actor.addEffect({ name: "Guarded Assault", img: ICON("defensive"), rounds: 0, modifiers: [mod("defenses.reflex", 2, "dodge")] });
   },
   // Gunslinger
+  /* ================= Galaxy of Intrigue ================= */
+  "advanced-planning": async actor => {
+    const ally = targetsActors()[0];
+    const c = game.combat;
+    const me = c?.combatants.find(x => x.actor?.id === actor.id);
+    const them = ally && c?.combatants.find(x => x.actor?.id === ally.id);
+    if (!me || !them || me.initiative === null || them.initiative === null) return ui.notifications.warn(L("SWSE.Talent.NeedInitiative"));
+    const a = me.initiative, b = them.initiative;
+    await c.updateEmbeddedDocuments("Combatant", [{ _id: me.id, initiative: b }, { _id: them.id, initiative: a }]);
+    chat(actor, `<h3>Advanced Planning</h3><p>${actor.name} ⇄ ${ally.name}</p>`);
+  },
+  "blend-in": async actor => { await actor.addEffect({ name: "Blend In", img: ICON("total-concealment"), rounds: 0, statuses: ["totalConcealment"] }); },
+  "master-manipulator": async actor => {
+    const c = await choose("Master Manipulator", { recovery: "Demand Recovery (+5 passos, +2 moral)", control: "Exceptional Control (d20 reserva)", warning: "Word of Warning" });
+    if (c === "recovery") {
+      const allies = targetsActors();
+      if (!allies.length) return ui.notifications.warn(L("SWSE.Talent.NeedTarget"));
+      for (const a of allies) await shiftTarget(a, -5);
+      const names = await applyTo(allies, { name: "Demand Recovery", img: ICON("buff"), rounds: 1, modifiers: [mod("attack.all", 2, "morale"), mod("skills.all", 2, "morale")] });
+      return chat(actor, `<h3>Demand Recovery</h3><p>${F("SWSE.Talent.AppliedTo", { names })} (+5 ${L("SWSE.Talent.Steps")})</p>`);
+    }
+    if (c === "control") {
+      const r = await new Roll("1d20").evaluate();
+      return ChatMessage.create({ speaker: ChatMessage.getSpeaker({ actor }), rolls: [r], content: `<div class="swse-card talent-card"><h3>Exceptional Control</h3>${await r.render()}<p>${L("SWSE.Talent.ExceptionalControlNote")}</p></div>` });
+    }
+    if (c === "warning") return chat(actor, `<h3>Word of Warning</h3><p>${L("SWSE.Talent.WordOfWarningNote")}</p>`);
+  },
+  "revolutionary-rhetoric": async actor => {
+    const hits = await skillVsDefense(actor, "persuasion", "will", "Revolutionary Rhetoric");
+    for (const t of hits ?? []) await requestEffect(t, { name: `Revolutionary Rhetoric (${actor.name}): só movimento e ações rápidas`, img: ICON("debuff"), rounds: 1 });
+  },
+  "for-the-cause": async actor => {
+    const names = await applyTo([actor, ...targetsActors()], { name: "For the Cause", img: ICON("buff"), rounds: 1, modifiers: [mod("attack.all", 2), mod("damage.all", 2)] });
+    chat(actor, `<h3>For the Cause</h3><p>${F("SWSE.Talent.AppliedTo", { names })}</p>`);
+  },
+  "sizing-up": async actor => {
+    const hits = await skillVsDefense(actor, "perception", "will", "Sizing Up");
+    if (hits?.length) await actor.addEffect({ name: `Sizing Up: +2 intuição contra ${hits.map(h => h.name).join(", ")}`, img: ICON("aiming"), rounds: ENCOUNTER() });
+  },
+  "dedicated-protector": async actor => {
+    const names = await applyTo(targetsActors().slice(0, 1), { name: `Dedicated Protector (${actor.name}; adjacente)`, img: ICON("defensive"), rounds: ENCOUNTER(), modifiers: [mod("defenses.reflex", 1, "morale")] });
+    chat(actor, `<h3>Dedicated Protector</h3><p>${F("SWSE.Talent.AppliedTo", { names: names || "—" })}</p>`);
+  },
+  "dedicated-guardian": async actor => {
+    const c = await choose("Dedicated Guardian", { blast: "Blast Shield (Evasion)", pain: "Take the Pain", team: "Team Effort (flanqueados)" });
+    if (c === "blast") {
+      const names = await applyTo(targetsActors().slice(0, 1), { name: `Blast Shield (${actor.name}): Evasion contra área`, img: ICON("defensive"), rounds: 1 });
+      return chat(actor, `<h3>Blast Shield</h3><p>${F("SWSE.Talent.AppliedTo", { names: names || "—" })}</p>`);
+    }
+    if (c === "pain") return chat(actor, `<h3>Take the Pain</h3><p>${L("SWSE.Talent.TakeThePainNote")}</p>`);
+    if (c === "team") return chat(actor, `<h3>Team Effort</h3><p>${L("SWSE.Talent.TeamEffortNote")}</p>`);
+  },
+  "pistol-duelist": async actor => {
+    const c = await choose("Pistol Duelist", { endGame: "End Game (Limiar ÷2)", snap: "Snap Aiming (mirar)", steady: "Stand Steady (+4 Reflexos)" });
+    if (!c) return;
+    if (c === "steady") await actor.addEffect({ name: "Stand Steady", img: ICON("defensive"), rounds: 1, modifiers: [mod("defenses.reflex", 4)] });
+    if (c === "snap" && !actor.statuses?.has("aiming")) await actor.toggleStatusEffect("aiming", { active: true });
+    const pistols = actor.items.filter(i => i.type === "weapon" && i.system.group === "pistols");
+    const w = pistols.find(i => i.system.equipped) ?? pistols[0];
+    if (!w) return ui.notifications.warn(L("SWSE.Warn.NoWeapons"));
+    if (c === "endGame") chat(actor, `<h3>End Game</h3><p>${L("SWSE.Talent.EndGameNote")}</p>`);
+    const { attackWithWeapon } = await import("../rolls/attack.mjs");
+    return attackWithWeapon(actor, w);
+  },
+  "brilliant-defense": async actor => {
+    const n = Math.max(0, actor.system.abilities.int.mod);
+    await actor.addEffect({ name: `Brilliant Defense (+${n})`, img: ICON("defensive"), rounds: 0, modifiers: [mod("defenses.reflex", n)] });
+  },
+  "indomitable-personality": async actor => {
+    const n = Math.max(0, actor.system.abilities.cha.mod);
+    await actor.addEffect({ name: `Indomitable Personality (+${n})`, img: ICON("defensive"), rounds: 1, modifiers: [mod("defenses.will", n)] });
+  },
+  "channel-rage": async actor => { await actor.addEffect({ name: "Channel Rage (+5 Vontade)", img: ICON("rage"), rounds: ENCOUNTER(), modifiers: [mod("defenses.will", 5)] }); },
+  "opportunistic-trickery": actor => trickery(actor, 2, 1),
+  "improved-opportunistic-trickery": actor => trickery(actor, 5, 1),
+
   "keep-them-honest": async actor => {
     const names = await applyTo(targetsActors(), { name: `Keep Them Honest (${actor.name})`, img: ICON("debuff"), rounds: 1, modifiers: [mod("attack.all", -5, "penalty")] });
     chat(actor, `<h3>Keep Them Honest</h3><p>${F("SWSE.Talent.AppliedTo", { names: names || "—" })}</p>`);
   }
 };
+
+/** Opportunistic Trickery: abre mão do ataque de oportunidade para reduzir a Reflexos do alvo. */
+async function trickery(actor, n, rounds) {
+  const names = await applyTo(targetsActors(), { name: `Opportunistic Trickery (−${n} Reflexos)`, img: ICON("debuff"), rounds, modifiers: [mod("defenses.reflex", -n, "penalty")] });
+  chat(actor, `<h3>Opportunistic Trickery</h3><p>${F("SWSE.Talent.AppliedTo", { names: names || "—" })}</p>`);
+}
 
 /** Squad Leader: efeito no líder e nos aliados marcados até o fim do próximo turno do líder. */
 async function squad(actor, name, modifiers) {
