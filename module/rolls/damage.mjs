@@ -11,11 +11,30 @@ export async function requestDamage(actor, amount, opts) {
   game.socket.emit(SOCKET, { action: "applyDamage", uuid: actor.uuid, amount, opts, gm: gm.id });
 }
 
+/** Atualiza um ator que o usuário talvez não controle (ex.: veículo inimigo num dogfight), via Mestre. */
+export async function requestUpdate(actor, data) {
+  if (actor.isOwner) return actor.update(data);
+  const gm = game.users.activeGM;
+  if (!gm) return ui.notifications.warn(game.i18n.localize("SWSE.Warn.NoGM"));
+  game.socket.emit(SOCKET, { action: "update", uuid: actor.uuid, data, gm: gm.id });
+}
+
+/** Cria um efeito num ator que o usuário talvez não controle, via Mestre. */
+export async function requestEffect(actor, effect) {
+  if (actor.isOwner) return actor.addEffect(effect);
+  const gm = game.users.activeGM;
+  if (!gm) return ui.notifications.warn(game.i18n.localize("SWSE.Warn.NoGM"));
+  game.socket.emit(SOCKET, { action: "effect", uuid: actor.uuid, effect, gm: gm.id });
+}
+
 export function registerSocket() {
   game.socket.on(SOCKET, async data => {
-    if (data.action !== "applyDamage" || game.user.id !== data.gm) return;
+    if (game.user.id !== data.gm) return;
     const actor = await fromUuid(data.uuid);
-    if (actor) actor.applyDamage(data.amount, data.opts);
+    if (!actor) return;
+    if (data.action === "applyDamage") actor.applyDamage(data.amount, data.opts);
+    else if (data.action === "update") actor.update(data.data);
+    else if (data.action === "effect") actor.addEffect(data.effect);
   });
 }
 

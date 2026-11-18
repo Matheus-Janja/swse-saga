@@ -53,6 +53,11 @@ Novo tipo de ator **Veículo** (Cap. 10):
 - **Armas de veículo** (novo tipo de item): ataque = BBA do operador + Int do veículo (+2 se um piloto treinado dispara), dano = (dados + ½ nível heroico) × multiplicador (errata); autofire, splash/explosão em área, íon, penetração, raio trator (teste de agarrar), munição de mísseis/torpedos, −20 de naves capitais contra alvos menores, dogfight e alcances da Tabela 10-2.
 - **Dano em veículos**: SR, RD, Limiar (−1 passo), destruído ou desativado ao chegar a 0 PV, e os ocupantes sofrem metade do excesso sobre o Limiar.
 - **Ações**: recarregar escudos e redirecionar energia (Mechanics CD 20).
+- **Combate veicular** (painel na ficha do veículo; marque o veículo inimigo com T):
+  - **Dogfight**: iniciar (Pilot −5 oposto; *Relentless Pursuit* rola duas vezes), atacar no dogfight (Pilot oposto → ataque com arma do veículo; perdendo, artilheiros −5 até o próximo turno), desengajar; *Elusive Dogfighter* (−10 nos ataques do inimigo), *Dogfight Gunner* e *Expert Gunner* automáticos; atirar num dogfight alheio aplica −5 sozinho (exceto *Precise Shot*); aviso ao atacar alvos fora do dogfight.
+  - **Abalroar** (Pilot −10 contra a Reflexos) e **colisão com perigo** (1d20 + tamanho), com o dano da Tabela 10-3 (+ For, dobrado em movimento total) para os dois veículos e para os tripulantes (reduzido pelo Limiar do veículo, errata); *Vehicular Evasion* aplicada.
+  - **Manobras**: luta defensiva agora também aplica −5/−10 aos artilheiros; **movimento total** (4×, 5× com *Full Throttle*; sem Des na Ref e sem ataques até o próximo turno), **aumentar velocidade** (Pilot CD 20; falha −1 passo), **evitar colisão** (CD 15), **parada total**, **levantar/baixar escudos**.
+  - **Vehicle Dodge** do Ace Pilot na Reflexos do veículo; veículos aceitam efeitos temporários (modificadores `vehicle.attack.all`, `vehicle.attack.gunner`, defesas e perícias).
 - **Compêndio "Veículos e Naves"** com os 18 veículos do livro: AT-AT, AT-ST, X-34, speeder bike 74-Z, AAT-1, T-47, LAAT/i, X-wing, Y-wing, TIE fighter, TIE interceptor, Eta-2, ARC-170, Vulture, Tri-Fighter, YT-1300, Corvette Corelliana e Star Destroyer classe Imperial I. Um teste garante que todos batem com o livro.
 
 ### Droides jogadores

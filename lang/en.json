@@ -651,7 +651,8 @@
       "none": "None",
       "defensive": "Fight defensively",
       "defensiveTotal": "Total defense (no attacks)",
-      "attackRun": "Attack Run (−2 Ref)"
+      "attackRun": "Attack Run (−2 Ref)",
+      "allOut": "All-out movement (no Dex to Ref)"
     },
     "VCat": {
       "walker": "Walker",
@@ -684,7 +685,11 @@
       "size": "Size",
       "armor": "Armor/pilot level",
       "dodge": "Dodge (maneuver)",
-      "attackRun": "Attack Run"
+      "attackRun": "Attack Run",
+      "expertGunner": "Expert Gunner",
+      "maneuver": "Pilot maneuver",
+      "effects": "Effects",
+      "mods": "Effects"
     },
     "Vehicle": {
       "Details": "Details",
@@ -824,6 +829,51 @@
       "Toggle": "Toggle",
       "None": "No active effects.",
       "Unnamed": "Effect"
+    },
+    "VC": {
+      "Title": "Vehicle combat",
+      "Hint": "Target (T) the enemy vehicle before using actions against it. Opposed checks use both vehicles' Pilot (assigned crew member or default crew).",
+      "Dogfight": "Start dogfight",
+      "DogfightHint": "Standard action (pilot): Pilot −5 opposed by the adjacent target's Pilot. Relentless Pursuit rolls twice.",
+      "DogfightAttack": "Dogfight attack",
+      "DogfightAttackHint": "Standard action: opposed Pilot; if you win, one vehicle weapon attack (swift). If you lose, your gunners take −5 until your next turn.",
+      "Disengage": "Disengage",
+      "DisengageHint": "Move action: opposed Pilot; win to leave the dogfight. Lose: gunners −5.",
+      "Ram": "Ram",
+      "RamHint": "Full-round: Pilot −10 vs the target's Reflex; collision damage to both vehicles and occupants (half on a failure).",
+      "Hazard": "Hazard collision",
+      "HazardHint": "Mobile hazard (asteroid, uncontrolled vehicle): 1d20 + size vs Reflex; Table 10-3 damage, half on a miss.",
+      "HazardSize": "Hazard size",
+      "HazardAttack": "Hazard attack",
+      "HalfDamage": "Miss: half damage",
+      "AvoidCollision": "Avoid collision",
+      "AvoidNote": "Reaction (pilot): Pilot DC 15 → everyone involved takes half damage (starship scale: no collision). Not when ramming on purpose.",
+      "IncreaseSpeed": "Increase speed",
+      "IncreaseSpeedHint": "Swift action (trained pilot): Pilot DC 20; +1 square and +1 per 5 over. Failure: −1 step on the condition track.",
+      "AllOutHint": "Full-round: 4× speed (5× with Full Throttle) in a straight line; the vehicle loses Dex to Ref and gunners can't attack until your next turn.",
+      "StopHint": "Swift action: bring the vehicle to a stop (Dex −5 to Reflex). Click again to power up.",
+      "FullStop": "Full stop",
+      "Start": "Power up",
+      "ShieldsUp": "Raise shields",
+      "ShieldsDown": "Lower shields",
+      "TargetOne": "Target (T) exactly one token.",
+      "Wins": "{name} wins the opposed check.",
+      "Engaged": "{a} and {b} are in a dogfight.",
+      "NotInDogfight": "You are not in a dogfight with {name}.",
+      "ChooseWeapon": "Choose weapon",
+      "GunnerPenalty": "Dogfight: gunners −5",
+      "RamCheck": "Ram check",
+      "RamHit": "Hit: full collision damage.",
+      "RamMiss": "Failed: half damage; the vehicle is pushed out.",
+      "AllOutDouble": "All-out movement: collision damage doubled.",
+      "CollisionNote": "Occupants: damage reduced by the vehicle's damage threshold unless it provides no cover (errata).",
+      "NeedTrained": "Requires a pilot trained in Pilot.",
+      "SpeedFail": "Failed: the vehicle moves −1 step on the condition track.",
+      "SpeedUp": "Speed increased by {n} square(s) until your next turn.",
+      "AllOutMsg": "All-out movement (×{mult}): up to {n} squares (character scale) / {s} (starship scale) in a straight line.",
+      "NoAttackAllOut": "After all-out movement, gunners can't attack until your next turn.",
+      "OutsideDogfight": "While in a dogfight you can't attack targets outside it.",
+      "InDogfight": "In a dogfight with"
     }
   }
 }

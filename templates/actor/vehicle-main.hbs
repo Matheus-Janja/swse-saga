@@ -55,6 +55,33 @@
     </ol>
   </div>
 
+  <div class="panel vc-panel">
+    <h3>{{localize "SWSE.VC.Title"}}</h3>
+    <p class="hint">{{localize "SWSE.VC.Hint"}}</p>
+    <div class="vc-buttons">
+      <button type="button" data-action="vc" data-op="dogfight" data-tooltip="{{localize 'SWSE.VC.DogfightHint'}}"><i class="fa-solid fa-jet-fighter"></i> {{localize "SWSE.VC.Dogfight"}}</button>
+      <button type="button" data-action="vc" data-op="dogfightAttack" data-tooltip="{{localize 'SWSE.VC.DogfightAttackHint'}}"><i class="fa-solid fa-crosshairs"></i> {{localize "SWSE.VC.DogfightAttack"}}</button>
+      <button type="button" data-action="vc" data-op="disengage" data-tooltip="{{localize 'SWSE.VC.DisengageHint'}}"><i class="fa-solid fa-person-running"></i> {{localize "SWSE.VC.Disengage"}}</button>
+      <button type="button" data-action="vc" data-op="ram" data-tooltip="{{localize 'SWSE.VC.RamHint'}}"><i class="fa-solid fa-car-burst"></i> {{localize "SWSE.VC.Ram"}}</button>
+      <button type="button" data-action="vc" data-op="hazard" data-tooltip="{{localize 'SWSE.VC.HazardHint'}}"><i class="fa-solid fa-meteor"></i> {{localize "SWSE.VC.Hazard"}}</button>
+      <button type="button" data-action="vc" data-op="avoid" data-tooltip="{{localize 'SWSE.VC.AvoidNote'}}"><i class="fa-solid fa-shuffle"></i> {{localize "SWSE.VC.AvoidCollision"}}</button>
+      <button type="button" data-action="vc" data-op="speed" data-tooltip="{{localize 'SWSE.VC.IncreaseSpeedHint'}}"><i class="fa-solid fa-gauge-high"></i> {{localize "SWSE.VC.IncreaseSpeed"}}</button>
+      <button type="button" data-action="vc" data-op="allOut" class="{{#if allOut}}active{{/if}}" data-tooltip="{{localize 'SWSE.VC.AllOutHint'}}"><i class="fa-solid fa-forward-fast"></i> {{localize "SWSE.Maneuver.allOut"}}</button>
+      <button type="button" data-action="vc" data-op="stop" class="{{#if system.stationary}}active{{/if}}" data-tooltip="{{localize 'SWSE.VC.StopHint'}}"><i class="fa-solid fa-circle-stop"></i> {{#if system.stationary}}{{localize "SWSE.VC.Start"}}{{else}}{{localize "SWSE.VC.FullStop"}}{{/if}}</button>
+      <button type="button" data-action="vc" data-op="shields" class="{{#if system.shieldsUp}}active{{/if}}"><i class="fa-solid fa-shield"></i> {{#if system.shieldsUp}}{{localize "SWSE.VC.ShieldsDown"}}{{else}}{{localize "SWSE.VC.ShieldsUp"}}{{/if}}</button>
+    </div>
+    {{#if dogfight.length}}
+    <p class="dogfight-list"><strong>{{localize "SWSE.VC.InDogfight"}}:</strong>
+      {{#each dogfight as |o|}}<span class="chip">{{o.name}} <a data-action="leaveDogfight" data-uuid="{{o.uuid}}"><i class="fa-solid fa-xmark"></i></a></span>{{/each}}</p>
+    {{/if}}
+    <h4>{{localize "SWSE.Effect.Effects"}} {{#if editable}}<a class="ctl" data-action="createEffect"><i class="fa-solid fa-plus"></i></a>{{/if}}</h4>
+    <ul class="item-list">
+      {{#each vehicleEffects as |e|}}<li class="item"><img src="{{e.img}}"><span>{{e.name}}</span><span class="tag">{{e.duration}}</span>
+        {{#if @root.editable}}<a class="ctl" data-action="deleteEffect" data-id="{{e.id}}"><i class="fa-solid fa-trash"></i></a>{{/if}}</li>
+      {{else}}<li class="hint">{{localize "SWSE.Effect.None"}}</li>{{/each}}
+    </ul>
+  </div>
+
   <div class="panel crew-panel">
     <h3>{{localize "SWSE.Vehicle.Crew"}}
       <span class="ctl-group">

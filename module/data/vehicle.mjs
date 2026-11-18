@@ -1,4 +1,5 @@
 import { computeVehicle, VEHICLE_ROLES, VEHICLE_SKILLS } from "../rules/vehicle.mjs";
+import { collectEffects } from "./actor.mjs";
 
 const fields = foundry.data.fields;
 const num = (initial = 0, opts = {}) => new fields.NumberField({ required: true, nullable: false, integer: true, initial, ...opts });
@@ -13,6 +14,9 @@ export function crewProfile(actor) {
     heroicLevel: s.heroicLevel ?? 0,
     bab: s.bab ?? 0,
     pilotTrained: !!(s.skills.pilot?.isTrained ?? s.skills.pilot?.trained),
+    uuid: actor.uuid,
+    features: actor.items.filter(i => ["feat", "talent"].includes(i.type)).map(i => i.system.key),
+    acePilotLevel: actor.items.filter(i => i.type === "class" && i.system.key === "ace-pilot").reduce((a, i) => a + (i.system.levels || 0), 0),
     skills: Object.fromEntries(VEHICLE_SKILLS.map(k => [k, s.skills[k]?.total ?? 0]))
   };
 }
@@ -38,6 +42,8 @@ export class VehicleData extends foundry.abstract.TypeDataModel {
       hp: new fields.SchemaField({ value: num(10), max: num(10), temp: num(0, { min: 0 }) }),
       condition: new fields.SchemaField({ step: num(0, { min: 0, max: 5 }), persistent: new fields.BooleanField({ initial: false }) }),
       maneuver: str("none"),
+      dogfight: new fields.ArrayField(new fields.StringField({ blank: false })),
+      shieldsUp: new fields.BooleanField({ initial: true }),
       stationary: new fields.BooleanField({ initial: false }),
       crewBab: num(0),
       crewQuality: str("normal"),
@@ -77,7 +83,8 @@ export class VehicleData extends foundry.abstract.TypeDataModel {
   prepareDerivedData() {
     const actors = this.crewActors;
     const crew = Object.fromEntries(VEHICLE_ROLES.map(r => [r, crewProfile(actors[r])]));
-    const d = computeVehicle(this, crew);
+    const { statuses, effects } = collectEffects(this.parent);
+    const d = computeVehicle(this, crew, { statuses, effects });
     d.crew = crew;
     d.gunners = actors.gunners.map(crewProfile);
     this.derived = d;

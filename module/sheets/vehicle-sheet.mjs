@@ -1,6 +1,8 @@
 import { SWSE, SYSTEM_ID } from "../config.mjs";
 import { VEHICLE_SIZES, CREW_QUALITY, VEHICLE_WEAPON_TYPES, VEHICLE_ROLES, VEHICLE_SKILLS, MANEUVERS } from "../rules/vehicle.mjs";
 import { vehicleWeaponInfo, stationCrew } from "../rolls/vehicle.mjs";
+import * as VC from "../rolls/vehicle-combat.mjs";
+import { effectDialog, durationLabel } from "../helpers/effects.mjs";
 
 const { HandlebarsApplicationMixin } = foundry.applications.api;
 const L = k => game.i18n.localize(k);
@@ -23,7 +25,11 @@ export class SWSEVehicleSheet extends HandlebarsApplicationMixin(foundry.applica
       openCrew: SWSEVehicleSheet.#onOpenCrew,
       rechargeShields: SWSEVehicleSheet.#onRechargeShields,
       reroutePower: SWSEVehicleSheet.#onReroutePower,
-      resetShields: SWSEVehicleSheet.#onResetShields
+      resetShields: SWSEVehicleSheet.#onResetShields,
+      vc: SWSEVehicleSheet.#onVehicleCombat,
+      leaveDogfight: SWSEVehicleSheet.#onLeaveDogfight,
+      createEffect: SWSEVehicleSheet.#onCreateEffect,
+      deleteEffect: SWSEVehicleSheet.#onDeleteEffect
     }
   };
 
@@ -83,6 +89,9 @@ export class SWSEVehicleSheet extends HandlebarsApplicationMixin(foundry.applica
       };
     });
     context.otherItems = actor.items.filter(i => i.type !== "vehicleWeapon");
+    context.dogfight = sys.dogfight.map(u => ({ uuid: u, name: fromUuidSync(u)?.name ?? "?" }));
+    context.vehicleEffects = actor.effects.map(e => ({ id: e.id, name: e.name, img: e.img, duration: durationLabel(e) }));
+    context.allOut = !!d.allOut;
     context.refTooltip = Object.entries(d.defenses?.reflex?.parts ?? {}).filter(([, v]) => v).map(([p, v]) => `${L(`SWSE.VPart.${p}`)}: ${v >= 0 ? "+" : ""}${v}`).join("<br>");
     const TextEditor = foundry.applications.ux.TextEditor.implementation;
     context.enrichedNotes = await TextEditor.enrichHTML(sys.notes, { relativeTo: actor });
@@ -158,5 +167,16 @@ export class SWSEVehicleSheet extends HandlebarsApplicationMixin(foundry.applica
   static async #onOpenCrew(event, target) { (await fromUuid(target.dataset.uuid))?.sheet.render({ force: true }); }
   static #onRechargeShields() { this.actor.rechargeShields(); }
   static #onReroutePower() { this.actor.reroutePower(); }
+  static #onVehicleCombat(event, target) {
+    const fn = {
+      dogfight: VC.initiateDogfight, dogfightAttack: VC.dogfightAttack, disengage: VC.disengage, ram: VC.ram,
+      hazard: VC.hazardCollision, avoid: VC.avoidCollision, speed: VC.increaseSpeed, allOut: VC.allOut,
+      stop: VC.fullStop, shields: VC.toggleShields
+    }[target.dataset.op];
+    return fn?.(this.actor);
+  }
+  static #onLeaveDogfight(event, target) { VC.leaveDogfight(this.actor, target.dataset.uuid); }
+  static #onCreateEffect() { effectDialog(this.actor); }
+  static #onDeleteEffect(event, target) { this.actor.effects.get(target.dataset.id)?.delete(); }
   static #onResetShields() { this.actor.update({ "system.shieldRating": this.actor.system.shieldMax }); }
 }

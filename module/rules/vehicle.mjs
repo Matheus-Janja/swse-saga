@@ -1,7 +1,7 @@
 /**
  * Regras de veículos (Cap. 10) — funções puras.
  */
-import { abilityMod } from "./calc.mjs";
+import { abilityMod, aggregateModifiers, evalModifierValue } from "./calc.mjs";
 
 /** Tabela 10-1 e modificadores de Limiar de Dano por tamanho. */
 export const VEHICLE_SIZES = {
@@ -42,8 +42,32 @@ export const MANEUVERS = {
   none: { label: "SWSE.Maneuver.none" },
   defensive: { label: "SWSE.Maneuver.defensive" },
   defensiveTotal: { label: "SWSE.Maneuver.defensiveTotal" },
-  attackRun: { label: "SWSE.Maneuver.attackRun" }
+  attackRun: { label: "SWSE.Maneuver.attackRun" },
+  allOut: { label: "SWSE.Maneuver.allOut" }
 };
+
+/** Tabela 10-3 (dano de colisão) e bônus de ataque de perigos móveis, por tamanho. */
+export const COLLISION = {
+  large: { dice: "2d6", hazard: 1 },
+  huge: { dice: "4d6", hazard: 2 },
+  gargantuan: { dice: "6d6", hazard: 5 },
+  colossal: { dice: "8d6", hazard: 10 },
+  colossalFrigate: { dice: "10d6", hazard: 10 },
+  colossalCruiser: { dice: "15d6", hazard: 10 },
+  colossalStation: { dice: "20d6", hazard: 10 }
+};
+
+/** Fórmula de dano de colisão: dados do tamanho + mod. de For; dobrado em movimento total. */
+export function collisionFormula(size, strMod = 0, allOut = false) {
+  const dice = COLLISION[size]?.dice ?? "2d6";
+  const base = `${dice} ${strMod >= 0 ? "+" : "-"} ${Math.abs(strMod)}`;
+  return allOut ? `(${base}) * 2` : base;
+}
+
+/** Penalidade de ataque dos artilheiros pela manobra do piloto. */
+export function maneuverAttackPenalty(maneuver) {
+  return maneuver === "defensiveTotal" ? -10 : maneuver === "defensive" ? -5 : 0;
+}
 
 /**
  * Calcula os valores derivados de um veículo.
@@ -51,8 +75,18 @@ export const MANEUVERS = {
  * @param {object} crew { pilot, copilot, commander, systemOperator, engineer } — perfis simples dos tripulantes:
  *   { heroicLevel, bab, skills:{pilot,initiative,mechanics,perception,useComputer}, pilotTrained }
  */
-export function computeVehicle(sys, crew = {}) {
+export function computeVehicle(sys, crew = {}, opts = {}) {
   const d = {};
+  // Efeitos ativos (buffs/penalidades e efeitos de dogfight) e status
+  const statuses = opts.statuses instanceof Set ? opts.statuses : new Set(opts.statuses ?? []);
+  const raw = [];
+  for (const eff of opts.effects ?? []) for (const m of eff.modifiers ?? []) {
+    if (!m.disabled && m.target) raw.push({ target: m.target, value: evalModifierValue(m.value, {}), type: m.type || "untyped", source: eff.name });
+  }
+  const agg = aggregateModifiers(raw);
+  const mod = k => agg[k]?.total ?? 0;
+  d.modifiers = agg;
+  d.statuses = [...statuses];
   const size = VEHICLE_SIZES[sys.size] ?? VEHICLE_SIZES.large;
   const quality = CREW_QUALITY[sys.crewQuality] ?? CREW_QUALITY.normal;
   const str = abilityMod(sys.abilities?.str ?? 10);
@@ -76,11 +110,16 @@ export function computeVehicle(sys, crew = {}) {
   if (sys.maneuver === "defensive") dodge = pilotTrained ? 5 : 2;
   else if (sys.maneuver === "defensiveTotal") dodge = pilotTrained ? 10 : 5;
   const attackRun = sys.maneuver === "attackRun" ? -2 : 0;
+  // Vehicle Dodge (Ace Pilot): esquiva igual a ½ nível de Ace Pilot do piloto
+  dodge += Math.floor((pilot?.acePilotLevel ?? 0) / 2);
   const stationary = !!sys.stationary;
-  const dexToRef = stationary ? -5 : dex;
-  const refParts = { base: 10, ability: dexToRef, size: size.mod, armor: armorOrLevel, dodge, attackRun, misc: Number(sys.defenses?.reflex?.misc) || 0, condition: condPen };
+  // Movimento total ou surpreso: perde a Destreza (e a esquiva) na Reflexos
+  const noDex = sys.maneuver === "allOut" || statuses.has("allOut") || statuses.has("flatFooted");
+  let dexToRef = stationary ? -5 : dex;
+  if (noDex) { dexToRef = Math.min(dexToRef, 0); dodge = 0; }
+  const refParts = { base: 10, ability: dexToRef, size: size.mod, armor: armorOrLevel, dodge, attackRun, mods: mod("defenses.reflex") + mod("defenses.all"), misc: Number(sys.defenses?.reflex?.misc) || 0, condition: condPen };
   const sum = o => Object.values(o).reduce((a, b) => a + (Number(b) || 0), 0);
-  const fortParts = { base: 10, ability: str, misc: Number(sys.defenses?.fortitude?.misc) || 0, condition: condPen };
+  const fortParts = { base: 10, ability: str, mods: mod("defenses.fortitude") + mod("defenses.all"), misc: Number(sys.defenses?.fortitude?.misc) || 0, condition: condPen };
   d.defenses = {
     reflex: { total: sum(refParts), parts: refParts, flatFooted: sum(refParts) - Math.max(dexToRef, 0) - dodge },
     fortitude: { total: sum(fortParts), parts: fortParts }
@@ -95,12 +134,19 @@ export function computeVehicle(sys, crew = {}) {
     const base = who ? (who.skills?.[k] ?? 0) : quality.check;
     const vehicleMods = k === "pilot" || k === "initiative" ? dex + size.mod : 0;
     const misc = who ? 0 : Number(sys.skills?.[k]?.misc) || 0;
-    const parts = { crew: base, vehicle: vehicleMods, misc, condition: condPen };
+    const parts = { crew: base, vehicle: vehicleMods, misc, mods: mod(`skills.${k}`), condition: condPen };
     d.skills[k] = { total: sum(parts), parts, usable: true, byCrew: !!who };
   }
 
   d.crewBab = Number(sys.crewBab) || 0;
   d.pilotTrained = pilotTrained;
+  // Penalidades/bônus de ataque: manobra do piloto (todos os artilheiros), efeitos
+  d.attackMods = {
+    maneuver: maneuverAttackPenalty(sys.maneuver),
+    all: mod("vehicle.attack.all"),
+    gunner: mod("vehicle.attack.gunner")
+  };
+  d.allOut = sys.maneuver === "allOut" || statuses.has("allOut");
   return d;
 }
 
@@ -114,7 +160,14 @@ export function vehicleWeaponProfile(v, weapon, gunner) {
   const w = weapon.system;
   const bab = gunner ? gunner.bab : v.crewBab;
   const trainedPilot = w.station === "pilot" && gunner?.pilotTrained ? 2 : 0;
-  const parts = { bab, int: v.abilities.int.mod, trainedPilot, weapon: Number(w.attackBonus) || 0, condition: v.conditionPenalty };
+  const am = v.attackMods ?? {};
+  const feats = gunner?.features ?? [];
+  // Penalidade de dogfight aos artilheiros: não afeta a estação do piloto nem quem tem Dogfight Gunner
+  const gunnerPen = w.station !== "pilot" && !feats.includes("dogfight-gunner") ? (am.gunner || 0) : 0;
+  const parts = {
+    bab, int: v.abilities.int.mod, trainedPilot, expertGunner: feats.includes("expert-gunner") ? 1 : 0,
+    weapon: Number(w.attackBonus) || 0, maneuver: am.maneuver || 0, effects: (am.all || 0) + gunnerPen, condition: v.conditionPenalty
+  };
   const attackBonus = Object.values(parts).reduce((a, b) => a + b, 0);
   const halfLevel = gunner ? Math.floor((gunner.heroicLevel || 0) / 2) : 0;
   return { parts, attackBonus, halfLevel, damageBonus: halfLevel + (Number(w.damageBonus) || 0), multiplier: Number(w.multiplier) || 1 };

@@ -27,7 +27,14 @@ export async function vehicleAttack(vehicle, weapon, { skipDialog = false } = {}
   const p = vehicleWeaponProfile(vehicle.system.derived, weapon, gunner);
   const capital = !!vehicle.system.derived?.capital;
   const tractor = w.weaponType === "tractor";
-  let f = { range: "pointBlank", aim: false, autofire: false, attackRun: false, intoDogfight: false, smallTarget: false, miscAttack: "", miscDamage: "" };
+  if (vehicle.system.derived?.allOut) return ui.notifications.warn(L("SWSE.VC.NoAttackAllOut"));
+  // Atirar num dogfight do qual não participa: −5 (exceto com Precise Shot)
+  const marked = Array.from(game.user.targets).map(t => t.actor).filter(Boolean);
+  const intoDogfight = marked.some(a => a.type === "vehicle" && a.system.dogfight?.length && !a.system.dogfight.includes(vehicle.uuid))
+    && !gunner?.features?.includes("precise-shot");
+  const outsideDogfight = vehicle.system.dogfight?.length && marked.some(a => !vehicle.system.dogfight.includes(a.uuid));
+  if (outsideDogfight) ui.notifications.warn(L("SWSE.VC.OutsideDogfight"));
+  let f = { range: "pointBlank", aim: false, autofire: false, attackRun: false, intoDogfight, smallTarget: false, miscAttack: "", miscDamage: "" };
   if (!skipDialog) {
     const rangeOpts = Object.entries(SWSE.rangeBands).map(([k, v]) => `<option value="${k}">${L(v.label)}</option>`).join("");
     const ranges = VEHICLE_WEAPON_TYPES[w.weaponType];
@@ -42,7 +49,7 @@ export async function vehicleAttack(vehicle, weapon, { skipDialog = false } = {}
         <div class="form-group"><label>${L("SWSE.Attack.Aim")}</label><input type="checkbox" name="aim"></div>
         ${w.autofire ? `<div class="form-group"><label>${L("SWSE.Attack.FireAutofire")} (−5)</label><input type="checkbox" name="autofire"></div>` : ""}
         ${w.station === "pilot" ? `<div class="form-group"><label>${L("SWSE.Maneuver.attackRun")} (+2)</label><input type="checkbox" name="attackRun"></div>` : ""}
-        <div class="form-group"><label>${L("SWSE.Vehicle.IntoDogfight")} (−5)</label><input type="checkbox" name="intoDogfight"></div>
+        <div class="form-group"><label>${L("SWSE.Vehicle.IntoDogfight")} (−5)</label><input type="checkbox" name="intoDogfight" ${intoDogfight ? "checked" : ""}></div>
         ${capital && w.weaponType !== "pointDefense" ? `<div class="form-group"><label>${L("SWSE.Vehicle.SmallTarget")} (−20)</label><input type="checkbox" name="smallTarget"></div>` : ""}
         <div class="form-group"><label>${L("SWSE.Attack.MiscAttack")}</label><input type="text" name="miscAttack" value=""></div>
         <div class="form-group"><label>${L("SWSE.Attack.MiscDamage")}</label><input type="text" name="miscDamage" value=""></div>

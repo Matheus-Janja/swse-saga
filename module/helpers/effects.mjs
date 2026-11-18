@@ -68,6 +68,7 @@ export function registerEffectHooks() {
       if (!a) continue;
       const ids = a.effects.filter(e => e.flags?.[SYSTEM_ID]?.expiry?.combat === combat.id).map(e => e.id);
       if (ids.length) await a.deleteEmbeddedDocuments("ActiveEffect", ids);
+      if (a.type === "vehicle" && a.system.dogfight?.length) await a.update({ "system.dogfight": [] });
     }
   });
 }

@@ -281,3 +281,9 @@
 .swse-dialog .status-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; font-size: .85em; }
 .swse-dialog .status-opt { display: flex; align-items: center; gap: 4px; }
 .swse-card .target-results .tnotes { flex: 0 0 100%; font-size: .75em; color: #555; }
+
+/* ---------- Combate veicular ---------- */
+.swse.vehicle .vc-buttons { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; }
+.swse.vehicle .vc-buttons button { line-height: 22px; font-size: .8em; padding: 0 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.swse.vehicle .vc-buttons button.active { border-color: var(--swse-accent); color: var(--swse-accent); }
+.swse.vehicle .dogfight-list .chip { display: inline-block; border: 1px solid var(--swse-red); border-radius: 10px; padding: 0 8px; margin: 0 2px; }

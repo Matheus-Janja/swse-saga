@@ -651,7 +651,8 @@
       "none": "Nenhuma",
       "defensive": "Luta defensiva",
       "defensiveTotal": "Luta defensiva total (sem atacar)",
-      "attackRun": "Attack Run (−2 Ref)"
+      "attackRun": "Attack Run (−2 Ref)",
+      "allOut": "Movimento total (sem Des na Ref)"
     },
     "VCat": {
       "walker": "Walker",
@@ -684,7 +685,11 @@
       "size": "Tamanho",
       "armor": "Armadura/nível do piloto",
       "dodge": "Esquiva (manobra)",
-      "attackRun": "Attack Run"
+      "attackRun": "Attack Run",
+      "expertGunner": "Expert Gunner",
+      "maneuver": "Manobra do piloto",
+      "effects": "Efeitos",
+      "mods": "Efeitos"
     },
     "Vehicle": {
       "Details": "Detalhes",
@@ -824,6 +829,51 @@
       "Toggle": "Ativar/desativar",
       "None": "Nenhum efeito ativo.",
       "Unnamed": "Efeito"
+    },
+    "VC": {
+      "Title": "Combate veicular",
+      "Hint": "Marque (T) o veículo inimigo antes de usar as ações contra ele. Testes opostos usam o Pilot dos dois veículos (tripulante designado ou tripulação padrão).",
+      "Dogfight": "Iniciar dogfight",
+      "DogfightHint": "Ação padrão (piloto): Pilot −5 contra o Pilot do alvo adjacente. Relentless Pursuit rola duas vezes.",
+      "DogfightAttack": "Atacar no dogfight",
+      "DogfightAttackHint": "Ação padrão: Pilot oposto; vencendo, um ataque com arma do veículo (ação rápida). Perdendo, seus artilheiros sofrem −5 até o próximo turno.",
+      "Disengage": "Desengajar",
+      "DisengageHint": "Ação de movimento: Pilot oposto; vencendo, sai do dogfight. Perdendo, artilheiros −5.",
+      "Ram": "Abalroar",
+      "RamHint": "Rodada completa: Pilot −10 contra a Reflexos do alvo marcado; dano de colisão para os dois veículos e ocupantes (metade se falhar).",
+      "Hazard": "Colisão com perigo",
+      "HazardHint": "Perigo móvel (asteroide, veículo desgovernado): 1d20 + tamanho contra a Reflexos; dano da Tabela 10-3, metade se errar.",
+      "HazardSize": "Tamanho do perigo",
+      "HazardAttack": "Ataque do perigo",
+      "HalfDamage": "Errou: metade do dano",
+      "AvoidCollision": "Evitar colisão",
+      "AvoidNote": "Reação (piloto): Pilot CD 15 → todos os envolvidos sofrem metade do dano (escala de nave: não há colisão). Não vale ao abalroar de propósito.",
+      "IncreaseSpeed": "Aumentar velocidade",
+      "IncreaseSpeedHint": "Ação rápida (piloto treinado): Pilot CD 20; +1 quadrado e +1 a cada 5 acima. Falha: −1 passo na trilha de condição.",
+      "AllOutHint": "Rodada completa: 4× o deslocamento (5× com Full Throttle) em linha reta; o veículo perde a Des na Ref e os artilheiros não atacam até o próximo turno.",
+      "StopHint": "Ação rápida: para o veículo (Des −5 na Reflexos). Clique de novo para ligar.",
+      "FullStop": "Parada total",
+      "Start": "Ligar motores",
+      "ShieldsUp": "Levantar escudos",
+      "ShieldsDown": "Baixar escudos",
+      "TargetOne": "Marque (T) exatamente um alvo.",
+      "Wins": "{name} vence o teste oposto.",
+      "Engaged": "{a} e {b} estão em dogfight.",
+      "NotInDogfight": "Você não está em dogfight com {name}.",
+      "ChooseWeapon": "Escolha a arma",
+      "GunnerPenalty": "Dogfight: artilheiros −5",
+      "RamCheck": "Teste de abalroar",
+      "RamHit": "Acertou: dano total de colisão.",
+      "RamMiss": "Falhou: metade do dano; o veículo é empurrado para fora.",
+      "AllOutDouble": "Movimento total: dano de colisão dobrado.",
+      "CollisionNote": "Ocupantes: dano reduzido pelo Limiar de Dano do veículo, exceto se o veículo não der cobertura (errata).",
+      "NeedTrained": "Exige piloto treinado em Pilot.",
+      "SpeedFail": "Falhou: o veículo desce −1 passo na trilha de condição.",
+      "SpeedUp": "Velocidade aumentada em {n} quadrado(s) até o próximo turno.",
+      "AllOutMsg": "Movimento total (×{mult}): até {n} quadrados (escala de personagem) / {s} (escala de nave) em linha reta.",
+      "NoAttackAllOut": "Após movimento total, os artilheiros não podem atacar até o próximo turno.",
+      "OutsideDogfight": "Em dogfight, você não pode atacar alvos fora dele.",
+      "InDogfight": "Em dogfight com"
     }
   }
 }

@@ -156,8 +156,26 @@ t("Veículo: piloto heroico substitui armadura; artilheiro usa BBA próprio e ½
   assert.equal(d.damageThreshold, 46);
   assert.equal(d.skills.pilot.total, 15 + 6 - 5);
   const p = vehicleWeaponProfile(d, { system: { station: "pilot", attackBonus: 0, damageBonus: 0, multiplier: 2 } }, pilot);
-  assert.equal(p.attackBonus, 10 + 3 + 2);
+  assert.equal(p.attackBonus, 10 + 3 + 2 - 5); // luta defensiva: −5 em todos os artilheiros
   assert.equal(p.damageBonus, 5);
+});
+
+t("Combate veicular: movimento total, Vehicle Dodge, efeitos de dogfight e Dogfight Gunner", async () => {
+  const { collisionFormula } = await import("../module/rules/vehicle.mjs");
+  const base = { size: "huge", abilities: { str: 34, dex: 18, int: 14 }, armor: 3, defenses: { reflex: { misc: 0 }, fortitude: { misc: 0 } },
+    damageThreshold: { misc: 0 }, condition: { step: 0 }, crewQuality: "skilled", crewBab: 2, skills: {}, maneuver: "none" };
+  const ace = { heroicLevel: 9, bab: 9, pilotTrained: true, acePilotLevel: 4, features: [], skills: {} };
+  const n = computeVehicle(base, { pilot: ace });
+  assert.equal(n.defenses.reflex.total, 10 + 4 - 2 + 9 + 2); // Vehicle Dodge +2
+  const ao = computeVehicle({ ...base, maneuver: "allOut" }, { pilot: ace });
+  assert.equal(ao.defenses.reflex.total, 10 + 0 - 2 + 9);
+  const fx = [{ name: "Dogfight", modifiers: [{ target: "vehicle.attack.gunner", value: "-5" }] }];
+  const d = computeVehicle(base, {}, { effects: fx });
+  const gun = { system: { station: "gunner", attackBonus: 0, multiplier: 2 } };
+  assert.equal(vehicleWeaponProfile(d, gun, null).attackBonus, 2 + 2 - 5);
+  assert.equal(vehicleWeaponProfile(d, gun, { bab: 2, features: ["dogfight-gunner", "expert-gunner"] }).attackBonus, 2 + 2 + 1);
+  assert.equal(vehicleWeaponProfile(d, { system: { station: "pilot", attackBonus: 0 } }, null).attackBonus, 2 + 2);
+  assert.equal(collisionFormula("gargantuan", 16, true), "(6d6 + 16) * 2");
 });
 
 {
