@@ -42,8 +42,10 @@
 
   <div class="panel condition-track">
     <h3>{{localize "SWSE.Condition.label"}}
+      <a class="ctl recover" data-action="recover" data-tooltip="{{localize 'SWSE.RecoverHint'}}"><i class="fa-solid fa-arrow-up"></i> {{localize "SWSE.Recover"}}</a>
       <label class="persistent"><input type="checkbox" name="system.condition.persistent" {{checked system.condition.persistent}}> {{localize "SWSE.Condition.persistent"}}</label>
     </h3>
+    {{#if statusSummary}}<p class="status-summary"><i class="fa-solid fa-bolt"></i> {{statusSummary}}</p>{{/if}}
     <ol class="track">
       {{#each conditionTrack as |c|}}
       <li class="step step-{{c.step}} {{#if c.active}}active{{/if}}" data-action="setCondition" data-step="{{c.step}}">

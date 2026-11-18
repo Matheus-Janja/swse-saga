@@ -1,4 +1,5 @@
 import { SWSE, SYSTEM_ID } from "../config.mjs";
+import { targetAdjustment } from "../rules/effects.mjs";
 import { weaponProfileFrom, isProficientCtx, effectiveGroup as groupCtx, unarmedDamageCtx } from "../rules/weapon.mjs";
 
 const signed = n => (n >= 0 ? `+${n}` : `${n}`);
@@ -18,7 +19,8 @@ export function weaponCtx(actor) {
     modifiers: actor.derived.modifiers ?? {}, armorPenalty: actor.derived.armor?.penalty ?? 0,
     features: actor.items.filter(i => ["feat", "talent"].includes(i.type)).map(i => ({ key: i.system.key, choice: i.system.choice?.value })),
     classLevels: actor.derived.classLevels ?? {},
-    droidAppendage: actor.derived.droidAppendage ?? null
+    droidAppendage: actor.derived.droidAppendage ?? null,
+    grabbed: !!actor.derived.status?.grabbed
   };
 }
 
@@ -58,17 +60,18 @@ function dialogContent(actor, weapon, p) {
         ${has("burst-fire") ? `<option value="burst">${L("SWSE.Attack.FireBurst")}</option>` : ""}
       </select>`) : ""}
     ${check("braced", L("SWSE.Attack.Braced"), ranged && p.autofire)}
-    ${check("aim", L("SWSE.Attack.Aim") + (has("careful-shot") ? " (+1)" : "") + (has("deadeye") ? " (+1 dado)" : ""), ranged)}
+    ${check("aim", L("SWSE.Attack.Aim") + (has("careful-shot") ? " (+1)" : "") + (has("deadeye") ? " (+1 dado)" : ""), ranged, !!actor.derived.status?.list?.includes("aiming"))}
     ${check("intoMelee", L("SWSE.Attack.IntoMelee") + (has("precise-shot") ? " (Precise Shot)" : ""), ranged)}
     ${check("rapidShot", L("SWSE.Attack.RapidShot"), ranged && has("rapid-shot"))}
     ${check("rapidStrike", L("SWSE.Attack.RapidStrike"), p.melee && has("rapid-strike"))}
     ${check("mightySwing", L("SWSE.Attack.MightySwing"), p.melee && has("mighty-swing"))}
     ${p.melee && has("power-attack") ? row(`<label>${L("SWSE.Attack.PowerAttack")} (0–${bab})</label><input type="number" name="powerAttack" value="0" min="0" max="${bab}">`) : ""}
     ${check("charge", L("SWSE.Attack.Charge"), p.melee)}
+    ${check("flanking", L("SWSE.Attack.Flanking"), p.melee)}
     ${check("flatFooted", L("SWSE.Attack.FlatFooted") + (sneak ? ` (Sneak Attack +${Math.min(sneak, 10)}d6)` : ""), true)}
     ${check("huntersTarget", L("SWSE.Attack.HuntersTarget"), has("hunters-target"))}
     ${check("familiarFoe", L("SWSE.Attack.FamiliarFoe"), actor.classLevel("bounty-hunter") >= 2)}
-    ${check("rage", L("SWSE.Attack.Rage"), p.melee && rageAvailable)}
+    ${check("rage", L("SWSE.Attack.Rage"), p.melee && rageAvailable && !actor.derived.status?.list?.includes("rage"))}
     ${check("stun", L("SWSE.Attack.Stun"), weapon.system.stun)}
     ${check("forcePoint", `${L("SWSE.SpendForcePoint")} (${actor.system.forcePoints.value})`, actor.system.forcePoints.value > 0)}
     ${row(`<label>${L("SWSE.Attack.MiscAttack")}</label><input type="text" name="miscAttack" value="" placeholder="+1">`)}
@@ -134,6 +137,7 @@ export async function resolveAttack(actor, weapon, p, f) {
     if (weapon.system.inaccurate && f.range === "long") notes.push(L("SWSE.Attack.InaccurateLong"));
     if (f.intoMelee && !has("precise-shot")) atk.push([L("SWSE.Attack.IntoMelee"), -5]);
     if (f.aim) {
+      if (actor.isOwner && actor.statuses?.has("aiming")) await actor.toggleStatusEffect("aiming", { active: false });
       if (has("careful-shot")) atk.push(["Careful Shot", 1]);
       if (has("deadeye")) extraDice += 1;
       if (has("debilitating-shot") || has("hunters-mark")) bonusSteps.push(has("hunters-mark") ? "Hunter's Mark" : "Debilitating Shot");
@@ -172,7 +176,14 @@ export async function resolveAttack(actor, weapon, p, f) {
       atk.push(["Power Attack", -pa]);
       dmg.push(["Power Attack", p.twoHanded ? pa * 2 : pa]);
     }
-    if (f.charge) { atk.push([L("SWSE.Attack.Charge"), 2]); notes.push(L("SWSE.Attack.ChargeNote")); }
+    if (f.charge) {
+      atk.push([L("SWSE.Attack.Charge"), 2]);
+      notes.push(L("SWSE.Attack.ChargeNote"));
+      if (actor.isOwner && !actor.derived.status?.list?.includes("charging")) {
+        await actor.addEffect({ name: L("SWSE.Status.charging"), img: "systems/swse-saga/assets/icons/status/charging.svg", statuses: ["charging"], rounds: 0 });
+      }
+    }
+    if (f.flanking) atk.push([L("SWSE.Attack.Flanking"), 2]);
     if (f.rage) {
       const r = has("dreadful-rage") ? 4 : 2;
       atk.push([L("SWSE.Attack.Rage"), r]); dmg.push([L("SWSE.Attack.Rage"), r]);
@@ -225,7 +236,9 @@ export async function resolveAttack(actor, weapon, p, f) {
     const baseDamage = Math.max(1, dmgRoll.total);
     const critDamage = baseDamage * p.critMultiplier;
     const results = targets.map(({ token, actor: ta }) => {
-      const reflex = ta.system.defenses?.reflex?.total ?? 10;
+      const tStatus = ta.system.derived?.status ?? {};
+      const adj = targetAdjustment(tStatus, { melee: p.melee, aim: !!f.aim, keenShot: !p.melee && has("keen-shot") });
+      const reflex = (ta.system.defenses?.reflex?.total ?? 10) + adj.delta;
       let hit = !autoMiss && (autoHit || atkRoll.total >= reflex);
       if (area && !autoMiss && atkRoll.total < 10) hit = false;
       const isCrit = hit && crit && !area && (nat === 20 || atkRoll.total >= reflex);
@@ -236,7 +249,7 @@ export async function resolveAttack(actor, weapon, p, f) {
       if (area) mult = hit ? (evasion ? 0.5 : 1) : (evasion ? 0 : 0.5);
       else if (!hit) mult = 0;
       return {
-        uuid: ta.uuid, name: token.name, reflex, hit, crit: isCrit,
+        uuid: ta.uuid, name: token.name, reflex, hit, crit: isCrit, adjNotes: adj.notes,
         amount: Math.floor(amount * mult), evasion
       };
     });
@@ -281,6 +294,7 @@ export async function resolveAttack(actor, weapon, p, f) {
         html += `<li class="${r.hit ? "hit" : "miss"}"><span class="tname">${r.name}</span>
           <span class="tdef">${L("SWSE.Defense.reflexAbbr")} ${game.user.isGM ? r.reflex : "—"}</span>
           <span class="tstatus">${status}${r.evasion && area ? " (Evasion)" : ""}</span>
+          ${r.adjNotes?.length ? `<span class="tnotes">${r.adjNotes.map(n => L(`SWSE.TargetNote.${n}`)).join(" · ")}</span>` : ""}
           ${r.amount > 0 ? `<button type="button" data-swse-action="apply-damage" data-attack="${i}" data-target="${r.uuid}" data-amount="${r.amount}">${L("SWSE.Attack.Apply")} ${r.amount}</button>` : ""}
         </li>`;
       }

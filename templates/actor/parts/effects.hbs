@@ -1,0 +1,38 @@
+<section class="tab {{tab.cssClass}}" data-group="primary" data-tab="effects">
+  <div class="panel">
+    <h3>{{localize "SWSE.Effect.Conditions"}}</h3>
+    <p class="hint">{{localize "SWSE.Effect.ConditionsHint"}}</p>
+    <div class="status-toggles">
+      {{#each statusList as |s|}}
+      <a class="status-toggle {{#if s.active}}active{{/if}}" data-action="toggleStatus" data-status="{{s.id}}" data-tooltip="{{s.label}}">
+        <img src="{{s.img}}"><span>{{s.label}}</span></a>
+      {{/each}}
+    </div>
+  </div>
+  <div class="panel">
+    <h3>{{localize "SWSE.Effect.Effects"}} {{#if editable}}<a class="ctl" data-action="createEffect" data-tooltip="{{localize 'SWSE.Effect.New'}}"><i class="fa-solid fa-plus"></i></a>{{/if}}</h3>
+    <p class="hint">{{localize "SWSE.Effect.EffectsHint"}}</p>
+    <table class="item-table effects-table">
+      <thead><tr><th></th><th>{{localize "SWSE.Name"}}</th><th>{{localize "SWSE.Modifiers"}}</th><th>{{localize "SWSE.Effect.Duration"}}</th><th></th></tr></thead>
+      <tbody>
+      {{#each effects as |e|}}
+        <tr class="item {{#if e.disabled}}disabled{{/if}}" data-effect-uuid="{{e.uuid}}">
+          <td><img src="{{e.img}}"></td>
+          <td>{{e.name}}{{#if e.source}}<br><small>{{e.source}}</small>{{/if}}{{#if e.statuses}}<br><small>{{e.statuses}}</small>{{/if}}</td>
+          <td><small>{{e.mods}}</small></td>
+          <td><small>{{e.duration}}</small></td>
+          <td class="ctls">
+            {{#if @root.editable}}
+            <a data-action="toggleEffect" class="{{#unless e.disabled}}on{{/unless}}" data-tooltip="{{localize 'SWSE.Effect.Toggle'}}"><i class="fa-solid fa-power-off"></i></a>
+            <a data-action="editEffect"><i class="fa-solid fa-pen"></i></a>
+            <a data-action="deleteEffect"><i class="fa-solid fa-trash"></i></a>
+            {{/if}}
+          </td>
+        </tr>
+      {{else}}
+        <tr><td colspan="5" class="hint">{{localize "SWSE.Effect.None"}}</td></tr>
+      {{/each}}
+      </tbody>
+    </table>
+  </div>
+</section>

@@ -266,3 +266,18 @@
 .swse.vehicle .vehicle-details label { display: flex; flex-direction: column; font-size: 0.85em; color: var(--swse-dim); }
 
 .swse-wizard .droid-toggle { display: inline-flex; gap: 6px; align-items: center; padding: 4px 10px; border: 1px solid var(--swse-blue); border-radius: 12px; margin-bottom: 6px; }
+
+/* ---------- Efeitos ---------- */
+.swse .status-toggles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; }
+.swse .status-toggle { display: flex; align-items: center; gap: 6px; padding: 3px 6px; border: 1px solid var(--swse-border); border-radius: 6px; color: var(--swse-dim); background: var(--swse-panel-2); }
+.swse .status-toggle img { width: 22px; height: 22px; border: none; opacity: .5; }
+.swse .status-toggle.active { border-color: var(--swse-accent); color: var(--swse-text); box-shadow: 0 0 4px rgba(242, 193, 78, .5); }
+.swse .status-toggle.active img { opacity: 1; }
+.swse .effects-table tr.disabled { opacity: .45; }
+.swse .effects-table td:nth-child(3), .swse .effects-table td:nth-child(2) { text-align: left; }
+.swse .status-summary { margin: 0 0 4px; color: var(--swse-accent); font-size: .85em; }
+.swse .condition-track h3 .recover { margin-left: auto; font-size: .85em; }
+.swse .condition-track h3 .recover + .persistent { margin-left: 8px; }
+.swse-dialog .status-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; font-size: .85em; }
+.swse-dialog .status-opt { display: flex; align-items: center; gap: 4px; }
+.swse-card .target-results .tnotes { flex: 0 0 100%; font-size: .75em; color: #555; }

@@ -157,7 +157,8 @@
       "talents": "Feats e Talentos",
       "force": "Força",
       "gear": "Equipamento",
-      "bio": "Biografia"
+      "bio": "Biografia",
+      "effects": "Efeitos"
     },
     "Ability": {
       "label": "Atrib.",
@@ -336,7 +337,8 @@
       "natural": "Armadura natural",
       "luck": "Sorte",
       "rage": "Fúria",
-      "penalty": "Penalidade"
+      "penalty": "Penalidade",
+      "cover": "Cobertura"
     },
     "Target": {
       "defensesAll": "Todas as Defesas",
@@ -443,7 +445,8 @@
       "InaccurateLong": "Arma imprecisa não pode atacar em alcance longo.",
       "BonusStepsNote": "Se causar dano, o alvo também desce na trilha de condição ({list}).",
       "DevastatingNote": "Devastating Attack: Limiar de Dano do alvo tratado como {n} menor.",
-      "StunningStrikeNote": "Stunning Strike: −1 passo adicional se o dano exceder o Limiar."
+      "StunningStrikeNote": "Stunning Strike: −1 passo adicional se o dano exceder o Limiar.",
+      "Flanking": "Flanqueando (+2)"
     },
     "Chat": {
       "TookDamage": "Sofreu {amount} de dano ({type}; rolado: {raw}).",
@@ -490,7 +493,8 @@
       "NoWeapons": "Este personagem não tem armas.",
       "NoPowers": "Este personagem não conhece poderes da Força.",
       "MacroOwnedOnly": "Arraste itens da ficha de um personagem.",
-      "ItemNotFound": "Item {name} não encontrado."
+      "ItemNotFound": "Item {name} não encontrado.",
+      "Persistent": "Condição persistente: não é possível usar Recuperar."
     },
     "Settings": {
       "HpMethod": "PV ao subir de nível",
@@ -507,7 +511,9 @@
       "EnforcePrereqs": "Exigir pré-requisitos",
       "EnforcePrereqsHint": "Nos assistentes, oculta/bloqueia feats, talentos e classes cujos pré-requisitos não foram cumpridos.",
       "AutoOpenCreator": "Abrir criação ao criar personagem",
-      "AutoOpenCreatorHint": "Abre o assistente automaticamente quando um personagem novo é criado."
+      "AutoOpenCreatorHint": "Abre o assistente automaticamente quando um personagem novo é criado.",
+      "AutoFlatFooted": "Surpreso no início do combate",
+      "AutoFlatFootedHint": "Ao iniciar o combate, todos os combatentes ficam Surpresos até o seu primeiro turno (removido automaticamente)."
     },
     "CG": {
       "Step": {
@@ -769,6 +775,55 @@
         "locoExtra": "Custo da locomoção andando",
         "selfDestruct": "Autodestruição (dano máx. × 20)"
       }
+    },
+    "Recover": "Recuperar",
+    "RecoverHint": "3 ações rápidas: +1 passo na trilha de condição (não com condição persistente)",
+    "Recovered": "Usou a ação Recuperar: +1 passo na trilha de condição.",
+    "Status": {
+      "dead": "Morto",
+      "unconscious": "Inconsciente / desativado",
+      "helpless": "Indefeso",
+      "flatFooted": "Surpreso (sem Des na Ref)",
+      "prone": "Caído",
+      "fightDefensive": "Lutando defensivamente",
+      "totalDefense": "Defesa total",
+      "charging": "Investida (−2 Ref)",
+      "grabbed": "Agarrado",
+      "pinned": "Imobilizado",
+      "cover": "Cobertura (+5 Ref)",
+      "improvedCover": "Cobertura melhorada (+10)",
+      "concealment": "Camuflagem",
+      "totalConcealment": "Camuflagem total",
+      "rage": "Fúria (+2)",
+      "aiming": "Mirando"
+    },
+    "TargetNote": {
+      "prone-melee": "caído: +5 no corpo a corpo",
+      "prone-ranged": "caído: −5 à distância",
+      "helpless": "indefeso: +5 no corpo a corpo",
+      "aim-cover": "mirou: ignora cobertura",
+      "concealment": "camuflagem −2",
+      "total-concealment": "camuflagem total −5"
+    },
+    "Effect": {
+      "Conditions": "Condições",
+      "ConditionsHint": "Clique para ativar/desativar (o mesmo do HUD do token). Os efeitos são aplicados automaticamente: surpreso/indefeso/imobilizado perdem a Des na Reflexos; caído −5 no corpo a corpo; luta defensiva +2 (+5 com Acrobatics treinada) e −5 nos ataques; defesa total +5/+10; agarrado −2 (exceto armas leves/naturais) e sem deslocamento; cobertura e camuflagem ajustam os ataques contra o personagem.",
+      "Effects": "Efeitos ativos",
+      "EffectsHint": "Buffs e penalidades com modificadores e duração em rodadas. Efeitos com duração são removidos no início do turno do personagem após o prazo (o Mestre precisa estar conectado).",
+      "New": "Novo efeito",
+      "Edit": "Editar efeito",
+      "Save": "Salvar",
+      "Preset": "Modelo pronto",
+      "Duration": "Duração",
+      "DurationHint": "vazio = permanente; 0 = até o próximo turno; N = rodadas",
+      "ModsHint": "Modificadores (mesmos alvos e tipos dos itens). Bônus do mesmo tipo não se acumulam, exceto esquiva e sem tipo.",
+      "Statuses": "Condições aplicadas por este efeito",
+      "Permanent": "Permanente",
+      "UntilNextTurn": "Até o próximo turno",
+      "Rounds": "{n} rodada(s)",
+      "Toggle": "Ativar/desativar",
+      "None": "Nenhum efeito ativo.",
+      "Unnamed": "Efeito"
     }
   }
 }

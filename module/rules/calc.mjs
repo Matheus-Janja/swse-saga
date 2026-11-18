@@ -4,6 +4,7 @@
  */
 import { SWSE } from "../config.mjs";
 import { bestAppendage, locomotionSpeed } from "./droid.mjs";
+import { statusEffects } from "./effects.mjs";
 
 export const abilityMod = score => Math.floor((Number(score) - 10) / 2);
 
@@ -151,6 +152,18 @@ export function computeActor(sys, items, opts = {}) {
   for (const a of armors) pushItemMods(a);
   const droidSystems = byType("droidSystem");
   for (const s of droidSystems) pushItemMods(s);
+  // Status (condições de combate) e efeitos ativos (buffs temporários)
+  const statuses = opts.statuses instanceof Set ? opts.statuses : new Set(opts.statuses ?? []);
+  const acrobaticsTrained = !!sys.skills?.acrobatics?.trained || choicesOf("skill-training").includes("acrobatics");
+  const st = statusEffects(statuses, { acrobaticsTrained, uncannyDodge: has("uncanny-dodge-i") });
+  d.status = { ...st, list: [...statuses] };
+  for (const m of st.mods) rawMods.push({ target: m.target, value: Number(m.value), type: m.type, source: m.source });
+  for (const eff of opts.effects ?? []) {
+    for (const m of eff.modifiers ?? []) {
+      if (m.disabled || !m.target) continue;
+      rawMods.push({ target: m.target, value: evalModifierValue(m.value, rollData), type: m.type || "untyped", source: eff.name || "Efeito" });
+    }
+  }
   for (const m of sys.customModifiers ?? []) {
     if (m.disabled) continue;
     rawMods.push({ target: m.target, value: evalModifierValue(m.value, rollData), type: m.type || "untyped", source: m.label || "Custom" });
@@ -207,7 +220,9 @@ export function computeActor(sys, items, opts = {}) {
 
   // --- Defesas ---
   const dexMod = d.abilities.dex.mod;
-  const dexToReflex = d.armor ? Math.min(dexMod, d.armor.maxDex) : dexMod;
+  let dexToReflex = d.armor ? Math.min(dexMod, d.armor.maxDex) : dexMod;
+  // Surpreso, indefeso, imobilizado: perde o bônus de Destreza (e de esquiva) na Reflexos
+  if (st.noDex) dexToReflex = Math.min(dexToReflex, 0);
   let levelOrArmor = heroicLevel;
   if (d.armor) {
     const ab = d.armor.reflexBonus;
@@ -217,12 +232,13 @@ export function computeActor(sys, items, opts = {}) {
   }
   const allDef = mod("defenses.all");
   const misc = k => Number(sys.defenses?.[k]?.misc) || 0;
-  const reflexParts = { base: 10, level: levelOrArmor, ability: dexToReflex, class: classDef.reflex, size: size.reflex, mods: mod("defenses.reflex") + allDef, misc: misc("reflex"), condition: d.conditionPenalty };
+  const dodgeAll = (agg["defenses.reflex"]?.parts ?? []).concat(agg["defenses.all"]?.parts ?? []).filter(p => p.type === "dodge").reduce((a, p) => a + p.value, 0);
+  const reflexParts = { base: 10, level: levelOrArmor, ability: dexToReflex, class: classDef.reflex, size: size.reflex, mods: mod("defenses.reflex") + allDef - (st.noDex ? dodgeAll : 0), misc: misc("reflex"), condition: d.conditionPenalty };
   const fortAbility = isDroid ? d.abilities.str.mod : d.abilities.con.mod;
   const fortParts = { base: 10, level: heroicLevel, ability: fortAbility, class: classDef.fortitude, equipment: d.armor?.fortBonus ?? 0, mods: mod("defenses.fortitude") + allDef, misc: misc("fortitude"), condition: d.conditionPenalty };
   const willParts = { base: 10, level: heroicLevel, ability: d.abilities.wis.mod, class: classDef.will, mods: mod("defenses.will") + allDef, misc: misc("will"), condition: d.conditionPenalty };
   const sum = o => Object.values(o).reduce((a, b) => a + (Number(b) || 0), 0);
-  const dodge = (agg["defenses.reflex"]?.parts ?? []).concat(agg["defenses.all"]?.parts ?? []).filter(p => p.type === "dodge").reduce((a, p) => a + p.value, 0);
+  const dodge = st.noDex ? 0 : dodgeAll;
   d.defenses = {
     reflex: { total: sum(reflexParts), parts: reflexParts, flatFooted: sum(reflexParts) - Math.max(dexToReflex, 0) - dodge },
     fortitude: { total: sum(fortParts), parts: fortParts },
@@ -297,6 +313,9 @@ export function computeActor(sys, items, opts = {}) {
   }
   if (has("long-stride") && (!d.armor || d.armor.category === "light")) speed += 2;
   d.speed = speed + mod("speed") + (Number(sys.speed?.misc) || 0);
+  // −10 na trilha de condição: move-se à metade do deslocamento; agarrado/imobilizado não se move
+  if (condStep === 4) d.speed = Math.floor(d.speed / 2);
+  if (st.grabbed || condStep >= 5) d.speed = 0;
 
   // --- Pontos da Força ---
   let fpBase = 5;

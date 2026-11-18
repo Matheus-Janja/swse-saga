@@ -2,6 +2,8 @@ import { SWSE, SYSTEM_ID } from "../config.mjs";
 import { weaponProfile } from "../rolls/attack.mjs";
 import { promptChoice } from "../helpers/choices.mjs";
 import { fixArrayFields } from "../helpers/form.mjs";
+import { STATUSES } from "../rules/effects.mjs";
+import { effectDialog, durationLabel } from "../helpers/effects.mjs";
 
 const { HandlebarsApplicationMixin } = foundry.applications.api;
 const TPL = p => `systems/${SYSTEM_ID}/templates/actor/${p}`;
@@ -22,6 +24,12 @@ export class SWSEActorSheet extends HandlebarsApplicationMixin(foundry.applicati
       createItem: SWSEActorSheet.#onCreateItem,
       toggleEquip: SWSEActorSheet.#onToggleEquip,
       setCondition: SWSEActorSheet.#onSetCondition,
+      recover: SWSEActorSheet.#onRecover,
+      toggleStatus: SWSEActorSheet.#onToggleStatus,
+      createEffect: SWSEActorSheet.#onCreateEffect,
+      editEffect: SWSEActorSheet.#onEditEffect,
+      toggleEffect: SWSEActorSheet.#onToggleEffect,
+      deleteEffect: SWSEActorSheet.#onDeleteEffect,
       secondWind: SWSEActorSheet.#onSecondWind,
       rest: SWSEActorSheet.#onRest,
       openCreator: SWSEActorSheet.#onOpenCreator,
@@ -48,6 +56,7 @@ export class SWSEActorSheet extends HandlebarsApplicationMixin(foundry.applicati
     talents: { template: TPL("parts/talents.hbs"), scrollable: [""] },
     force: { template: TPL("parts/force.hbs"), scrollable: [""] },
     gear: { template: TPL("parts/gear.hbs"), scrollable: [""] },
+    effects: { template: TPL("parts/effects.hbs"), scrollable: [""] },
     bio: { template: TPL("parts/bio.hbs"), scrollable: [""] }
   };
 
@@ -60,6 +69,7 @@ export class SWSEActorSheet extends HandlebarsApplicationMixin(foundry.applicati
         { id: "talents", label: "SWSE.Tab.talents", icon: "fa-solid fa-star" },
         { id: "force", label: "SWSE.Tab.force", icon: "fa-solid fa-hand-sparkles" },
         { id: "gear", label: "SWSE.Tab.gear", icon: "fa-solid fa-suitcase" },
+        { id: "effects", label: "SWSE.Tab.effects", icon: "fa-solid fa-bolt" },
         { id: "bio", label: "SWSE.Tab.bio", icon: "fa-solid fa-book" }
       ],
       initial: "main"
@@ -150,6 +160,21 @@ export class SWSEActorSheet extends HandlebarsApplicationMixin(foundry.applicati
     context.bonusTypes = SWSE.bonusTypes;
     context.sizes = Object.fromEntries(Object.entries(SWSE.sizes).map(([k, v]) => [k, v.label]));
     context.customModifiers = sys.customModifiers.map((m, i) => ({ ...m, index: i }));
+    const active = actor.statuses ?? new Set();
+    context.statusList = STATUSES.map(s => ({ id: s.id, label: L(s.name), img: s.img, active: active.has(s.id) }));
+    const allEffects = typeof actor.allApplicableEffects === "function" ? Array.from(actor.allApplicableEffects()) : Array.from(actor.effects);
+    context.effects = allEffects.map(e => {
+      const mods = e.flags?.["swse-saga"]?.modifiers ?? [];
+      const targetLabel = t => L(context.modifierTargets[t] ?? t);
+      return {
+        uuid: e.uuid, name: e.name, img: e.img, disabled: e.disabled,
+        source: e.parent?.documentName === "Item" ? e.parent.name : "",
+        statuses: Array.from(e.statuses ?? []).map(id => L(STATUSES.find(s => s.id === id)?.name ?? id)).join(", "),
+        mods: mods.map(m => `${targetLabel(m.target)} ${Number(m.value) >= 0 ? "+" : ""}${m.value}${m.type && m.type !== "untyped" ? ` (${L(SWSE.bonusTypes[m.type] ?? m.type)})` : ""}`).join(", "),
+        duration: durationLabel(e)
+      };
+    });
+    context.statusSummary = context.statusList.filter(s => s.active).map(s => s.label).join(", ");
     context.xpNext = SWSE.xpTable[Math.min(sys.level, 19)] ?? "—";
     context.canLevelUp = sys.xp >= (SWSE.xpTable[sys.level] ?? Infinity);
 
@@ -310,6 +335,22 @@ export class SWSEActorSheet extends HandlebarsApplicationMixin(foundry.applicati
     if (!(await this.actor.spendForcePoint())) return;
     const roll = await new Roll(this.actor.forcePointFormula).evaluate();
     roll.toMessage({ speaker: ChatMessage.getSpeaker({ actor: this.actor }), flavor: game.i18n.localize("SWSE.ForcePointSpent") });
+  }
+
+  static #onRecover() { this.actor.recover(); }
+  static #onToggleStatus(event, target) { this.actor.toggleStatusEffect(target.dataset.status); }
+  static #onCreateEffect() { effectDialog(this.actor); }
+  static async #onEditEffect(event, target) {
+    const e = await fromUuid(target.closest("[data-effect-uuid]").dataset.effectUuid);
+    if (e) effectDialog(this.actor, e);
+  }
+  static async #onToggleEffect(event, target) {
+    const e = await fromUuid(target.closest("[data-effect-uuid]").dataset.effectUuid);
+    e?.update({ disabled: !e.disabled });
+  }
+  static async #onDeleteEffect(event, target) {
+    const e = await fromUuid(target.closest("[data-effect-uuid]").dataset.effectUuid);
+    e?.delete();
   }
 
   static #onGrapple() {

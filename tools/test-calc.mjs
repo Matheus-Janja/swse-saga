@@ -202,4 +202,73 @@ t("Veículo: piloto heroico substitui armadura; artilheiro usa BBA próprio e ½
   });
 }
 
+{
+  const { targetAdjustment } = await import("../module/rules/effects.mjs");
+  const { isExpired } = await import("../module/helpers/effects.mjs");
+  const base = () => {
+    const sc = find(classes, "scout"); sc.system.hpRolls = [24];
+    return [find(species, "human"), sc];
+  };
+  const abil = { str: 10, dex: 16, con: 10, int: 10, wis: 10, cha: 10 };
+
+  t("Condições: surpreso perde Des e esquiva; Uncanny Dodge I mantém", () => {
+    const items = [...base(), find(feats, "dodge")];
+    const fx = [{ name: "Dodge", modifiers: [{ target: "defenses.reflex", value: "1", type: "dodge" }] }];
+    const normal = computeActor(sys(abil), items, { effects: fx });
+    const ff = computeActor(sys(abil), items, { effects: fx, statuses: ["flatFooted"] });
+    assert.equal(normal.defenses.reflex.total - ff.defenses.reflex.total, 3 + 1);
+    const ud = computeActor(sys(abil), [...items, find(talents, "uncanny-dodge-i")], { effects: fx, statuses: ["flatFooted"] });
+    assert.equal(ud.defenses.reflex.total, normal.defenses.reflex.total);
+    const pinned = computeActor(sys(abil), [...items, find(talents, "uncanny-dodge-i")], { statuses: ["pinned"] });
+    assert.equal(pinned.speed, 0);
+    assert.ok(pinned.defenses.reflex.total < normal.defenses.reflex.total);
+  });
+
+  t("Condições: luta defensiva, defesa total, caído, cobertura e −10 na trilha", () => {
+    const n0 = computeActor(sys(abil), base());
+    const fd = computeActor(sys(abil), base(), { statuses: ["fightDefensive"] });
+    assert.equal(fd.defenses.reflex.total, n0.defenses.reflex.total + 2);
+    assert.equal(fd.attack.melee, n0.attack.melee - 5);
+    const s2 = sys(abil); s2.skills = { acrobatics: { trained: true } };
+    assert.equal(computeActor(s2, base(), { statuses: ["totalDefense"] }).defenses.reflex.total, n0.defenses.reflex.total + 10);
+    assert.equal(computeActor(sys(abil), base(), { statuses: ["prone"] }).attack.melee, n0.attack.melee - 5);
+    assert.equal(computeActor(sys(abil), base(), { statuses: ["cover", "improvedCover"] }).defenses.reflex.total, n0.defenses.reflex.total + 10);
+    assert.equal(computeActor(sys(abil, { condition: { step: 4 } }), base()).speed, 3);
+  });
+
+  t("Buffs: modificadores do mesmo tipo não se acumulam", () => {
+    const fx = [
+      { name: "Born Leader", modifiers: [{ target: "attack.all", value: "1", type: "insight" }] },
+      { name: "Battle Meditation", modifiers: [{ target: "attack.all", value: "1", type: "insight" }] },
+      { name: "Inspire Confidence", modifiers: [{ target: "attack.all", value: "1", type: "morale" }] }
+    ];
+    const d0 = computeActor(sys(abil), base());
+    assert.equal(computeActor(sys(abil), base(), { effects: fx }).attack.ranged, d0.attack.ranged + 2);
+  });
+
+  t("Ajuste por alvo: caído, cobertura com mira, camuflagem e Keen Shot", () => {
+    assert.equal(targetAdjustment({ prone: true }, { melee: true }).delta, -5);
+    assert.equal(targetAdjustment({ prone: true }, { melee: false }).delta, 5);
+    assert.equal(targetAdjustment({ cover: 5 }, { melee: false, aim: true }).delta, -5);
+    assert.equal(targetAdjustment({ concealment: 2 }, { melee: false, keenShot: true }).delta, 0);
+    assert.equal(targetAdjustment({ concealment: 5 }, { melee: false, keenShot: true }).delta, 5);
+  });
+
+  t("Expiração: até o próximo turno do personagem", () => {
+    const fx = exp => ({ flags: { "swse-saga": { expiry: exp } } });
+    // Criado no próprio turno (rodada 2, turno 1): não expira nesse turno, expira na rodada 3
+    const own = fx({ rounds: 0, combat: "c", round: 2, turn: 1 });
+    assert.equal(isExpired(own, { id: "c", round: 2, turn: 1 }), false);
+    assert.equal(isExpired(own, { id: "c", round: 3, turn: 1 }), true);
+    // Criado por outro antes do turno do personagem na mesma rodada: expira no turno dele
+    assert.equal(isExpired(fx({ rounds: 0, combat: "c", round: 2, turn: 0 }), { id: "c", round: 2, turn: 3 }), true);
+    // Surpreso do início do combate: some no primeiro turno
+    assert.equal(isExpired(fx({ rounds: 0, combat: "c", round: 1, turn: -1 }), { id: "c", round: 1, turn: 0 }), true);
+    // 3 rodadas
+    assert.equal(isExpired(fx({ rounds: 3, combat: "c", round: 1, turn: 2 }), { id: "c", round: 3, turn: 2 }), false);
+    assert.equal(isExpired(fx({ rounds: 3, combat: "c", round: 1, turn: 2 }), { id: "c", round: 4, turn: 2 }), true);
+    assert.equal(isExpired({ flags: {} }, { id: "c", round: 9, turn: 0 }), false);
+  });
+}
+
 console.log(`\n${n} testes passaram.`);

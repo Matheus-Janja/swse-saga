@@ -63,6 +63,13 @@ Marque **"Personagem droide"** no primeiro passo da criação (Cap. 11):
 - Na ficha: Fortitude com Força, PV sem Con, deslocamento do melhor sistema de locomoção, armadura embutida sem redução de deslocamento, pacote sensorial (+2 Perception), rerrolagens de garras de escalada e servos de salto, dano desarmado pelo apêndice (Tabela 11-4), processador básico restringindo perícias sem treino, imunidade a atordoamento e vulnerabilidade a íon.
 - Compêndio **Sistemas de Droide** com 59 sistemas e 11 armaduras embutidas.
 
+### Condições e efeitos
+- **Condições de combate** (HUD do token ou aba **Efeitos** da ficha): surpreso, caído, indefeso, inconsciente, lutando defensivamente, defesa total, investida, agarrado, imobilizado, cobertura, cobertura melhorada, camuflagem, camuflagem total, fúria e mirando — cada uma aplicada automaticamente às Defesas, ataques e deslocamento (Cap. 9). *Uncanny Dodge I* mantém a Destreza quando surpreso.
+- **Ataques consideram o estado do alvo**: caído (+5 corpo a corpo / −5 à distância), indefeso, cobertura ignorada ao mirar e camuflagem (−2/−5, *Keen Shot*). Nova opção **Flanqueando (+2)**; a investida aplica −2 Ref por uma rodada sozinha.
+- **Efeitos temporários (buffs/penalidades)** com modificadores (mesmos alvos e regras de empilhamento dos itens) e duração em rodadas, removidos no início do turno do personagem. Modelos prontos: Born Leader, Battle Meditation, Inspire Confidence, Rally, Dark Presence, Fool's Luck, Lightsaber Defense, Dodge, Battle Strike, Dark Rage, Force Talisman, Surge, Shift Defense e outros.
+- **Início de combate**: todos ficam surpresos até o primeiro turno (configurável). **Recuperar** (+1 passo na trilha) na ficha; −10 na trilha reduz o deslocamento à metade; atordoamento/íon a 0 PV levam ao fim da trilha.
+- Macros: *Aplicar Efeito aos Selecionados* e *Alternar Condição*.
+
 ### Compêndios
 Espécies (21, incluindo Aqualish, Hutt, Neimoidian e Yuuzhan Vong do Cap. 16), classes heroicas, de prestígio e não heroica, 69 feats, todas as árvores de talento do livro básico (classes, Força e prestígio), 16 poderes da Força, técnicas e segredos, armas, armaduras, equipamentos e macros. Erratas oficiais de out/2008 aplicadas.
 

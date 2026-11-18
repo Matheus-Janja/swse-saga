@@ -237,7 +237,7 @@ export class SWSEActor extends Actor {
         else { status = game.i18n.localize("SWSE.Chat.Disabled"); updates["system.condition.step"] = 5; }
       } else if (step >= 5) status = game.i18n.localize("SWSE.Chat.Disabled");
     } else if (newHp <= 0) {
-      if (type === "stun" || type === "ion") status = game.i18n.localize("SWSE.Chat.Unconscious");
+      if (type === "stun" || type === "ion") { status = game.i18n.localize("SWSE.Chat.Unconscious"); updates["system.condition.step"] = 5; }
       else if (this.type === "npc" && !this.system.heroicLevel) status = game.i18n.localize("SWSE.Chat.Dead");
       else if (amount >= dt) status = game.i18n.localize("SWSE.Chat.Dead");
       else { status = game.i18n.localize("SWSE.Chat.Unconscious"); updates["system.condition.step"] = 5; }
@@ -276,6 +276,34 @@ export class SWSEActor extends Actor {
     const roll = await this.rollSkill("mechanics", { dc: 20 });
     if (!roll || roll.total < 20) return;
     await this.shiftCondition(-1);
+  }
+
+  /* -------------------------------------------- */
+  /*  Efeitos                                     */
+  /* -------------------------------------------- */
+
+  /**
+   * Cria um efeito temporário com modificadores e/ou status.
+   * @param {object} o { name, img, modifiers, statuses, rounds } — rounds: dura até o início do turno do ator
+   *   após N rodadas (0 = até o próximo turno dele; null = permanente).
+   */
+  async addEffect({ name, img, modifiers = [], statuses = [], rounds = null, origin = null } = {}) {
+    const combat = game.combat;
+    const flags = { "swse-saga": { modifiers } };
+    if (rounds !== null && rounds !== undefined && rounds !== "") {
+      flags["swse-saga"].expiry = { rounds: Number(rounds), combat: combat?.id ?? null, round: combat?.round ?? 0, turn: combat?.started ? combat.turn : -1 };
+    }
+    return this.createEmbeddedDocuments("ActiveEffect", [{
+      name, img: img || "systems/swse-saga/assets/icons/status/buff.svg", statuses, disabled: false, origin, flags
+    }]);
+  }
+
+  /** Recuperar (3 ações rápidas): +1 passo na trilha de condição, exceto com condição persistente. */
+  async recover() {
+    if (this.system.condition.persistent) return ui.notifications.warn(game.i18n.localize("SWSE.Warn.Persistent"));
+    if (this.system.condition.step <= 0) return;
+    await this.shiftCondition(-1);
+    ChatMessage.create({ speaker: ChatMessage.getSpeaker({ actor: this }), content: `<div class="swse-card"><p>${game.i18n.localize("SWSE.Recovered")}</p></div>` });
   }
 
   async applyHealing(amount) {

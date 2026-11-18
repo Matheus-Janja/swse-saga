@@ -86,7 +86,8 @@ export function weaponProfileFrom(ctx, weapon) {
     armor: ctx.armorPenalty ?? 0,
     condition: ctx.conditionPenalty ?? 0,
     mods: m("attack.all") + m(melee ? "attack.melee" : "attack.ranged"),
-    weapon: w.attackBonus || 0
+    weapon: w.attackBonus || 0,
+    grabbed: ctx.grabbed && !natural && !light ? -2 : 0
   };
   const damageParts = {
     halfLevel: ctx.damageHalfLevel ?? ctx.halfLevel,

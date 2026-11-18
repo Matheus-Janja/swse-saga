@@ -3,6 +3,20 @@ import { computeActor } from "../rules/calc.mjs";
 
 const fields = foundry.data.fields;
 
+/** Status e modificadores dos efeitos ativos do ator (inclusive os transferidos de itens). */
+export function collectEffects(actor) {
+  const statuses = new Set();
+  const effects = [];
+  const all = typeof actor.allApplicableEffects === "function" ? Array.from(actor.allApplicableEffects()) : Array.from(actor.effects ?? []);
+  for (const e of all) {
+    if (e.disabled || e.isSuppressed) continue;
+    for (const s of e.statuses ?? []) statuses.add(s);
+    const modifiers = e.flags?.["swse-saga"]?.modifiers;
+    if (Array.isArray(modifiers) && modifiers.length) effects.push({ name: e.name, modifiers });
+  }
+  return { statuses, effects };
+}
+
 const num = (initial = 0, opts = {}) => new fields.NumberField({ required: true, nullable: false, integer: true, initial, ...opts });
 
 export function modifierField() {
@@ -85,7 +99,8 @@ class SWSEActorData extends foundry.abstract.TypeDataModel {
     const items = actor.items.map(i => ({ type: i.type, name: i.name, system: i.system }));
     const src = this.toObject(false);
     src.isNPC = this.isNPC;
-    const d = computeActor(src, items);
+    const { statuses, effects } = collectEffects(actor);
+    const d = computeActor(src, items, { statuses, effects });
     Object.assign(this, { derived: d });
     // Atalhos práticos para fórmulas (@abilities.str.mod, @skills.perception.total, @defenses.reflex.total ...)
     for (const [k, v] of Object.entries(d.abilities)) Object.assign(this.abilities[k], v);

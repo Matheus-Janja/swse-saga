@@ -16,6 +16,7 @@ import { LevelUpApp } from "./apps/levelup.mjs";
 import { attackWithWeapon } from "./rolls/attack.mjs";
 import { onRenderChatMessage, registerSocket, requestDamage } from "./rolls/damage.mjs";
 import * as api from "./helpers/api.mjs";
+import { configureStatusEffects, registerEffectHooks, effectDialog, effectToSelected, toggleStatusPrompt } from "./helpers/effects.mjs";
 
 Hooks.once("init", () => {
   console.log(`${SYSTEM_ID} | Inicializando Star Wars Saga Edition`);
@@ -46,6 +47,8 @@ Hooks.once("init", () => {
 
   registerSettings();
   registerHandlebars();
+  configureStatusEffects();
+  registerEffectHooks();
 
   game.swse = {
     config: SWSE,
@@ -53,6 +56,9 @@ Hooks.once("init", () => {
     LevelUpApp,
     attackWithWeapon,
     requestDamage,
+    effectDialog,
+    effectToSelected,
+    toggleStatusPrompt,
     openCharacterCreator: actor => openApp(() => new CharacterCreator({ actor })),
     openLevelUp: (actor, opts = {}) => openApp(() => new LevelUpApp({ actor, ...opts })),
     ...api
@@ -67,6 +73,7 @@ Hooks.once("init", () => {
     `systems/${SYSTEM_ID}/templates/actor/parts/force.hbs`,
     `systems/${SYSTEM_ID}/templates/actor/parts/gear.hbs`,
     `systems/${SYSTEM_ID}/templates/actor/parts/bio.hbs`,
+    `systems/${SYSTEM_ID}/templates/actor/parts/effects.hbs`,
     `systems/${SYSTEM_ID}/templates/actor/vehicle-header.hbs`,
     `systems/${SYSTEM_ID}/templates/actor/vehicle-main.hbs`,
     `systems/${SYSTEM_ID}/templates/actor/vehicle-details.hbs`
@@ -104,6 +111,10 @@ function registerSettings() {
   });
   game.settings.register(SYSTEM_ID, "enforcePrereqs", {
     name: "SWSE.Settings.EnforcePrereqs", hint: "SWSE.Settings.EnforcePrereqsHint",
+    scope: "world", config: true, type: Boolean, default: true
+  });
+  game.settings.register(SYSTEM_ID, "autoFlatFooted", {
+    name: "SWSE.Settings.AutoFlatFooted", hint: "SWSE.Settings.AutoFlatFootedHint",
     scope: "world", config: true, type: Boolean, default: true
   });
   game.settings.register(SYSTEM_ID, "autoOpenCreator", {

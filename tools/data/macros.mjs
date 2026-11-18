@@ -28,6 +28,12 @@ for (const t of canvas.tokens.controlled) await t.actor?.rest();`),
   M("Recuperar Poderes da Força", "icons/magic/perception/third-eye-blue-red.webp",
 `for (const t of canvas.tokens.controlled) await t.actor?.recoverForcePowers();
 ui.notifications.info("Poderes da Força recuperados.");`),
+  M("Aplicar Efeito aos Selecionados", "icons/svg/aura.svg",
+`// Cria um buff/penalidade (com modelos prontos e duração) em todos os tokens selecionados.
+game.swse.effectToSelected();`),
+  M("Alternar Condição (selecionados)", "icons/svg/aura.svg",
+`// Ativa/desativa uma condição (caído, surpreso, cobertura...) em todos os tokens selecionados.
+game.swse.toggleStatusPrompt();`),
   M("Criação de Personagem", "icons/sundries/documents/document-sealed-signatures-red.webp",
 `const actor = canvas.tokens.controlled[0]?.actor ?? game.user.character;
 game.swse.openCharacterCreator(actor);`),

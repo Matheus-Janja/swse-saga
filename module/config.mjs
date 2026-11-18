@@ -218,6 +218,7 @@ SWSE.bonusTypes = {
   natural: "SWSE.BonusType.natural",
   luck: "SWSE.BonusType.luck",
   rage: "SWSE.BonusType.rage",
+  cover: "SWSE.BonusType.cover",
   penalty: "SWSE.BonusType.penalty"
 };
 

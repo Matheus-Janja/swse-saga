@@ -157,7 +157,8 @@
       "talents": "Feats & Talents",
       "force": "Force",
       "gear": "Gear",
-      "bio": "Biography"
+      "bio": "Biography",
+      "effects": "Effects"
     },
     "Ability": {
       "label": "Abil.",
@@ -336,7 +337,8 @@
       "natural": "Natural armor",
       "luck": "Luck",
       "rage": "Rage",
-      "penalty": "Penalty"
+      "penalty": "Penalty",
+      "cover": "Cover"
     },
     "Target": {
       "defensesAll": "All Defenses",
@@ -443,7 +445,8 @@
       "InaccurateLong": "Inaccurate weapons can't attack at long range.",
       "BonusStepsNote": "If it deals damage, the target also moves down the condition track ({list}).",
       "DevastatingNote": "Devastating Attack: target's damage threshold treated as {n} lower.",
-      "StunningStrikeNote": "Stunning Strike: −1 extra step if damage exceeds threshold."
+      "StunningStrikeNote": "Stunning Strike: −1 extra step if damage exceeds threshold.",
+      "Flanking": "Flanking (+2)"
     },
     "Chat": {
       "TookDamage": "Took {amount} damage ({type}; rolled: {raw}).",
@@ -490,7 +493,8 @@
       "NoWeapons": "This character has no weapons.",
       "NoPowers": "This character knows no Force powers.",
       "MacroOwnedOnly": "Drag items from a character sheet.",
-      "ItemNotFound": "Item {name} not found."
+      "ItemNotFound": "Item {name} not found.",
+      "Persistent": "Persistent condition: Recover can't be used."
     },
     "Settings": {
       "HpMethod": "HP on level up",
@@ -507,7 +511,9 @@
       "EnforcePrereqs": "Enforce prerequisites",
       "EnforcePrereqsHint": "In the wizards, hide/block feats, talents and classes whose prerequisites aren't met.",
       "AutoOpenCreator": "Open creation on new character",
-      "AutoOpenCreatorHint": "Automatically opens the wizard when a new character is created."
+      "AutoOpenCreatorHint": "Automatically opens the wizard when a new character is created.",
+      "AutoFlatFooted": "Flat-footed at combat start",
+      "AutoFlatFootedHint": "When combat starts, every combatant is flat-footed until their first turn (removed automatically)."
     },
     "CG": {
       "Step": {
@@ -769,6 +775,55 @@
         "locoExtra": "Walking locomotion cost",
         "selfDestruct": "Self-destruct (max damage × 20)"
       }
+    },
+    "Recover": "Recover",
+    "RecoverHint": "3 swift actions: +1 step on the condition track (not with a persistent condition)",
+    "Recovered": "Used the Recover action: +1 step on the condition track.",
+    "Status": {
+      "dead": "Dead",
+      "unconscious": "Unconscious / disabled",
+      "helpless": "Helpless",
+      "flatFooted": "Flat-footed (no Dex to Ref)",
+      "prone": "Prone",
+      "fightDefensive": "Fighting defensively",
+      "totalDefense": "Total defense",
+      "charging": "Charging (−2 Ref)",
+      "grabbed": "Grabbed",
+      "pinned": "Pinned",
+      "cover": "Cover (+5 Ref)",
+      "improvedCover": "Improved cover (+10)",
+      "concealment": "Concealment",
+      "totalConcealment": "Total concealment",
+      "rage": "Rage (+2)",
+      "aiming": "Aiming"
+    },
+    "TargetNote": {
+      "prone-melee": "prone: +5 melee",
+      "prone-ranged": "prone: −5 ranged",
+      "helpless": "helpless: +5 melee",
+      "aim-cover": "aimed: ignores cover",
+      "concealment": "concealment −2",
+      "total-concealment": "total concealment −5"
+    },
+    "Effect": {
+      "Conditions": "Conditions",
+      "ConditionsHint": "Click to toggle (same as the token HUD). Effects apply automatically: flat-footed/helpless/pinned lose Dex to Reflex; prone −5 melee; fighting defensively +2 (+5 trained Acrobatics) and −5 attacks; total defense +5/+10; grabbed −2 (except light/natural weapons) and no movement; cover and concealment adjust attacks against the character.",
+      "Effects": "Active effects",
+      "EffectsHint": "Buffs and penalties with modifiers and a duration in rounds. Timed effects are removed at the start of the character's turn once they expire (requires a connected GM).",
+      "New": "New effect",
+      "Edit": "Edit effect",
+      "Save": "Save",
+      "Preset": "Preset",
+      "Duration": "Duration",
+      "DurationHint": "blank = permanent; 0 = until next turn; N = rounds",
+      "ModsHint": "Modifiers (same targets and types as items). Bonuses of the same type don't stack, except dodge and untyped.",
+      "Statuses": "Conditions applied by this effect",
+      "Permanent": "Permanent",
+      "UntilNextTurn": "Until next turn",
+      "Rounds": "{n} round(s)",
+      "Toggle": "Toggle",
+      "None": "No active effects.",
+      "Unnamed": "Effect"
     }
   }
 }
