@@ -397,7 +397,9 @@
       "reach": "Alcance",
       "strDamage": "Soma Força ao dano",
       "noStrDamage": "Não soma Força",
-      "ignoresDR": "Ignora RD"
+      "ignoresDR": "Ignora RD",
+      "settings": "Ajustes de potência",
+      "settingsHint": "Formato dano:tiros separados por | (ex.: 3d4:1|3d6:5|3d8:10). Aparece como opção no diálogo de ataque."
     },
     "Attack": {
       "Title": "Ataque",
@@ -450,7 +452,9 @@
       "Flanking": "Flanqueando (+2)",
       "Disarm": "Desarmar (alvo +10 Ref)",
       "DisarmNote": "Desarmar: se acertar, o alvo larga a arma. Se errar, o alvo faz um ataque gratuito contra você.",
-      "DisarmNoteSafe": "Desarmar: se acertar, o alvo larga a arma (se errar, sem ataque gratuito)."
+      "DisarmNoteSafe": "Desarmar: se acertar, o alvo larga a arma (se errar, sem ataque gratuito).",
+      "PowerSetting": "Potência",
+      "Shots": "tiros"
     },
     "Chat": {
       "TookDamage": "Sofreu {amount} de dano ({type}; rolado: {raw}).",
@@ -817,7 +821,8 @@
       "dark-scourge": "Dark Scourge +1",
       "dark-side-scourge": "Dark Side Scourge +Car dano",
       "disarm": "desarmar: +10 Ref",
-      "elusive-target": "Elusive Target: −5"
+      "elusive-target": "Elusive Target: −5",
+      "no-dex": "sem Destreza"
     },
     "Effect": {
       "Conditions": "Condições",
@@ -882,7 +887,15 @@
       "AllOutMsg": "Movimento total (×{mult}): até {n} quadrados (escala de personagem) / {s} (escala de nave) em linha reta.",
       "NoAttackAllOut": "Após movimento total, os artilheiros não podem atacar até o próximo turno.",
       "OutsideDogfight": "Em dogfight, você não pode atacar alvos fora dele.",
-      "InDogfight": "Em dogfight com"
+      "InDogfight": "Em dogfight com",
+      "Battlefield": "Efeito de campo de batalha",
+      "BattlefieldActivate": "Ativar",
+      "BattlefieldHint": "Galaxy at War: o comandante gasta uma ação padrão e o veículo não ataca até o início do próximo turno do comandante. O efeito vale até o fim do próximo turno do veículo para quem estiver no raio (aliados = mesma disposição do token).",
+      "BattlefieldRadius": "raio de {n} quadrados",
+      "BattlefieldNoToken": "O veículo não tem token na cena: o efeito foi aplicado nos tokens marcados.",
+      "NoAttacks": "sem ataques",
+      "Allies": "Aliados afetados",
+      "Enemies": "Inimigos afetados"
     },
     "Talent": {
       "Use": "Usar talento/feat",
@@ -917,7 +930,36 @@
       "Negated": "Ataque negado!",
       "NotNegated": "Não conseguiu negar o ataque.",
       "RedirectNote": "Redirect Shot: você pode fazer um ataque à distância imediato com o disparo desviado.",
-      "ExtremeEffortNote": "Extreme Effort: +5 no próximo teste de Força ou perícia de Força (Climb, Jump, Swim) nesta rodada."
-    }
+      "ExtremeEffortNote": "Extreme Effort: +5 no próximo teste de Força ou perícia de Força (Climb, Jump, Swim) nesta rodada.",
+      "GaWAfterHit": "(use após acertar o ataque; marque os aliados)",
+      "NeedProne": "Precisa estar caído.",
+      "NeedCover": "Precisa estar com cobertura."
+    },
+    "Military": {
+      "title": "Patente e Privilégio (Galaxy at War)",
+      "organization": "Organização militar",
+      "manual": "Ajuste manual",
+      "nco": "Suboficial (teto 11)",
+      "score": "pontuação",
+      "bonus": "bônus de requisição/comando",
+      "orders": "ordens especiais por missão",
+      "minor": "menores",
+      "major": "maiores",
+      "command": "de comando",
+      "breakdown": "Composição da pontuação",
+      "hint": "Os critérios automáticos vêm da ficha (BBA, nível, classes, talentos de Leadership, Skill Focus, Knowledge (tactics), Officer Candidacy Training). Use o ajuste manual para capturas (+¼ do ND), bravura (+2), conflitos (+1), missões fracassadas, infrações etc. O bônus de comando soma em Persuasion com membros da organização."
+    },
+    "Artillery": {
+      "Title": "Ataque de artilharia",
+      "Fire": "Disparar",
+      "Hint": "Galaxy at War: escolha a munição (Tabela 3-3) ou uma ordem especial. Exige comlink, telêmetro e datapad. Marque o alvo do quadrado central primeiro e depois os do splash.",
+      "Reuse": "Reusar resultado de Knowledge (tactics)",
+      "Reused": "Reusando Knowledge (tactics) {n}.",
+      "OffTarget": "Falhou: o ataque cai {n} quadrado(s) fora do alvo (direção a critério do Mestre), em {delay} rodada(s).",
+      "OnTarget": "Acertou a coordenada: o ataque chega em {delay} rodada(s).",
+      "Every": "Repete a cada {every} rodadas",
+      "TargetsHint": "Quadrado central (◎): dano total se acertar, metade se errar. Splash: metade se acertar, nada se errar. Evasion se aplica."
+    },
+    "NaturalWeapon": "Arma natural (dano)"
   }
 }

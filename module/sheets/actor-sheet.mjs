@@ -184,6 +184,8 @@ export class SWSEActorSheet extends HandlebarsApplicationMixin(foundry.applicati
     const TextEditor = foundry.applications.ux.TextEditor.implementation;
     context.enrichedBiography = await TextEditor.enrichHTML(sys.details.biography, { relativeTo: actor, secrets: actor.isOwner });
     context.biographyField = sys.schema.getField("details.biography");
+    // Patente e Privilégio (Galaxy at War): só aparece se o personagem tiver organização militar ou pontuação
+    context.military = d.military ?? null;
     return context;
   }
 

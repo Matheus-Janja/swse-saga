@@ -71,6 +71,8 @@ export function onRenderChatMessage(message, html) {
         for (const s of payload.statusOnHit ?? []) {
           if (target?.hit && !actor.statuses?.has(s)) await requestEffect(actor, { name: game.i18n.localize(`SWSE.Status.${s}`), img: `systems/${SYSTEM_ID}/assets/icons/status/${s}.svg`, statuses: [s] });
         }
+        // Efeitos ao ferir (Staggering Attack, Hijkata Expertise...)
+        for (const e of payload.effectsOnHit ?? []) if (target?.hit) await requestEffect(actor, e);
       } else if (action === "apply-selected") {
         const tokens = canvas.tokens?.controlled ?? [];
         if (!tokens.length) return ui.notifications.warn(game.i18n.localize("SWSE.Warn.SelectTokens"));

@@ -66,6 +66,7 @@ export class SpeciesData extends BaseItemData {
       rerolls: new fields.ArrayField(new fields.SchemaField({ skill: str(), keep: str("second"), label: str() })),
       languages: str(),
       traits: new fields.ArrayField(new fields.SchemaField({ name: str(), text: str() })),
+      naturalWeapon: str(),
       modifiers: modifierField()
     };
   }
@@ -190,7 +191,8 @@ export class WeaponData extends PhysicalItemData {
       critRange: num(20),
       critMultiplier: num(2),
       ammo: new fields.SchemaField({ value: num(0), max: num(0) }),
-      special: str()
+      special: str(),
+      settings: str()
     };
   }
 }

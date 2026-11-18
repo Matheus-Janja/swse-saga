@@ -14,6 +14,8 @@ import { SWSEItemSheet } from "./sheets/item-sheet.mjs";
 import { CharacterCreator } from "./apps/chargen.mjs";
 import { LevelUpApp } from "./apps/levelup.mjs";
 import { attackWithWeapon } from "./rolls/attack.mjs";
+import { artilleryStrike } from "./rolls/artillery.mjs";
+import { battlefieldEffect } from "./rolls/battlefield.mjs";
 import { onRenderChatMessage, registerSocket, requestDamage } from "./rolls/damage.mjs";
 import * as api from "./helpers/api.mjs";
 import { registerTalentHooks, TALENT_ACTIONS } from "./helpers/talent-actions.mjs";
@@ -61,6 +63,8 @@ Hooks.once("init", () => {
     effectDialog,
     effectToSelected,
     toggleStatusPrompt,
+    artilleryStrike,
+    battlefieldEffect,
     openCharacterCreator: actor => openApp(() => new CharacterCreator({ actor })),
     openLevelUp: (actor, opts = {}) => openApp(() => new LevelUpApp({ actor, ...opts })),
     ...api

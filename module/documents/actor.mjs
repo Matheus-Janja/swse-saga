@@ -137,7 +137,13 @@ export class SWSEActor extends Actor {
       extra = ` (+${r.total} Force Recovery)`;
     }
     const newHp = Math.min(hp.max, hp.value + heal);
-    await this.update({ "system.hp.value": newHp, "system.secondWind.used": used + 1 });
+    const upd = { "system.hp.value": newHp, "system.secondWind.used": used + 1 };
+    // Tested in Battle (Galaxy at War): o second wind também sobe +2 passos na trilha de condição
+    if (this.hasFeature("tested-in-battle") && !this.system.condition.persistent && this.system.condition.step > 0) {
+      upd["system.condition.step"] = Math.max(0, this.system.condition.step - 2);
+      extra += " · Tested in Battle: +2 passos";
+    }
+    await this.update(upd);
     ChatMessage.create({
       speaker: ChatMessage.getSpeaker({ actor: this }),
       content: `<div class="swse-card"><h3>${game.i18n.localize("SWSE.SecondWind")}</h3><p>${game.i18n.format("SWSE.HealedFor", { amount: heal })}${extra} → ${newHp}/${hp.max}</p></div>`
@@ -185,6 +191,8 @@ export class SWSEActor extends Actor {
     const isVehicle = this.type === "vehicle";
     if (isVehicle && type === "ion" && this.system.ionVulnerable) amount *= 2;
     const isDroid = !!this.system.derived?.isDroid;
+    // Partes cibernéticas (Galaxy at War) tornam o ser vulnerável a íons como um droide
+    const ionAsDroid = isDroid || !!this.system.derived?.cybernetic;
     const dt = this.system.damageThreshold.total - (opts.thresholdReduction || 0);
     // Shield Rating: reduz o dano; dano >= SR reduz o SR em 5
     const sr = this.system.shieldRating || 0;
@@ -207,7 +215,7 @@ export class SWSEActor extends Actor {
         toHp = Math.floor(toHp / 2);
       }
     } else if (type === "ion") {
-      if (isDroid) {
+      if (ionAsDroid) {
         if (amount >= dt) steps = 2;
         toHp = Math.floor(toHp / 2);
       } else {
@@ -303,7 +311,20 @@ export class SWSEActor extends Actor {
     if (this.system.condition.persistent) return ui.notifications.warn(game.i18n.localize("SWSE.Warn.Persistent"));
     if (this.system.condition.step <= 0) return;
     await this.shiftCondition(-1);
-    ChatMessage.create({ speaker: ChatMessage.getSpeaker({ actor: this }), content: `<div class="swse-card"><p>${game.i18n.localize("SWSE.Recovered")}</p></div>` });
+    let extra = "";
+    // Fortifying Recovery (Galaxy at War): PV temporários = 2 × bônus de Con (mín. 2)
+    if (this.hasFeature("fortifying-recovery")) {
+      const n = Math.max(2, 2 * this.system.abilities.con.mod);
+      await this.gainTempHP(n);
+      extra = ` Fortifying Recovery: +${n} PV temporários.`;
+    }
+    ChatMessage.create({ speaker: ChatMessage.getSpeaker({ actor: this }), content: `<div class="swse-card"><p>${game.i18n.localize("SWSE.Recovered")}${extra}</p></div>` });
+  }
+
+  /** PV temporários (bônus de PV): não acumulam, fica o maior. */
+  async gainTempHP(n) {
+    n = Math.max(0, Math.floor(Number(n) || 0));
+    if (n > (this.system.hp.temp || 0)) await this.update({ "system.hp.temp": n });
   }
 
   async applyHealing(amount) {

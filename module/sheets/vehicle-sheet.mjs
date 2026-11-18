@@ -3,6 +3,7 @@ import { VEHICLE_SIZES, CREW_QUALITY, VEHICLE_WEAPON_TYPES, VEHICLE_ROLES, VEHIC
 import { vehicleWeaponInfo, stationCrew } from "../rolls/vehicle.mjs";
 import * as VC from "../rolls/vehicle-combat.mjs";
 import { effectDialog, durationLabel } from "../helpers/effects.mjs";
+import { battlefieldEffect } from "../rolls/battlefield.mjs";
 
 const { HandlebarsApplicationMixin } = foundry.applications.api;
 const L = k => game.i18n.localize(k);
@@ -171,7 +172,7 @@ export class SWSEVehicleSheet extends HandlebarsApplicationMixin(foundry.applica
     const fn = {
       dogfight: VC.initiateDogfight, dogfightAttack: VC.dogfightAttack, disengage: VC.disengage, ram: VC.ram,
       hazard: VC.hazardCollision, avoid: VC.avoidCollision, speed: VC.increaseSpeed, allOut: VC.allOut,
-      stop: VC.fullStop, shields: VC.toggleShields
+      stop: VC.fullStop, shields: VC.toggleShields, battlefield: battlefieldEffect
     }[target.dataset.op];
     return fn?.(this.actor);
   }

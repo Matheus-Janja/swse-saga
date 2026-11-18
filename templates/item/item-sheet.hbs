@@ -22,6 +22,7 @@
       <label>{{localize "SWSE.SizeLabel"}} <select name="system.size">{{selectOptions sizes selected=system.size localize=true}}</select></label>
       <label>{{localize "SWSE.Speed"}} <input type="number" name="system.speed" value="{{system.speed}}"></label>
       <label>{{localize "SWSE.SwimSpeed"}} <input type="number" name="system.swimSpeed" value="{{system.swimSpeed}}"></label>
+      <label>{{localize "SWSE.NaturalWeapon"}} <input type="text" name="system.naturalWeapon" value="{{system.naturalWeapon}}" placeholder="1d6"></label>
       <label>{{localize "SWSE.BonusTrainedSkills"}} <input type="number" name="system.bonusTrainedSkills" value="{{system.bonusTrainedSkills}}"></label>
       <label>{{localize "SWSE.BonusFeatChoices"}} <input type="number" name="system.bonusFeatChoices" value="{{system.bonusFeatChoices}}"></label>
       <label><input type="checkbox" name="system.primitive" {{checked system.primitive}}> {{localize "SWSE.Primitive"}}</label>
@@ -120,6 +121,7 @@
       <label>{{localize "SWSE.Weapon.damageBonus"}} <input type="number" name="system.damageBonus" value="{{system.damageBonus}}"></label>
       <label>{{localize "SWSE.Weapon.critRange"}} <input type="number" name="system.critRange" value="{{system.critRange}}"></label>
       <label>{{localize "SWSE.Ammo"}} <input type="number" name="system.ammo.value" value="{{system.ammo.value}}" class="short"> / <input type="number" name="system.ammo.max" value="{{system.ammo.max}}" class="short"></label>
+      <label data-tooltip="{{localize 'SWSE.Weapon.settingsHint'}}">{{localize "SWSE.Weapon.settings"}} <input type="text" name="system.settings" value="{{system.settings}}" placeholder="3d4:1|3d6:5"></label>
     </div>
     <div class="checks">
       <label><input type="checkbox" name="system.stun" {{checked system.stun}}> {{localize "SWSE.Weapon.stun"}}</label>

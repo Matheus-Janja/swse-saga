@@ -1,8 +1,8 @@
 {
   "id": "swse-saga",
   "title": "Star Wars RPG - Saga Edition",
-  "description": "Sistema não oficial para Star Wars Roleplaying Game: Saga Edition. Ficha automatizada, criação de personagem guiada, subida de nível, ataques automatizados por armas, feats e talentos, e compêndios com o conteúdo do Livro Básico.",
-  "version": "0.7.1",
+  "description": "Sistema não oficial para Star Wars Roleplaying Game: Saga Edition. Ficha automatizada, criação de personagem guiada, subida de nível, ataques automatizados por armas, feats e talentos, e compêndios com o conteúdo do Livro Básico e do suplemento Galaxy at War.",
+  "version": "0.8.0",
   "compatibility": {
     "minimum": "13",
     "verified": "14.370"
@@ -203,7 +203,7 @@
     },
     {
       "name": "npcs",
-      "label": "PdMs (Livro Básico)",
+      "label": "PdMs, Droides e Feras",
       "path": "packs/npcs",
       "type": "Actor",
       "system": "swse-saga",
@@ -266,6 +266,6 @@
   "initiative": "1d20 + @skills.initiative.total",
   "url": "https://github.com/Matheus-Janja/swse-saga",
   "manifest": "https://github.com/Matheus-Janja/swse-saga/releases/latest/download/system.json",
-  "download": "https://github.com/Matheus-Janja/swse-saga/releases/download/v0.7.1/swse-saga.zip",
+  "download": "https://github.com/Matheus-Janja/swse-saga/releases/download/v0.8.0/swse-saga.zip",
   "license": "LICENSE"
 }

@@ -88,6 +88,11 @@ class SWSEActorData extends foundry.abstract.TypeDataModel {
         destiny: new fields.StringField({ blank: true, initial: "" }),
         biography: new fields.HTMLField({ blank: true, initial: "" })
       }),
+      military: new fields.SchemaField({
+        organization: new fields.StringField({ blank: true, initial: "" }),
+        score: num(0),
+        nco: new fields.BooleanField({ initial: false })
+      }),
       creationComplete: new fields.BooleanField({ initial: false })
     };
   }

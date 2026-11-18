@@ -20,6 +20,7 @@ export function weaponCtx(actor) {
     features: actor.items.filter(i => ["feat", "talent"].includes(i.type)).map(i => ({ key: i.system.key, choice: i.system.choice?.value })),
     classLevels: actor.derived.classLevels ?? {},
     droidAppendage: actor.derived.droidAppendage ?? null,
+    naturalWeapon: actor.derived.naturalWeapon || "",
     grabbed: !!actor.derived.status?.grabbed
   };
 }
@@ -33,6 +34,14 @@ export function weaponProfile(actor, weapon) {
   return weaponProfileFrom(weaponCtx(actor), weapon);
 }
 
+/** Ajustes de potência (ex.: "3d4:1|3d6:5|3d8:10" → [{damage, shots}]). */
+export function parseSettings(str) {
+  return String(str || "").split("|").map(x => x.trim()).filter(Boolean).map(x => {
+    const [damage, shots] = x.split(":");
+    return { damage: damage.trim(), shots: Math.max(1, Number(shots) || 1) };
+  });
+}
+
 /** Monta o HTML do diálogo de ataque com apenas as opções que o personagem pode usar. */
 function dialogContent(actor, weapon, p) {
   const has = k => actor.hasFeature(k);
@@ -44,6 +53,8 @@ function dialogContent(actor, weapon, p) {
   const rangeOpts = Object.entries(SWSE.rangeBands).map(([k, v]) => `<option value="${k}">${L(v.label)}</option>`).join("");
   const sneak = actor.countFeature("sneak-attack");
   const rageAvailable = actor.species?.system.key === "wookiee" || has("channel-anger");
+  const settings = parseSettings(weapon.system.settings);
+  const stunOnly = weapon.system.special === "stunOnly";
   return `<div class="swse-dialog attack-dialog">
     <p class="summary">${weapon.name}: ${signed(p.attackBonus)} · ${weapon.system.damage}${signed(p.damageBonus)}
       ${p.proficient ? "" : `<br><strong class="warn">${L("SWSE.Attack.NotProficient")}</strong>`}</p>
@@ -53,6 +64,7 @@ function dialogContent(actor, weapon, p) {
         ${p.canTriple ? `<option value="triple">${L("SWSE.Attack.ModeTriple")}</option>` : ""}
       </select>`)}
     ${check("twoWeapon", L("SWSE.Attack.TwoWeapon"))}
+    ${settings.length ? row(`<label>${L("SWSE.Attack.PowerSetting")}</label><select name="setting">${settings.map((o, i) => `<option value="${i}">${o.damage} (${o.shots} ${L("SWSE.Attack.Shots")})</option>`).join("")}</select>`) : ""}
     ${ranged ? row(`<label>${L("SWSE.Attack.Range")}</label><select name="range">${rangeOpts}</select>`) : ""}
     ${ranged && p.autofire ? row(`<label>${L("SWSE.Attack.FireMode")}</label><select name="fire">
         ${p.autofireOnly ? "" : `<option value="single">${L("SWSE.Attack.FireSingle")}</option>`}
@@ -60,6 +72,8 @@ function dialogContent(actor, weapon, p) {
         ${has("burst-fire") ? `<option value="burst">${L("SWSE.Attack.FireBurst")}</option>` : ""}
       </select>`) : ""}
     ${check("braced", L("SWSE.Attack.Braced"), ranged && p.autofire)}
+    ${check("drawABead", "Draw a Bead (+Des no dano)", ranged && has("draw-a-bead"))}
+    ${check("bullseye", "Bullseye (alvo sem Des; mirando, fora da queima-roupa)", ranged && has("bullseye"))}
     ${check("aim", L("SWSE.Attack.Aim") + (has("careful-shot") ? " (+1)" : "") + (has("deadeye") ? " (+1 dado)" : ""), ranged, !!actor.derived.status?.list?.includes("aiming"))}
     ${check("intoMelee", L("SWSE.Attack.IntoMelee") + (has("precise-shot") ? " (Precise Shot)" : ""), ranged)}
     ${check("rapidShot", L("SWSE.Attack.RapidShot"), ranged && has("rapid-shot"))}
@@ -70,13 +84,17 @@ function dialogContent(actor, weapon, p) {
     ${check("disarm", L("SWSE.Attack.Disarm") + (has("improved-disarm") ? " (Improved Disarm +5)" : ""), p.melee || has("ranged-disarm"))}
     ${check("acrobaticStrike", "Acrobatic Strike (+2)", has("acrobatic-strike"))}
     ${check("skirmisher", "Skirmisher (+1)", has("skirmisher"))}
+    ${p.melee && has("staggering-attack") ? row(`<label>Staggering Attack</label><select name="staggering"><option value="0">—</option><option value="2">−2 ataque / −2 perícias</option><option value="5">−5 ataque / −5 perícias</option></select>`) : ""}
+    ${check("primeTarget", "Prime Targets (+1 dado)", p.lightsaber && has("prime-targets"))}
+    ${check("echani", "Echani Training (único ataque desarmado: For ×2 no dano)", p.unarmed && has("echani-training"))}
+    ${check("terasKasi", "Teräs Käsi Training (−5 no Limiar do alvo)", p.unarmed && has("teras-kasi-training"))}
     ${p.melee && has("melee-defense") ? row(`<label>Melee Defense (0–${bab})</label><input type="number" name="meleeDefense" value="0" min="0" max="${bab}">`) : ""}
     ${check("flanking", L("SWSE.Attack.Flanking"), p.melee)}
     ${check("flatFooted", L("SWSE.Attack.FlatFooted") + (sneak ? ` (Sneak Attack +${Math.min(sneak, 10)}d6)` : ""), true)}
     ${check("huntersTarget", L("SWSE.Attack.HuntersTarget"), has("hunters-target"))}
     ${check("familiarFoe", L("SWSE.Attack.FamiliarFoe"), actor.classLevel("bounty-hunter") >= 2)}
     ${check("rage", L("SWSE.Attack.Rage"), p.melee && rageAvailable && !actor.derived.status?.list?.includes("rage"))}
-    ${check("stun", L("SWSE.Attack.Stun"), weapon.system.stun)}
+    ${check("stun", L("SWSE.Attack.Stun") + (stunOnly ? " (sempre)" : ""), weapon.system.stun, stunOnly)}
     ${check("forcePoint", `${L("SWSE.SpendForcePoint")} (${actor.system.forcePoints.value})`, actor.system.forcePoints.value > 0)}
     ${row(`<label>${L("SWSE.Attack.MiscAttack")}</label><input type="text" name="miscAttack" value="" placeholder="+1">`)}
     ${row(`<label>${L("SWSE.Attack.MiscDamage")}</label><input type="text" name="miscDamage" value="" placeholder="+1d6">`)}
@@ -121,6 +139,19 @@ export async function resolveAttack(actor, weapon, p, f) {
   let shots = 1;
   const notes = [];
   const bonusSteps = [];
+  const effectsOnHit = [];
+  let thresholdExtra = 0;
+  let denyDex = false;
+  let damageOverride = null;
+  let shotMult = 1;
+  const settings = parseSettings(weapon.system.settings);
+  if (settings.length) {
+    const opt = settings[Number(f.setting) || 0] ?? settings[0];
+    damageOverride = opt.damage;
+    shotMult = opt.shots;
+  }
+  if (weapon.system.special === "stunOnly") f.stun = true;
+  for (const n of p.traitNotes ?? []) notes.push(n);
 
   // Modo de ataque múltiplo
   const nAttacks = (f.mode === "triple" ? 3 : f.mode === "double" ? 2 : 1) + (f.twoWeapon ? 1 : 0);
@@ -136,9 +167,24 @@ export async function resolveAttack(actor, weapon, p, f) {
     const rangePen = has("far-shot") ? band.farShot : band.penalty;
     if (rangePen) atk.push([L(band.label), rangePen]);
     if (f.range === "pointBlank" && has("point-blank-shot")) { atk.push(["Point Blank Shot", 1]); dmg.push(["Point Blank Shot", 1]); }
+    // Precision Shot (Galaxy at War): mirando, benefício de Point Blank Shot em qualquer alcance
+    else if (f.aim && has("precision-shot")) { atk.push(["Precision Shot", 1]); dmg.push(["Precision Shot", 1]); }
     // Arma precisa: sem penalidade em alcance curto. Arma imprecisa: não pode atacar em alcance longo.
-    if (weapon.system.accurate && f.range === "short" && rangePen) atk.push([L("SWSE.Weapon.accurate"), -rangePen]);
-    if (weapon.system.inaccurate && f.range === "long") notes.push(L("SWSE.Attack.InaccurateLong"));
+    if (p.accurate && f.range === "short" && rangePen) atk.push([L("SWSE.Weapon.accurate"), -rangePen]);
+    if (p.inaccurate && f.range === "long") notes.push(L("SWSE.Attack.InaccurateLong"));
+    // Scatter gun: 3d8 à queima-roupa, 2d8 em alcance curto, nada além
+    if (weapon.system.key === "scatter-gun") {
+      if (f.range === "short") damageOverride = "2d8";
+      else if (f.range !== "pointBlank") notes.push("Scatter gun: sem dano em alcance médio ou longo.");
+    }
+    if (f.drawABead && f.range !== "pointBlank") dmg.push(["Draw a Bead", Math.max(1, abil.dex.mod)]);
+    if (f.bullseye && f.aim && f.range !== "pointBlank") { denyDex = true; notes.push("Bullseye"); }
+    if (f.aim && has("steadying-position") && actor.derived.status?.list?.includes("prone")) { denyDex = true; notes.push("Steadying Position"); }
+    // Sport Hunter (Galaxy at War)
+    if (has("sport-hunter")) {
+      if (weapon.system.key === "slugthrower-pistol" && f.range === "pointBlank") extraDice += 1;
+      if (weapon.system.key === "sporting-blaster-rifle" && f.aim) atk.push(["Sport Hunter", 1]);
+    }
     if (f.intoMelee && !has("precise-shot")) atk.push([L("SWSE.Attack.IntoMelee"), -5]);
     if (f.aim) {
       if (actor.isOwner && actor.statuses?.has("aiming")) await actor.toggleStatusEffect("aiming", { active: false });
@@ -156,8 +202,10 @@ export async function resolveAttack(actor, weapon, p, f) {
     if (f.fire === "autofire") {
       area = true;
       let pen = -5;
-      if (has("controlled-burst")) pen = f.braced && p.autofireOnly ? 0 : -2;
-      else if (f.braced && p.autofireOnly) pen = -2;
+      // Apoiar: só armas somente-automáticas (Autofire Assault e Riflemaster permitem outras)
+      const braceOK = f.braced && (p.autofireOnly || has("autofire-assault") || p.canBrace);
+      if (has("controlled-burst")) pen = braceOK ? 0 : -2;
+      else if (braceOK) pen = -2;
       if (pen) atk.push(["Autofire", pen]);
       shots = 10;
       notes.push(L("SWSE.Attack.AutofireNote"));
@@ -190,6 +238,18 @@ export async function resolveAttack(actor, weapon, p, f) {
       if (actor.isOwner) await actor.addEffect({ name: `Melee Defense (+${md})`, rounds: 0, modifiers: [{ target: "defenses.reflex", value: String(md), type: "dodge", label: "", disabled: false }] });
     }
     if (f.flanking) atk.push([L("SWSE.Attack.Flanking"), 2]);
+    const stag = Number(f.staggering) || 0;
+    if (stag) {
+      atk.push(["Staggering Attack", -stag]);
+      effectsOnHit.push({ name: `Staggering Attack (−${stag} perícias)`, img: "systems/swse-saga/assets/icons/status/debuff.svg", rounds: 1, modifiers: [{ target: "skills.all", value: String(-stag), type: "penalty", label: "", disabled: false }] });
+    }
+    if (f.charge && has("reckless")) dmg.push(["Reckless", Math.max(1, abil.wis.mod)]);
+    if (f.primeTarget) extraDice += 1;
+    if (f.echani) dmg.push(["Echani Training", Math.max(1, 2 * abil.str.mod) - (p.damageParts.ability || 0)]);
+    if (f.terasKasi) thresholdExtra += 5;
+    if (p.unarmed && has("hijkata-expertise") && abil.str.mod > 0) {
+      effectsOnHit.push({ name: `Hijkata Expertise (−${abil.str.mod} no próximo ataque)`, img: "systems/swse-saga/assets/icons/status/debuff.svg", rounds: 1, modifiers: [{ target: "attack.all", value: String(-abil.str.mod), type: "penalty", label: "", disabled: false }] });
+    }
     if (f.rage) {
       const r = has("dreadful-rage") ? 4 : 2;
       atk.push([L("SWSE.Attack.Rage"), r]); dmg.push([L("SWSE.Attack.Rage"), r]);
@@ -213,14 +273,19 @@ export async function resolveAttack(actor, weapon, p, f) {
   if (f.familiarFoe) atk.push(["Familiar Foe", Math.floor(actor.classLevel("bounty-hunter") / 2)]);
   if (f.huntersTarget) dmg.push(["Hunter's Target", actor.classLevel("bounty-hunter")]);
   let sneakDice = 0;
-  if (f.flatFooted) {
+  // Backstabber (Galaxy at War): flanqueando, o alvo conta como surpreso
+  const backstab = p.melee && f.flanking && has("backstabber");
+  if (backstab) { denyDex = true; notes.push("Backstabber"); }
+  if (f.flatFooted || backstab) {
     sneakDice = Math.min(actor.countFeature("sneak-attack"), 10);
     if (has("dastardly-strike")) bonusSteps.push("Dastardly Strike");
+    if (p.unarmed && has("ktara-training")) extraDice += 1;
   }
 
   // Munição
   const ammo = weapon.system.ammo;
   if (ammo?.max > 0) {
+    shots *= shotMult;
     if (ammo.value < shots) {
       ui.notifications.warn(game.i18n.format("SWSE.Warn.NoAmmo", { name: weapon.name }));
       return null;
@@ -244,7 +309,9 @@ export async function resolveAttack(actor, weapon, p, f) {
   const attacks = [];
   for (let i = 0; i < nAttacks; i++) {
     const useSecondHead = f.twoWeapon && i === nAttacks - 1 && weapon.system.double && weapon.system.damage2;
-    const baseDice = addDice(useSecondHead ? weapon.system.damage2 : unarmedDamage(actor, weapon), extraDice);
+    let baseDice = addDice(useSecondHead ? weapon.system.damage2 : (damageOverride ?? unarmedDamage(actor, weapon)), extraDice);
+    // Sport Hunter: sporting blaster pistol rerrola 1s no dano
+    if (weapon.system.key === "sporting-blaster-pistol" && has("sport-hunter")) baseDice = baseDice.replace(/^(\d+d\d+)/, "$1r1");
     const atkRoll = await new Roll(`1d20 ${signed(atkTotalBonus)}${miscAtk}${i === 0 ? fpTerm : ""}`).evaluate();
     const nat = atkRoll.dice[0].total;
     const dmgFormula = `${baseDice} ${signed(dmgBonus)}${miscDmg}`;
@@ -267,7 +334,9 @@ export async function resolveAttack(actor, weapon, p, f) {
       if (f.flanking && ta.hasFeature?.("uncanny-dodge-ii")) { adj.delta += 2; adj.notes.push("no-flank"); }
       // Dark Scourge: +1 no ataque contra Jedi
       if (has("dark-scourge") && (ta.classLevel?.("jedi") || ta.classLevel?.("jedi-knight") || ta.classLevel?.("jedi-master"))) { adj.delta -= 1; adj.notes.push("dark-scourge"); }
-      const reflex = (ta.system.defenses?.reflex?.total ?? 10) + adj.delta;
+      const baseRef = denyDex ? (ta.system.defenses?.reflex?.flatFooted ?? ta.system.defenses?.reflex?.total ?? 10) : (ta.system.defenses?.reflex?.total ?? 10);
+      if (denyDex) adj.notes.push("no-dex");
+      const reflex = baseRef + adj.delta;
       // Dark Side Scourge: +Car (mín. 1) no dano corpo a corpo contra quem tem Lado Sombrio 1+
       let scourge = 0;
       if (p.melee && has("dark-side-scourge") && (ta.system.darkSide?.value ?? 0) > 0) { scourge = Math.max(1, actor.system.abilities.cha.mod); adj.notes.push("dark-side-scourge"); }
@@ -290,6 +359,13 @@ export async function resolveAttack(actor, weapon, p, f) {
     attacks.push({ atkRoll, dmgRoll, sneakRoll, nat, crit: crit && !autoMiss, results, baseDamage, critDamage, formula: dmgFormula });
   }
 
+  // Tough as Durasteel (Martial Arts Master 2+) e Wrruushi Training: PV temporários ao acertar desarmado (armadura leve/nenhuma)
+  const anyHit = attacks.some(a => a.results.some(r => r.hit && r.amount > 0));
+  if (p.unarmed && anyHit && actor.isOwner && (!actor.derived.armor || actor.derived.armor.category === "light")) {
+    const mam = actor.classLevel("martial-arts-master");
+    const temp = Math.max(mam >= 2 ? mam : 0, has("wrruushi-training") ? Math.max(0, abil.con.mod) : 0);
+    if (temp) { await actor.gainTempHP(temp); notes.push(`${mam >= 2 ? "Tough as Durasteel" : "Wrruushi Training"}: +${temp} PV temporários`); }
+  }
   // --- Cartão de chat ---
   const partsLine = Object.entries(p.attackParts).filter(([, v]) => v).map(([k, v]) => `${L(`SWSE.Part.${k}`)} ${signed(v)}`)
     .concat(atk.map(([l, v]) => `${l} ${signed(v)}`)).join(", ");
@@ -299,11 +375,12 @@ export async function resolveAttack(actor, weapon, p, f) {
   const payload = {
     type: damageType,
     ignoreDR: !!weapon.system.ignoresDR,
-    thresholdReduction: p.thresholdReduction,
+    thresholdReduction: p.thresholdReduction + thresholdExtra,
     drReduction: p.drReduction,
     extraSteps: p.melee && has("stunning-strike") ? 1 : 0,
     bonusSteps: bonusSteps.length,
     statusOnHit,
+    effectsOnHit,
     area,
     attacks: attacks.map(a => ({ base: a.baseDamage, crit: a.critDamage, sneak: a.sneakRoll?.total ?? 0, results: a.results }))
   };

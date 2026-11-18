@@ -237,8 +237,106 @@ export const TALENT_ACTIONS = {
     await actor.shiftCondition(-1);
     chat(actor, `<p>Shake It Off: +1 ${L("SWSE.Talent.Steps")}</p>`);
   },
-  dodge: async actor => { await actor.addEffect({ name: "Dodge", img: ICON("defensive"), rounds: 0, modifiers: [mod("defenses.reflex", 1, "dodge")] }); }
+  dodge: async actor => { await actor.addEffect({ name: "Dodge", img: ICON("defensive"), rounds: 0, modifiers: [mod("defenses.reflex", 1, "dodge")] }); },
+
+  /* ================= Galaxy at War ================= */
+  // Squad Leader (Elite Trooper): você + aliados marcados
+  "form-up": actor => squad(actor, "Form Up", [mod("defenses.reflex", 2, "morale")]),
+  "full-advance": actor => squad(actor, "Full Advance", [mod("damage.all", 2, "morale")]),
+  "search-and-destroy": actor => squad(actor, "Search and Destroy", [mod("skills.perception", 2, "morale")]),
+  "hold-steady": async actor => {
+    const all = [actor, ...targetsActors()];
+    for (const a of all) await shiftTarget(a, -1);
+    chat(actor, `<h3>Hold Steady</h3><p>+1 ${L("SWSE.Talent.Steps")}: ${all.map(a => a.name).join(", ")}</p>`);
+  },
+  "fall-back": async actor => chat(actor, `<h3>Fall Back</h3><p>Cada membro do esquadrão move 2 quadrados sem provocar ataques de oportunidade.</p>`),
+  // Noble
+  "commanding-presence": async actor => {
+    const c = await choose("Commanding Presence", { hold: "Hold the Line! (+2 Defesas)", lead: "Lead the Assault (+2 ataque e dano)", tide: "Turn the Tide (mover)" });
+    if (!c) return;
+    if (c === "tide") return chat(actor, `<h3>Commanding Presence: Turn the Tide</h3><p>Se o ataque causou dano, até ${Math.max(1, actor.system.abilities.cha.mod)} aliado(s) movem metade do deslocamento (ação livre).</p>`);
+    const mods = c === "hold" ? [mod("defenses.all", 2, "morale")] : [mod("attack.all", 2, "morale"), mod("damage.all", 2, "morale")];
+    const name = c === "hold" ? "Hold the Line!" : "Lead the Assault";
+    const names = await applyTo(targetsActors(), { name, img: ICON("buff"), rounds: 1, modifiers: mods });
+    chat(actor, `<h3>Commanding Presence: ${name}</h3><p>${F("SWSE.Talent.AppliedTo", { names: names || "—" })} ${L("SWSE.Talent.GaWAfterHit")}</p>`);
+  },
+  "get-down": async actor => {
+    const names = await applyTo(targetsActors(), { name: L("SWSE.Status.prone"), img: ICON("prone"), statuses: ["prone"] });
+    chat(actor, `<h3>Get Down!</h3><p>${F("SWSE.Talent.AppliedTo", { names: names || "—" })}</p>`);
+  },
+  // Scoundrel
+  "easy-prey": async actor => {
+    const names = await applyTo(targetsActors(), { name: `Easy Prey (${actor.name})`, img: ICON("flat-footed"), rounds: 1, statuses: ["flatFooted"] });
+    chat(actor, `<h3>Easy Prey</h3><p>${F("SWSE.Talent.AppliedTo", { names: names || "—" })} Use metade do dano deste ataque.</p>`);
+  },
+  "sly-combatant": async actor => {
+    const c = await choose("Sly Combatant", { injury: "Distracting Injury (−2 ataque e dano)", bleed: "Make Them Bleed (condição persistente)", numbers: "Strength in Numbers (+2 dano por aliado adjacente)" });
+    if (!c) return;
+    const targets = targetsActors();
+    if (c === "numbers") return chat(actor, `<h3>Sly Combatant: Strength in Numbers</h3><p>Some +2 de dano por aliado adjacente ao alvo (campo de dano extra).</p>`);
+    if (!targets.length) return ui.notifications.warn(L("SWSE.Talent.NeedTarget"));
+    if (c === "injury") {
+      const names = await applyTo(targets, { name: `Distracting Injury (${actor.name})`, img: ICON("debuff"), rounds: ENCOUNTER(), modifiers: [mod("attack.all", -2, "penalty"), mod("damage.all", -2, "penalty")] });
+      return chat(actor, `<h3>Distracting Injury</h3><p>${F("SWSE.Talent.AppliedTo", { names })}</p>`);
+    }
+    for (const t of targets) await requestUpdate(t, { "system.condition.persistent": true });
+    chat(actor, `<h3>Make Them Bleed</h3><p>${targets.map(t => t.name).join(", ")}: condição persistente (cirurgia, Treat Injury CD 25).</p>`);
+  },
+  // Scout
+  "dig-in": async actor => {
+    if (!actor.statuses?.has("prone")) return ui.notifications.warn(L("SWSE.Talent.NeedProne"));
+    await actor.addEffect({ name: "Dig In", img: ICON("concealment"), rounds: 0, statuses: ["concealment"] });
+  },
+  "ghost-assailant": async actor => {
+    const targets = targetsActors();
+    if (!targets.length) return ui.notifications.warn(L("SWSE.Talent.NeedTarget"));
+    const roll = await new Roll(`1d20 + ${actor.system.skills.stealth.total}`).evaluate();
+    const rows = [];
+    for (const t of targets) {
+      const per = await new Roll(`1d20 + ${t.system.skills?.perception?.total ?? 0}`).evaluate();
+      const ok = roll.total > per.total;
+      if (ok) await requestEffect(t, { name: `Ghost Assailant (${actor.name})`, img: ICON("flat-footed"), rounds: 0, statuses: ["flatFooted"] });
+      rows.push(`<li class="${ok ? "hit" : "miss"}"><span class="tname">${t.name}</span><span class="tdef">Perception ${game.user.isGM ? per.total : "—"}</span><span class="tstatus">${ok ? L("SWSE.Success") : L("SWSE.Failure")}</span></li>`);
+    }
+    ChatMessage.create({ speaker: ChatMessage.getSpeaker({ actor }), rolls: [roll], content: `<div class="swse-card talent-card"><h3>Ghost Assailant (Stealth)</h3>${await roll.render()}<ul class="target-results">${rows.join("")}</ul></div>` });
+  },
+  "mobile-combatant": async actor => {
+    const c = await choose("Mobile Combatant", { evasive: "Evasive Assault (+5 esquiva)", expeditious: "Expeditious Attack (mover ½)", yielding: "Yielding Assault (reação)" });
+    if (c === "evasive") return actor.addEffect({ name: "Evasive Assault", img: ICON("defensive"), rounds: 1, modifiers: [mod("defenses.reflex", 5, "dodge")] });
+    if (c === "expeditious") return chat(actor, `<h3>Expeditious Attack</h3><p>Após o ataque, move metade do deslocamento sem provocar ataques de oportunidade.</p>`);
+    if (c === "yielding") return chat(actor, `<h3>Yielding Assault</h3><p>Move metade do deslocamento sem provocar; no próximo turno, circunstância favorável no primeiro ataque contra esse inimigo.</p>`);
+  },
+  // Soldier
+  "defensive-position": async actor => {
+    if (!actor.statuses?.has("cover") && !actor.statuses?.has("improvedCover")) return ui.notifications.warn(L("SWSE.Talent.NeedCover"));
+    await actor.addEffect({ name: "Defensive Position", img: ICON("improved-cover"), rounds: 0, statuses: ["improvedCover"] });
+  },
+  "grizzled-warrior": async actor => {
+    const c = await choose("Grizzled Warrior", { defy: "Defy the Odds (PV temporários)", pain: "Double the Pain (aliado +½ nível no dano)", guarded: "Guarded Assault (+2 esquiva)" });
+    if (c === "defy") {
+      const n = actor.system.abilities.con.total || actor.system.abilities.str.total;
+      await actor.gainTempHP(n);
+      return chat(actor, `<h3>Defy the Odds</h3><p>+${n} PV temporários.</p>`);
+    }
+    if (c === "pain") {
+      const n = Math.floor((actor.system.level || 0) / 2);
+      const names = await applyTo(targetsActors(), { name: `Double the Pain (+${n})`, img: ICON("buff"), rounds: 0, modifiers: [mod("damage.all", n)] });
+      return chat(actor, `<h3>Double the Pain</h3><p>${F("SWSE.Talent.AppliedTo", { names: names || "—" })}</p>`);
+    }
+    if (c === "guarded") return actor.addEffect({ name: "Guarded Assault", img: ICON("defensive"), rounds: 0, modifiers: [mod("defenses.reflex", 2, "dodge")] });
+  },
+  // Gunslinger
+  "keep-them-honest": async actor => {
+    const names = await applyTo(targetsActors(), { name: `Keep Them Honest (${actor.name})`, img: ICON("debuff"), rounds: 1, modifiers: [mod("attack.all", -5, "penalty")] });
+    chat(actor, `<h3>Keep Them Honest</h3><p>${F("SWSE.Talent.AppliedTo", { names: names || "—" })}</p>`);
+  }
 };
+
+/** Squad Leader: efeito no líder e nos aliados marcados até o fim do próximo turno do líder. */
+async function squad(actor, name, modifiers) {
+  const names = await applyTo([actor, ...targetsActors()], { name, img: ICON("buff"), rounds: 1, modifiers });
+  chat(actor, `<h3>${name}</h3><p>${F("SWSE.Talent.AppliedTo", { names })}</p>`);
+}
 
 /**
  * Block / Deflect: Use the Force contra o resultado do ataque, com −5 cumulativo por uso desde o último turno

@@ -46,13 +46,32 @@ export function isProficientCtx(ctx, weapon) {
   return ctxHas(ctx, GROUP_FEAT[group]);
 }
 
+/** Feats do Galaxy at War que alteram propriedades de armas específicas. */
+export function weaponTraits(ctx, weapon) {
+  const w = weapon.system;
+  const k = w.key;
+  const out = { accurate: !!w.accurate, inaccurate: !!w.inaccurate, size: w.size, canBrace: false, notes: [] };
+  if (ctxHas(ctx, "pistoleer")) {
+    if (k === "blaster-pistol") { out.accurate = true; out.notes.push("Pistoleer"); }
+    if (k === "heavy-blaster-pistol") { out.inaccurate = false; out.notes.push("Pistoleer"); }
+  }
+  if (ctxHas(ctx, "riflemaster")) {
+    if (k === "blaster-carbine") { out.canBrace = true; out.notes.push("Riflemaster"); }
+    if (k === "blaster-rifle") { out.accurate = true; out.notes.push("Riflemaster"); }
+    if (k === "light-repeating-blaster") { out.size = "medium"; out.notes.push("Riflemaster"); }
+  }
+  if (ctxHas(ctx, "disabler") && k === "ion-rifle") { out.accurate = true; out.notes.push("Disabler"); }
+  return out;
+}
+
 export function weaponProfileFrom(ctx, weapon) {
   const w = weapon.system;
+  const traits = weaponTraits(ctx, weapon);
   const melee = w.rangeType === "melee";
   const group = effectiveGroup(ctx, weapon);
   const sizeOrder = s => SWSE.sizes[s]?.order ?? 4;
   const wielder = sizeOrder(ctx.size ?? "medium");
-  const wsize = sizeOrder(w.size);
+  const wsize = sizeOrder(traits.size);
   const natural = isNatural(weapon);
   const light = wsize < wielder || w.key === "unarmed";
   const twoHanded = !natural && (wsize === wielder + 1 || !!w.twoHanded);
@@ -100,30 +119,49 @@ export function weaponProfileFrom(ctx, weapon) {
     weapon: w.damageBonus || 0
   };
   const sum = o => Object.values(o).reduce((a, b) => a + b, 0);
+  const unarmedish = natural || ["combat-gloves", "shockboxing-gloves"].includes(w.key);
+  let critRange = lightsaber && ctxHas(ctx, "vaapad") ? Math.min(19, w.critRange || 20) : (w.critRange || 20);
+  if (unarmedish && ctxHas(ctx, "echani-expertise")) critRange = Math.min(critRange, 19);
   return {
-    melee, group, light, twoHanded, proficient, lightsaber, atkAbility, dmgAbilityLabel,
+    melee, group, light, twoHanded, proficient, lightsaber, atkAbility, dmgAbilityLabel, unarmed: unarmedish,
+    accurate: traits.accurate, inaccurate: traits.inaccurate, canBrace: traits.canBrace, traitNotes: traits.notes,
     attackParts, damageParts,
     attackBonus: sum(attackParts),
     damageBonus: sum(damageParts),
     autofire: /A/.test(w.rateOfFire || ""),
     autofireOnly: (w.rateOfFire || "").trim() === "A",
-    critRange: lightsaber && ctxHas(ctx, "vaapad") ? Math.min(19, w.critRange || 20) : (w.critRange || 20),
+    critRange,
     critMultiplier: matches(ctx, "triple-crit", weapon) ? 3 : (w.critMultiplier || 2),
     thresholdReduction: matches(ctx, "greater-devastating-attack", weapon) ? 10 : matches(ctx, "devastating-attack", weapon) ? 5 : 0,
     drReduction: matches(ctx, "greater-penetrating-attack", weapon) ? 10 : matches(ctx, "penetrating-attack", weapon) ? 5 : 0,
     canDouble: matches(ctx, "double-attack", weapon) > 0,
     canTriple: matches(ctx, "triple-attack", weapon) > 0,
-    multiattackReduction: 2 * ctxCount(ctx, `multiattack-proficiency-${group}`)
+    multiattackReduction: 2 * ctxCount(ctx, `multiattack-proficiency-${group}`) + (unarmedish ? 2 * ctxCount(ctx, "flurry-of-blows") : 0)
   };
 }
 
-/** Dano desarmado: 1d3 (Pequeno) / 1d4 (Médio), +1 passo por Martial Arts I/II/III. */
+const UNARMED_STEPS = ["1d2", "1d3", "1d4", "1d6", "1d8", "1d10", "1d12", "2d8"];
+
+/**
+ * Dados de dano da arma.
+ * Desarmado: 1d3 (Pequeno) / 1d4 (Médio), +1 passo por Martial Arts I/II/III; espécies com armas naturais
+ * (Galaxy at War: Barabel, Trianii, Yevetha 1d6; Yuzzem 1d8) partem do dado natural.
+ * Feats de arma (Galaxy at War): Riflemaster, Sport Hunter e Disabler trocam o tipo de dado.
+ */
 export function unarmedDamageCtx(ctx, weapon) {
-  if (!["unarmed", "combat-gloves"].includes(weapon.system.key)) return weapon.system.damage;
-  const martial = ["martial-arts-i", "martial-arts-ii", "martial-arts-iii"].filter(k => ctxHas(ctx, k)).length;
+  const k = weapon.system.key;
+  if (!["unarmed", "combat-gloves", "shockboxing-gloves"].includes(k)) {
+    let dmg = weapon.system.damage;
+    const die = (from, to) => { dmg = dmg.replace(new RegExp(`d${from}(?!\\d)`), `d${to}`); };
+    if (k === "heavy-blaster-rifle" && ctxHas(ctx, "riflemaster")) die(10, 12);
+    if (k === "slugthrower-rifle" && ctxHas(ctx, "sport-hunter")) die(8, 12);
+    if (k === "ion-pistol" && ctxHas(ctx, "disabler")) die(6, 8);
+    return dmg;
+  }
+  const martial = ["martial-arts-i", "martial-arts-ii", "martial-arts-iii"].filter(m => ctxHas(ctx, m)).length;
   if (ctx.droidAppendage) return droidUnarmedDamage(ctx.size ?? "medium", ctx.droidAppendage, martial);
-  const steps = ["1d2", "1d3", "1d4", "1d6", "1d8", "1d10", "1d12", "2d8"];
   let idx = Math.max(0, (SWSE.sizes[ctx.size ?? "medium"]?.order ?? 4) - 2);
-  idx += ["martial-arts-i", "martial-arts-ii", "martial-arts-iii"].filter(k => ctxHas(ctx, k)).length;
-  return steps[Math.min(idx, steps.length - 1)];
+  if (ctx.naturalWeapon) idx = Math.max(idx, UNARMED_STEPS.indexOf(ctx.naturalWeapon));
+  idx += martial;
+  return UNARMED_STEPS[Math.min(idx, UNARMED_STEPS.length - 1)];
 }

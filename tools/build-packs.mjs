@@ -10,12 +10,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { compilePack } from "@foundryvtt/foundryvtt-cli";
 
-import species from "./data/species.mjs";
-import classes from "./data/classes.mjs";
-import feats from "./data/feats.mjs";
-import talents from "./data/talents.mjs";
-import forcePowers from "./data/force-powers.mjs";
-import { weapons, armor, equipment } from "./data/gear.mjs";
+import { species, classes, feats, talents, forcePowers, weapons, armor, equipment } from "./data/all.mjs";
 import macros from "./data/macros.mjs";
 import { droidSpecies, droidSystems, DROID_FOLDERS } from "./data/droids.mjs";
 import { buildNpcs } from "./build-npcs.mjs";
@@ -23,6 +18,8 @@ import { buildVehicles } from "./build-vehicles.mjs";
 import { iconFor, ICON } from "./build-packs-icons.mjs";
 import { TALENT_ACTIONS } from "../module/helpers/talent-actions.mjs";
 const TALENT_ACTION_KEYS = new Set(Object.keys(TALENT_ACTIONS));
+const CORE = "Livro Básico";
+const sourceFolder = d => d.folder ?? (d.system.source === "Galaxy at War" ? "Galaxy at War" : CORE);
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const SRC = path.join(ROOT, "packs-src");
@@ -39,7 +36,11 @@ function makeId(seed) {
 const PASSIVE_AUTO = new Set(["force-intuition", "force-perception", "force-pilot", "force-persuasion", "force-deception", "force-treatment", "niman",
   "dark-scourge", "dark-side-scourge", "uncanny-dodge-ii", "knockdown-shot", "powerful-charge", "melee-defense", "charging-fire", "acrobatic-strike",
   "skirmisher", "knack", "force-power-mastery", "force-power-adept", "dark-side-master", "devastating-power", "resist-the-dark-side",
-  "force-point-recovery", "telekinetic-power", "makashi", "jar-kai", "elusive-dogfighter", "relentless-pursuit", "dogfight-gunner", "expert-gunner", "vehicular-evasion", "full-throttle", "improved-disarm", "ranged-disarm", "elusive-target", "shii-cho", "soresu", "redirect-shot"]);
+  "force-point-recovery", "telekinetic-power", "makashi", "jar-kai", "elusive-dogfighter", "relentless-pursuit", "dogfight-gunner", "expert-gunner", "vehicular-evasion", "full-throttle", "improved-disarm", "ranged-disarm", "elusive-target", "shii-cho", "soresu", "redirect-shot",
+  // Galaxy at War (opções no diálogo de ataque / automáticos)
+  "staggering-attack", "echani-training", "teras-kasi-training", "ktara-training", "wrruushi-training", "prime-targets", "bullseye", "draw-a-bead",
+  "hijkata-expertise", "backstabber", "reckless", "aquatic-specialists", "ascension-specialists", "covert-operatives", "medical-team", "mounted-regiment",
+  "nimble-team", "slicer-team", "technical-experts", "tireless-squad", "unhindered-approach", "unified-squadron", "wary-sentries", "wilderness-specialists"]);
 function markAutomation(data) {
   const key = data.system.key;
   const d = data.system.description ?? "";
@@ -68,7 +69,9 @@ function folderDoc(pack, name, type = "Item", sort = 0) {
 const packs = {};
 {
   const fDroid = folderDoc("species", "Droides (heróis)", "Item", 1);
-  packs.species = [fDroid, ...species.map(d => itemDoc("species", d)), ...droidSpecies.map(d => itemDoc("species", d, fDroid._id))];
+  const fCore = folderDoc("species", CORE, "Item", 0);
+  const fGaw = folderDoc("species", "Galaxy at War", "Item", 2);
+  packs.species = [fCore, fDroid, fGaw, ...species.map(d => itemDoc("species", d, sourceFolder(d) === CORE ? fCore._id : fGaw._id)), ...droidSpecies.map(d => itemDoc("species", d, fDroid._id))];
 }
 {
   const folders = Object.fromEntries(DROID_FOLDERS.map((n, i) => [n, folderDoc("droid-systems", n, "Item", i)]));
@@ -83,7 +86,15 @@ const packs = {};
   packs.classes = [fBase, fPrest, fNon, ...classes.map(d => itemDoc("classes", d,
     d.system.classType === "prestige" ? fPrest._id : d.system.classType === "nonheroic" ? fNon._id : fBase._id))];
 }
-packs.feats = feats.map(d => itemDoc("feats", d));
+{
+  const folders = new Map();
+  const docs = feats.map(d => {
+    const name = sourceFolder(d);
+    if (!folders.has(name)) folders.set(name, folderDoc("feats", name, "Item", folders.size));
+    return itemDoc("feats", d, folders.get(name)._id);
+  });
+  packs.feats = [...folders.values(), ...docs];
+}
 
 // Talentos em pastas por árvore (técnicas e segredos ficam no pack de poderes)
 {
@@ -109,9 +120,13 @@ packs.feats = feats.map(d => itemDoc("feats", d));
   const folders = Object.fromEntries(Object.entries(groups).map(([k, n], i) => [k, folderDoc("weapons", n, "Item", i)]));
   packs.weapons = [...Object.values(folders), ...weapons.map(d => itemDoc("weapons", d, folders[d.system.group]._id))];
 }
-packs.armor = armor.map(d => itemDoc("armor", d));
 {
-  const cats = { communication: "Comunicação", computer: "Computadores", detection: "Detecção", lifeSupport: "Suporte de Vida", medical: "Médico", survival: "Sobrevivência", tools: "Ferramentas", accessory: "Acessórios" };
+  const fCore = folderDoc("armor", CORE, "Item", 0);
+  const fGaw = folderDoc("armor", "Galaxy at War", "Item", 1);
+  packs.armor = [fCore, fGaw, ...armor.map(d => itemDoc("armor", d, sourceFolder(d) === CORE ? fCore._id : fGaw._id))];
+}
+{
+  const cats = { communication: "Comunicação", computer: "Computadores", detection: "Detecção", lifeSupport: "Suporte de Vida", medical: "Médico", survival: "Sobrevivência", tools: "Ferramentas", accessory: "Acessórios", cybernetic: "Cibernéticos" };
   const folders = Object.fromEntries(Object.entries(cats).map(([k, n], i) => [k, folderDoc("equipment", n, "Item", i)]));
   packs.equipment = [...Object.values(folders), ...equipment.map(d => itemDoc("equipment", d, folders[d.system.category]._id))];
 }

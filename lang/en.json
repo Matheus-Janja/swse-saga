@@ -397,7 +397,9 @@
       "reach": "Reach",
       "strDamage": "Adds Str to damage",
       "noStrDamage": "No Str to damage",
-      "ignoresDR": "Ignores DR"
+      "ignoresDR": "Ignores DR",
+      "settings": "Power settings",
+      "settingsHint": "Format damage:shots separated by | (e.g. 3d4:1|3d6:5|3d8:10). Shown as an option in the attack dialog."
     },
     "Attack": {
       "Title": "Attack",
@@ -450,7 +452,9 @@
       "Flanking": "Flanking (+2)",
       "Disarm": "Disarm (target +10 Ref)",
       "DisarmNote": "Disarm: on a hit the target drops its weapon. On a miss, the target gets a free attack against you.",
-      "DisarmNoteSafe": "Disarm: on a hit the target drops its weapon (no free attack on a miss)."
+      "DisarmNoteSafe": "Disarm: on a hit the target drops its weapon (no free attack on a miss).",
+      "PowerSetting": "Power setting",
+      "Shots": "shots"
     },
     "Chat": {
       "TookDamage": "Took {amount} damage ({type}; rolled: {raw}).",
@@ -817,7 +821,8 @@
       "dark-scourge": "Dark Scourge +1",
       "dark-side-scourge": "Dark Side Scourge +Cha damage",
       "disarm": "disarm: +10 Ref",
-      "elusive-target": "Elusive Target: −5"
+      "elusive-target": "Elusive Target: −5",
+      "no-dex": "no Dex"
     },
     "Effect": {
       "Conditions": "Conditions",
@@ -882,7 +887,15 @@
       "AllOutMsg": "All-out movement (×{mult}): up to {n} squares (character scale) / {s} (starship scale) in a straight line.",
       "NoAttackAllOut": "After all-out movement, gunners can't attack until your next turn.",
       "OutsideDogfight": "While in a dogfight you can't attack targets outside it.",
-      "InDogfight": "In a dogfight with"
+      "InDogfight": "In a dogfight with",
+      "Battlefield": "Battlefield effect",
+      "BattlefieldActivate": "Activate",
+      "BattlefieldHint": "Galaxy at War: the commander takes a standard action and the vehicle can't attack until the start of the commander's next turn. The effect lasts until the end of the vehicle's next turn for everyone in the radius (allies = same token disposition).",
+      "BattlefieldRadius": "{n}-square radius",
+      "BattlefieldNoToken": "The vehicle has no token on the scene: the effect was applied to targeted tokens.",
+      "NoAttacks": "no attacks",
+      "Allies": "Allies affected",
+      "Enemies": "Enemies affected"
     },
     "Talent": {
       "Use": "Use talent/feat",
@@ -917,7 +930,36 @@
       "Negated": "Attack negated!",
       "NotNegated": "Failed to negate the attack.",
       "RedirectNote": "Redirect Shot: you may make an immediate ranged attack with the deflected bolt.",
-      "ExtremeEffortNote": "Extreme Effort: +5 on the next Strength check or Strength-based skill (Climb, Jump, Swim) this round."
-    }
+      "ExtremeEffortNote": "Extreme Effort: +5 on the next Strength check or Strength-based skill (Climb, Jump, Swim) this round.",
+      "GaWAfterHit": "(use after the attack hits; target your allies)",
+      "NeedProne": "You must be prone.",
+      "NeedCover": "You must have cover."
+    },
+    "Military": {
+      "title": "Rank and Privilege (Galaxy at War)",
+      "organization": "Military organization",
+      "manual": "Manual adjustment",
+      "nco": "Noncommissioned (cap 11)",
+      "score": "score",
+      "bonus": "requisition/command bonus",
+      "orders": "special orders per mission",
+      "minor": "minor",
+      "major": "major",
+      "command": "command",
+      "breakdown": "Score breakdown",
+      "hint": "Automatic criteria come from the sheet (BAB, level, classes, Leadership talents, Skill Focus, Knowledge (tactics), Officer Candidacy Training). Use the manual adjustment for captures (+1/4 CL), valor (+2), conflicts (+1), failed missions, infractions etc. The command bonus applies to Persuasion with members of the organization."
+    },
+    "Artillery": {
+      "Title": "Artillery strike",
+      "Fire": "Fire",
+      "Hint": "Galaxy at War: choose the ammunition (Table 3-3) or a special order. Requires comlink, rangefinder and datapad. Target the center-square creature first, then those in the splash.",
+      "Reuse": "Reuse Knowledge (tactics) result",
+      "Reused": "Reusing Knowledge (tactics) {n}.",
+      "OffTarget": "Failed: the strike lands {n} square(s) off target (GM picks direction), in {delay} round(s).",
+      "OnTarget": "Coordinates confirmed: the strike arrives in {delay} round(s).",
+      "Every": "Repeats every {every} rounds",
+      "TargetsHint": "Center square (◎): full damage on a hit, half on a miss. Splash: half on a hit, none on a miss. Evasion applies."
+    },
+    "NaturalWeapon": "Natural weapon (damage)"
   }
 }

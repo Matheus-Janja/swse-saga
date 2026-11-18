@@ -7,14 +7,17 @@
 import { computeActor } from "../module/rules/calc.mjs";
 import { weaponProfileFrom } from "../module/rules/weapon.mjs";
 import { SWSE } from "../module/config.mjs";
-import npcs, { FOLDERS } from "./data/npcs.mjs";
+import coreNpcs, { FOLDERS as CORE_FOLDERS } from "./data/npcs.mjs";
+import gawNpcs, { F as GAW_F } from "./data/gaw/npcs.mjs";
+const npcs = [...coreNpcs, ...gawNpcs];
+const FOLDERS = [...CORE_FOLDERS, ...Object.values(GAW_F)];
 import { iconFor } from "./build-packs-icons.mjs";
 
 const ABIL = ["str", "dex", "con", "int", "wis", "cha"];
 const clone = x => structuredClone(x);
 
 const TOKEN_SIZE = { fine: 0.5, diminutive: 0.5, tiny: 0.5, small: 1, medium: 1, large: 2, huge: 3, gargantuan: 4, colossal: 6 };
-const HOSTILE = new Set(["Império Galáctico", "Fringe", "Feras"]);
+const HOSTILE = new Set(["Império Galáctico", "Fringe", "Feras", GAW_F.beasts]);
 const A = n => `systems/swse-saga/assets/icons/${n}.svg`;
 const IMG = { force: A("npc-force"), droid: A("npc-droid"), beast: A("npc-beast"), trooper: A("npc-trooper"), default: A("npc") };
 const TROOPERS = /trooper|stormtrooper/i;
@@ -150,7 +153,7 @@ export function buildNpcs(data, makeId, stats) {
       secondWind: { used: 0 },
       defenses: { reflex: { misc: 0 }, fortitude: { misc: 0 }, will: { misc: 0 } },
       damageThreshold: { misc: 0 },
-      damageReduction: 0,
+      damageReduction: npc.dr ?? 0,
       shieldRating: npc.sr ?? 0,
       isDroid: !!npc.droid,
       speed: { base: npc.speed ?? 6, misc: 0 },
@@ -218,7 +221,7 @@ export function buildNpcs(data, makeId, stats) {
     // Documento do ator
     const actorId = makeId(`npcs:actor:${npc.name}`);
     const forceUser = (npc.feats ?? []).includes("force-sensitivity");
-    const img = npc.droid ? IMG.droid : npc.folder === "Feras" ? IMG.beast : forceUser ? IMG.force : TROOPERS.test(npc.name) ? IMG.trooper : IMG.default;
+    const img = npc.droid ? IMG.droid : (npc.folder === "Feras" || npc.folder === GAW_F.beasts) ? IMG.beast : forceUser ? IMG.force : TROOPERS.test(npc.name) ? IMG.trooper : IMG.default;
     const tsize = TOKEN_SIZE[size] ?? 1;
     for (const i of items) delete i.system.img;
     const embedded = items.map((i, idx) => {

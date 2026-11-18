@@ -82,6 +82,20 @@ Marque **"Personagem droide"** no primeiro passo da criação (Cap. 11):
 - **Ativáveis (botão ⚡ na ficha ou arrastando para a barra de macros)**: *Block* e *Deflect* (penalidade acumulada, *Shii-Cho*, *Soresu*), *Lightsaber Defense* (*Makashi*, *Jar'Kai*), *Battle Meditation*, *Born Leader*, *Inspire Confidence*, *Rally*, *Bolster Ally*, *Dark Presence*, *Fool's Luck*, *Cover Fire*, *Walk the Line*, *Adept/Master Negotiator*, *Deceptive Shot*, *Shift Defense I–III*, *Deployment/Field/Assault Tactics*, *Outmaneuver*, *Resilience*, *Indomitable*, *Shake It Off*, *Equilibrium*, *Damage Reduction 10*, *Force Focus*, *Telekinetic Savant*, *Channel Anger*, *Force Talisman*, *Attune/Empower Weapon*, *Dark Healing*, *Extreme Effort* e outros. Talentos que afetam aliados aplicam o efeito aos tokens marcados (T).
 - Os restantes são narrativos ou dependem do posicionamento no mapa (Cleave, Mobility, Running Attack, Harm's Way, formas de sabre de reação etc.); a descrição de cada um continua no item.
 
+### Suplemento: Galaxy at War
+Conteúdo mecânico dos capítulos 1 a 3 (pastas "Galaxy at War" nos compêndios):
+- **9 espécies** (Barabel, Dashade, Lurmen, Taung, Thakwaash, Trianii, Yevetha, Yuzzem, Zygerrian) — armas naturais (o ataque desarmado passa a usar o dado natural), *Armor Training* do Taung e *Strength of Conviction* do Zygerrian automáticos.
+- **42 feats**: gerais (as listas de feats bônus das classes base foram ampliadas), 8 de artes marciais e 13 de equipe. Automáticos: *Force of Personality*, *Predictive Defense*, *Resilient Strength*, *Fight Through Pain*, *Fortifying Recovery*, *Pistoleer*, *Riflemaster*, *Sport Hunter*, *Disabler*, *Steadying Position*, feats de equipe (+3); opções no diálogo de ataque para *Staggering Attack*, *Echani Training* e *Teräs Käsi Training*.
+- **Talentos**: árvores novas Anticipation (Noble), Brigand (Scoundrel), Advance Patrol (Scout), Shockboxer e Veteran (Soldier, Veteran qualifica para Officer), Squad Leader (Elite Trooper), Sharpshooter (Gunslinger), além de talentos novos em árvores do Livro Básico. Botões ⚡ para *Squad Leader*, *Commanding Presence*, *Get Down*, *Easy Prey*, *Sly Combatant*, *Dig In*, *Ghost Assailant*, *Mobile Combatant*, *Defensive Position*, *Grizzled Warrior*, *Keep Them Honest*; passivos *Watchful Step*, *Tested in Battle*, *Precision Shot*, *Autofire Assault*, *Backstabber*, *Reckless*.
+- **Classe de prestígio Martial Arts Master** (árvores Martial Arts Forms e Unarmed Mastery; *Tough as Durasteel* dá PV temporários ao acertar desarmado).
+- **Equipamento**: armas (rifles de potência variável com escolha de potência no ataque, scatter gun por alcance, ICWS, canhões), minas e defesas de campo, armaduras, equipamentos e **cibernéticos** (−1 em Use the Force por peça; quem tem peças cibernéticas sofre íons como droide, salvo com *Ion Shielding*).
+- **PdMs**: 11 droides (A-Series, KDY-4, Chiba DR-10, B2-AA, Eradicator, Purge Trooper, Sniper Droideka, T-Series, Vigilant 2X, CLL-M2, MR-200), 8 feras de guerra e a sentinela automática — todos conferidos com os blocos do livro.
+- **Veículos**: Freeco Speeder, Shelter Speeder, WLO-5, Drop Pod, IF-120, Penumbra, YU-410, Wayfarer e a fragata Corona.
+- **Efeitos de campo de batalha** de veículos (botão no painel de combate veicular): aplicam o efeito aos tokens aliados/inimigos no raio.
+- **Patente e Privilégio** (aba Bio): pontuação de organização com os critérios automáticos da ficha, título, bônus de requisição/comando e ordens especiais.
+- **Macro "Ataque de Artilharia / Bombardeio"**: observador avançado (Knowledge (tactics) CD 15) com as munições da Tabela 3-3, ou as ordens especiais de bombardeio.
+- Os capítulos 4 a 7 (unidades militares, bases e aventuras) são ambientação/material do Mestre e não entram nos compêndios.
+
 ### Compêndios
 Espécies (21, incluindo Aqualish, Hutt, Neimoidian e Yuuzhan Vong do Cap. 16), classes heroicas, de prestígio e não heroica, 69 feats, todas as árvores de talento do livro básico (classes, Força e prestígio), 16 poderes da Força, técnicas e segredos, armas, armaduras, equipamentos e macros. Erratas oficiais de out/2008 aplicadas.
 

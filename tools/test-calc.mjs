@@ -4,12 +4,8 @@
  */
 import assert from "node:assert/strict";
 import { computeActor, babFor, aggregateModifiers, evalModifierValue } from "../module/rules/calc.mjs";
-import species from "./data/species.mjs";
-import classes from "./data/classes.mjs";
-import feats from "./data/feats.mjs";
-import talents from "./data/talents.mjs";
-import { armor, weapons } from "./data/gear.mjs";
-import forcePowers from "./data/force-powers.mjs";
+import { species, classes, feats, talents, armor, weapons, forcePowers, equipment } from "./data/all.mjs";
+const armor_ = key => armor.find(a => a.system.key === key);
 import { buildNpcs } from "./build-npcs.mjs";
 import { buildVehicles } from "./build-vehicles.mjs";
 import { computeVehicle, vehicleWeaponProfile } from "../module/rules/vehicle.mjs";
@@ -142,7 +138,7 @@ t("Veículos do livro batem com os blocos de estatística", () => {
   let i = 0;
   const { actors, report } = buildVehicles(() => `v${i++}`.padEnd(16, "x"), {});
   assert.deepEqual(report, []);
-  assert.equal(actors.length, 18);
+  assert.equal(actors.length, 27); // 18 do Livro Básico + 9 do Galaxy at War
 });
 
 t("Veículo: piloto heroico substitui armadura; artilheiro usa BBA próprio e ½ nível no dano", () => {
@@ -303,6 +299,62 @@ t("Talentos: Use the Force no lugar de perícias (Force Intuition, Force Pilot) 
   const niman = computeActor(s, [...items, saber, find(talents, "niman")]);
   assert.equal(niman.defenses.reflex.total - base.defenses.reflex.total, 1);
   assert.equal(niman.defenses.will.total - base.defenses.will.total, 1);
+});
+
+/* ================= Galaxy at War ================= */
+t("Galaxy at War: defesas com atributo alternativo, Fight Through Pain, Taung e Zygerrian", () => {
+  const sol = () => { const c = find(classes, "soldier"); c.system.hpRolls = [30]; c.system.isStartingClass = true; return c; };
+  const s = sys({ str: 16, dex: 10, con: 10, int: 16, wis: 8, cha: 16 });
+  const base = computeActor(s, [find(species, "human"), sol()]);
+  const all = computeActor(s, [find(species, "human"), sol(), find(feats, "force-of-personality"), find(feats, "predictive-defense"), find(feats, "resilient-strength")]);
+  assert.equal(all.defenses.will.total - base.defenses.will.total, 3 - -1);      // Car 16 no lugar de Sab 8
+  assert.equal(all.defenses.reflex.total - base.defenses.reflex.total, 3);       // Int 16 no lugar de Des 10
+  assert.equal(all.defenses.fortitude.total - base.defenses.fortitude.total, 3); // For 16 no lugar de Con 10
+  const ftp = computeActor(s, [find(species, "human"), sol(), find(feats, "fight-through-pain")]);
+  assert.equal(ftp.damageThreshold, ftp.defenses.will.total);
+  // Zygerrian: Car na Vontade (+2 de espécie); Taung: +1 em todas e +1 no máx. de Des da armadura
+  const zy = computeActor(sys({ str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 16 }), [find(species, "zygerrian"), sol()]);
+  assert.equal(zy.defenses.will.total, 10 + 1 + 3 + 2);
+  const armor = structuredClone(armor_("battle-armor")); armor.system.equipped = true;
+  const ta = computeActor(sys({ str: 10, dex: 18, con: 10, int: 10, wis: 10, cha: 10 }), [find(species, "taung"), sol(), find(feats, "armor-proficiency-light"), find(feats, "armor-proficiency-medium"), armor]);
+  assert.equal(ta.armor.maxDex, 3);
+  assert.equal(ta.defenses.reflex.parts.ability, 3);
+});
+
+t("Galaxy at War: armas naturais, feats de arma, Watchful Step, cibernéticos e Patente", async () => {
+  const { unarmedDamageCtx, weaponProfileFrom } = await import("../module/rules/weapon.mjs");
+  const ctx = (features, extra = {}) => ({ abilities: { str: { mod: 0 }, dex: { mod: 0 } }, bab: 0, features: features.map(key => ({ key })), size: "medium", ...extra });
+  const unarmed = weapons.find(w => w.system.key === "unarmed");
+  assert.equal(unarmedDamageCtx(ctx([], { naturalWeapon: "1d6" }), unarmed), "1d6");
+  assert.equal(unarmedDamageCtx(ctx(["martial-arts-i"], { naturalWeapon: "1d6" }), unarmed), "1d8");
+  assert.equal(unarmedDamageCtx(ctx([], { naturalWeapon: "1d8", size: "large" }), unarmed), "1d8");
+  const hbr = weapons.find(w => w.system.key === "heavy-blaster-rifle");
+  assert.equal(unarmedDamageCtx(ctx(["riflemaster"]), hbr), "3d12");
+  assert.equal(weaponProfileFrom(ctx(["pistoleer"]), weapons.find(w => w.system.key === "blaster-pistol")).accurate, true);
+  assert.equal(weaponProfileFrom(ctx(["pistoleer"]), weapons.find(w => w.system.key === "heavy-blaster-pistol")).inaccurate, false);
+  assert.equal(weaponProfileFrom(ctx(["echani-expertise"]), unarmed).critRange, 19);
+  assert.equal(weaponProfileFrom(ctx(["flurry-of-blows", "flurry-of-blows"]), unarmed).multiattackReduction, 4);
+  // Watchful Step
+  const sc = find(classes, "scout"); sc.system.hpRolls = [24]; sc.system.isStartingClass = true;
+  const s = sys({ str: 10, dex: 10, con: 10, int: 10, wis: 18, cha: 10 });
+  s.skills = { perception: { trained: true }, initiative: { trained: true } };
+  const ws = computeActor(s, [find(species, "human"), sc, find(talents, "watchful-step")]);
+  assert.equal(ws.skills.initiative.total, ws.skills.perception.total);
+  // Cibernéticos: −1 em Use the Force; íons como droide até ter blindagem iônica
+  const eq = k => { const e = structuredClone(equipment.find(x => x.system.key === k)); e.system.equipped = true; return e; };
+  const cy = computeActor(s, [find(species, "human"), sc, eq("skeletal-reinforcement")]);
+  assert.equal(cy.cybernetic, true);
+  assert.equal(cy.damageThreshold - ws.damageThreshold, 2);
+  assert.equal(computeActor(s, [find(species, "human"), sc, eq("skeletal-reinforcement"), eq("ion-shielding")]).cybernetic, false);
+  // Patente: soldado 7 (BBA +7) treinado em Knowledge (tactics) com Officer Candidacy Training
+  const so = find(classes, "soldier"); so.system.levels = 7; so.system.hpRolls = [30, 6, 6, 6, 6, 6, 6]; so.system.isStartingClass = true;
+  const s2 = sys({ str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10 });
+  s2.skills = { knowledgeTactics: { trained: true } };
+  s2.military = { score: 2, nco: false };
+  const r = computeActor(s2, [find(species, "human"), so, find(feats, "officer-candidacy-training")]).military;
+  assert.equal(r.score, 1 + 3 + 1 + 1 + 2 + 2); // BBA, ½ nível, Soldier, K(tactics), OCT, manual
+  assert.equal(r.title, "Chief Warrant Officer");
+  assert.equal(r.bonus, 2);
 });
 
 console.log(`\n${n} testes passaram.`);

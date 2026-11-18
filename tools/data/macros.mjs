@@ -37,6 +37,11 @@ game.swse.toggleStatusPrompt();`),
   M("Criação de Personagem", "icons/sundries/documents/document-sealed-signatures-red.webp",
 `const actor = canvas.tokens.controlled[0]?.actor ?? game.user.character;
 game.swse.openCharacterCreator(actor);`),
+  M("Ataque de Artilharia / Bombardeio", "icons/weapons/guns/gun-blunderbuss-gold.webp",
+`// Galaxy at War: observador avançado (Knowledge (tactics) CD 15) ou ordem especial de bombardeio.
+// Marque primeiro o alvo do quadrado central e depois os que estão no raio de splash.
+const actor = canvas.tokens.controlled[0]?.actor ?? game.user.character;
+game.swse.artilleryStrike(actor);`),
   M("Subir de Nível", "icons/magic/symbols/chevron-elipse-circle-blue.webp",
 `const actor = canvas.tokens.controlled[0]?.actor ?? game.user.character;
 if (!actor) return ui.notifications.warn("Selecione um token ou defina seu personagem.");

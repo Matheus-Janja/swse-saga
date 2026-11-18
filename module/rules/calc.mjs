@@ -5,6 +5,7 @@
 import { SWSE } from "../config.mjs";
 import { bestAppendage, locomotionSpeed } from "./droid.mjs";
 import { statusEffects } from "./effects.mjs";
+import { computeRank } from "./rank.mjs";
 
 export const abilityMod = score => Math.floor((Number(score) - 10) / 2);
 
@@ -214,7 +215,8 @@ export function computeActor(sys, items, opts = {}) {
     penalty: armorPenalty,
     reflexBonus: (Number(armor.system.reflexBonus) || 0) + (armorProficient && has("second-skin") ? 1 : 0),
     fortBonus: armorProficient ? (Number(armor.system.fortBonus) || 0) + (has("second-skin") ? 1 : 0) : 0,
-    maxDex: (armor.system.maxDex ?? 99) + (armorProficient && has("armor-mastery") ? 1 : 0)
+    // Armor Mastery (+1) e Taung Armor Training (+1, Galaxy at War)
+    maxDex: (armor.system.maxDex ?? 99) + (armorProficient && has("armor-mastery") ? 1 : 0) + (species?.system.key === "taung" ? 1 : 0)
   } : null;
 
   // --- Bônus de classe nas defesas (o maior entre as classes) ---
@@ -224,8 +226,10 @@ export function computeActor(sys, items, opts = {}) {
   }
 
   // --- Defesas ---
+  // Predictive Defense (Galaxy at War): Des ou Int na Reflexos
   const dexMod = d.abilities.dex.mod;
-  let dexToReflex = d.armor ? Math.min(dexMod, d.armor.maxDex) : dexMod;
+  const refMod = has("predictive-defense") ? Math.max(dexMod, d.abilities.int.mod) : dexMod;
+  let dexToReflex = d.armor ? Math.min(refMod, d.armor.maxDex) : refMod;
   // Surpreso, indefeso, imobilizado: perde o bônus de Destreza (e de esquiva) na Reflexos
   if (st.noDex) dexToReflex = Math.min(dexToReflex, 0);
   let levelOrArmor = heroicLevel;
@@ -239,9 +243,14 @@ export function computeActor(sys, items, opts = {}) {
   const misc = k => Number(sys.defenses?.[k]?.misc) || 0;
   const dodgeAll = (agg["defenses.reflex"]?.parts ?? []).concat(agg["defenses.all"]?.parts ?? []).filter(p => p.type === "dodge").reduce((a, p) => a + p.value, 0);
   const reflexParts = { base: 10, level: levelOrArmor, ability: dexToReflex, class: classDef.reflex, size: size.reflex, mods: mod("defenses.reflex") + allDef - (st.noDex ? dodgeAll : 0), misc: misc("reflex"), condition: d.conditionPenalty };
-  const fortAbility = isDroid ? d.abilities.str.mod : d.abilities.con.mod;
+  // Resilient Strength (Galaxy at War): For ou Con na Fortitude
+  let fortAbility = isDroid ? d.abilities.str.mod : d.abilities.con.mod;
+  if (has("resilient-strength")) fortAbility = Math.max(fortAbility, d.abilities.str.mod);
+  // Strength of Conviction (Zygerrian): Car no lugar de Sab; Force of Personality: o maior entre Sab e Car
+  let willAbility = species?.system.key === "zygerrian" ? d.abilities.cha.mod : d.abilities.wis.mod;
+  if (has("force-of-personality")) willAbility = Math.max(d.abilities.wis.mod, d.abilities.cha.mod);
   const fortParts = { base: 10, level: heroicLevel, ability: fortAbility, class: classDef.fortitude, equipment: d.armor?.fortBonus ?? 0, mods: mod("defenses.fortitude") + allDef, misc: misc("fortitude"), condition: d.conditionPenalty };
-  const willParts = { base: 10, level: heroicLevel, ability: d.abilities.wis.mod, class: classDef.will, mods: mod("defenses.will") + allDef, misc: misc("will"), condition: d.conditionPenalty };
+  const willParts = { base: 10, level: heroicLevel, ability: willAbility, class: classDef.will, mods: mod("defenses.will") + allDef, misc: misc("will"), condition: d.conditionPenalty };
   const sum = o => Object.values(o).reduce((a, b) => a + (Number(b) || 0), 0);
   const dodge = st.noDex ? 0 : dodgeAll;
   d.defenses = {
@@ -251,7 +260,9 @@ export function computeActor(sys, items, opts = {}) {
   };
 
   // --- Limiar de dano ---
-  d.damageThreshold = d.defenses.fortitude.total + size.dt + mod("damageThreshold") + (Number(sys.damageThreshold?.misc) || 0);
+  // Fight Through Pain (Galaxy at War): Vontade no lugar da Fortitude
+  d.damageThresholdDefense = has("fight-through-pain") ? "will" : "fortitude";
+  d.damageThreshold = d.defenses[d.damageThresholdDefense].total + size.dt + mod("damageThreshold") + (Number(sys.damageThreshold?.misc) || 0);
   d.damageReduction = mod("damageReduction") + (Number(sys.damageReduction) || 0);
 
   // --- Pontos de vida ---
@@ -314,6 +325,14 @@ export function computeActor(sys, items, opts = {}) {
     }
   }
 
+  // Watchful Step (Galaxy at War): Perception no lugar de Initiative
+  if (has("watchful-step") && d.skills.perception.total > d.skills.initiative.total) {
+    const s = d.skills.initiative;
+    s.total = d.skills.perception.total;
+    s.parts = { perception: s.total };
+    s.substitute = "watchful-step";
+  }
+
   // --- Ataque ---
   const strMod = d.abilities.str.mod;
   d.attack = {
@@ -358,6 +377,16 @@ export function computeActor(sys, items, opts = {}) {
 
   // --- Poderes da Força conhecidos ---
   d.forcePowersAllowed = count("force-training") * Math.max(1, 1 + d.abilities.wis.mod);
+
+  // --- Cibernéticos (Galaxy at War): sofrem íons como droides, salvo se todas as peças tiverem blindagem iônica ---
+  const cyber = items.filter(i => i.type === "equipment" && i.system.equipped && i.system.category === "cybernetic");
+  const cyberParts = cyber.filter(i => i.system.special !== "ionShielding").length;
+  const shielding = cyber.filter(i => i.system.special === "ionShielding").length;
+  d.cybernetic = cyberParts > 0 && shielding < cyberParts;
+  d.naturalWeapon = species?.system.naturalWeapon || "";
+
+  // --- Patente e Privilégio (Galaxy at War) ---
+  d.military = computeRank(d, sys.military ?? {}, { has, choicesOf, trees: new Set(talents.map(t => t.system.tree)) });
 
   return d;
 }

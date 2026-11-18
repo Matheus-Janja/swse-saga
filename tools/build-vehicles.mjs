@@ -3,7 +3,9 @@
  * e ajusta os campos "Outros" para bater com os blocos de estatística do livro.
  */
 import { computeVehicle, vehicleWeaponProfile, VEHICLE_SKILLS } from "../module/rules/vehicle.mjs";
-import vehicles, { FOLDERS } from "./data/vehicles.mjs";
+import coreVehicles, { FOLDERS } from "./data/vehicles.mjs";
+import gawVehicles from "./data/gaw/vehicles.mjs";
+const vehicles = [...coreVehicles, ...gawVehicles];
 import { ICON } from "./build-packs-icons.mjs";
 
 const TOKEN = { large: 2, huge: 3, gargantuan: 4, colossal: 6, colossalFrigate: 8, colossalCruiser: 10, colossalStation: 12 };
@@ -31,7 +33,7 @@ export function buildVehicles(makeId, stats) {
       speed: { character: v.speed[0], starship: v.speed[1], maxVelocity: v.maxv ?? "", notes: "" },
       fightingSpace: v.space ?? "", cover: v.cover ?? "", crewText: v.crewText ?? "", passengers: v.passengers ?? "",
       cargo: v.cargo ?? "", consumables: v.cons ?? "", carriedCraft: v.craft ?? "Nenhuma", payload: v.payload ?? "",
-      hyperdrive: v.hyper ?? "", availability: v.avail ?? "", cost: v.cost ?? "", notes: v.notes ?? ""
+      hyperdrive: v.hyper ?? "", availability: v.avail ?? "", cost: v.cost ?? "", notes: v.notes ?? "", source: v.source ?? "Saga Edition Core Rulebook"
     };
     // Defesas e Limiar
     let d = computeVehicle(sys, {});
@@ -50,7 +52,7 @@ export function buildVehicles(makeId, stats) {
       const item = {
         name: w.n, type: "vehicleWeapon",
         system: {
-          key: slug(w.n), description: "", source: "Saga Edition Core Rulebook",
+          key: slug(w.n), description: "", source: v.source ?? "Saga Edition Core Rulebook",
           weaponType: w.t, station, gunner, damage: w.dmg, multiplier: w.x ?? 1, ion: !!w.ion, autofire: !!w.auto,
           area: w.area ?? "", penetration: w.pen ?? 0, grapple: w.grp ?? 0, attackBonus: 0, damageBonus: 0,
           count: w.count ?? 1, ammo: { value: w.ammo ?? 0, max: w.ammo ?? 0 }, special: w.special ?? ""

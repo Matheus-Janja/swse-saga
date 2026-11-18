@@ -69,6 +69,7 @@
       <button type="button" data-action="vc" data-op="allOut" class="{{#if allOut}}active{{/if}}" data-tooltip="{{localize 'SWSE.VC.AllOutHint'}}"><i class="fa-solid fa-forward-fast"></i> {{localize "SWSE.Maneuver.allOut"}}</button>
       <button type="button" data-action="vc" data-op="stop" class="{{#if system.stationary}}active{{/if}}" data-tooltip="{{localize 'SWSE.VC.StopHint'}}"><i class="fa-solid fa-circle-stop"></i> {{#if system.stationary}}{{localize "SWSE.VC.Start"}}{{else}}{{localize "SWSE.VC.FullStop"}}{{/if}}</button>
       <button type="button" data-action="vc" data-op="shields" class="{{#if system.shieldsUp}}active{{/if}}"><i class="fa-solid fa-shield"></i> {{#if system.shieldsUp}}{{localize "SWSE.VC.ShieldsDown"}}{{else}}{{localize "SWSE.VC.ShieldsUp"}}{{/if}}</button>
+      <button type="button" data-action="vc" data-op="battlefield" data-tooltip="{{localize 'SWSE.VC.BattlefieldHint'}}"><i class="fa-solid fa-bullhorn"></i> {{localize "SWSE.VC.Battlefield"}}</button>
     </div>
     {{#if dogfight.length}}
     <p class="dogfight-list"><strong>{{localize "SWSE.VC.InDogfight"}}:</strong>
