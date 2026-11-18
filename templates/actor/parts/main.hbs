@@ -1,0 +1,96 @@
+<section class="tab {{tab.cssClass}}" data-group="primary" data-tab="main">
+  <div class="grid-2">
+    <div class="panel abilities">
+      <h3>{{localize "SWSE.Abilities"}}</h3>
+      <table class="ability-table">
+        <thead><tr><th></th><th>{{localize "SWSE.Base"}}</th><th>{{localize "SWSE.SpeciesAbbr"}}</th><th>{{localize "SWSE.Increase"}}</th><th>{{localize "SWSE.Misc"}}</th><th>{{localize "SWSE.Total"}}</th><th>{{localize "SWSE.Mod"}}</th></tr></thead>
+        <tbody>
+        {{#each abilities as |a|}}
+          <tr class="{{#if a.none}}disabled{{/if}}">
+            <th><a data-action="rollAbility" data-ability="{{a.key}}" data-tooltip="{{a.label}}">{{a.abbr}}</a></th>
+            <td><input type="number" name="system.abilities.{{a.key}}.base" value="{{a.base}}"></td>
+            <td class="ro">{{swseSigned a.species}}</td>
+            <td><input type="number" name="system.abilities.{{a.key}}.increase" value="{{a.increase}}"></td>
+            <td><input type="number" name="system.abilities.{{a.key}}.misc" value="{{a.misc}}"></td>
+            <td class="total">{{#if a.none}}—{{else}}{{a.total}}{{/if}}</td>
+            <td class="mod"><a data-action="rollAbility" data-ability="{{a.key}}">{{swseSigned a.mod}}</a></td>
+          </tr>
+        {{/each}}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="panel defenses">
+      <h3>{{localize "SWSE.Defenses"}}</h3>
+      {{#each defenses as |d|}}
+      <div class="defense-row">
+        <a class="defense-value" data-action="rollDefense" data-defense="{{d.key}}" data-tooltip="{{d.tooltip}}">{{d.total}}</a>
+        <span class="defense-label">{{d.label}}{{#if d.flatFooted}} <small>({{localize "SWSE.FlatFooted"}} {{d.flatFooted}})</small>{{/if}}</span>
+        <label class="misc">{{localize "SWSE.Misc"}} <input type="number" name="system.defenses.{{d.key}}.misc" value="{{d.misc}}"></label>
+      </div>
+      {{/each}}
+      <div class="defense-row small">
+        <span>{{localize "SWSE.DamageThreshold"}}: <strong>{{system.damageThreshold.total}}</strong></span>
+        <label class="misc">{{localize "SWSE.Misc"}} <input type="number" name="system.damageThreshold.misc" value="{{system.damageThreshold.misc}}"></label>
+      </div>
+      <div class="defense-row small">
+        <span>{{localize "SWSE.DamageReduction"}}: <strong>{{system.damageReduction}}</strong></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel condition-track">
+    <h3>{{localize "SWSE.Condition.label"}}
+      <label class="persistent"><input type="checkbox" name="system.condition.persistent" {{checked system.condition.persistent}}> {{localize "SWSE.Condition.persistent"}}</label>
+    </h3>
+    <ol class="track">
+      {{#each conditionTrack as |c|}}
+      <li class="step step-{{c.step}} {{#if c.active}}active{{/if}}" data-action="setCondition" data-step="{{c.step}}">
+        <span class="lbl">{{c.label}}</span>
+      </li>
+      {{/each}}
+    </ol>
+  </div>
+
+  <div class="grid-3">
+    <div class="panel stats">
+      <h3>{{localize "SWSE.Combat"}}</h3>
+      <div class="stat"><span>{{localize "SWSE.BAB"}}</span><strong>{{swseSigned system.bab}}</strong></div>
+      <div class="stat"><span>{{localize "SWSE.MeleeAttack"}}</span><strong>{{swseSigned derived.attack.melee}}</strong></div>
+      <div class="stat"><span>{{localize "SWSE.RangedAttack"}}</span><strong>{{swseSigned derived.attack.ranged}}</strong></div>
+      <div class="stat"><a data-action="grapple">{{localize "SWSE.Grapple"}}</a><strong>{{swseSigned system.grapple}}</strong></div>
+      <div class="stat"><a data-action="rollInitiative">{{localize "SWSE.Skill.initiative"}}</a><strong>{{swseSigned system.skills.initiative.total}}</strong></div>
+    </div>
+    <div class="panel stats">
+      <h3>{{localize "SWSE.SecondWind"}}</h3>
+      <div class="stat"><span>{{localize "SWSE.Uses"}}</span><strong>{{secondWind.used}} / {{secondWind.uses}}</strong></div>
+      <div class="stat"><span>{{localize "SWSE.Heals"}}</span><strong>{{secondWind.heal}}</strong></div>
+      <button type="button" data-action="secondWind"><i class="fa-solid fa-heart-pulse"></i> {{localize "SWSE.SecondWind"}}</button>
+      <button type="button" data-action="rest"><i class="fa-solid fa-bed"></i> {{localize "SWSE.Rest"}}</button>
+    </div>
+    <div class="panel stats">
+      <h3>{{localize "SWSE.Experience"}}</h3>
+      <div class="stat"><span>XP</span><input type="number" name="system.xp" value="{{system.xp}}"></div>
+      <div class="stat"><span>{{localize "SWSE.NextLevel"}}</span><strong>{{xpNext}}</strong></div>
+      <div class="stat"><span>{{localize "SWSE.DarkSideScore"}}</span><input type="number" name="system.darkSide.value" value="{{system.darkSide.value}}"></div>
+      {{#if isNPC}}
+      <div class="stat"><span>{{localize "SWSE.NPCLevel"}}</span><input type="number" name="system.npcLevel" value="{{system.npcLevel}}"></div>
+      <div class="stat"><span>{{localize "SWSE.BaseHP"}}</span><input type="number" name="system.hp.base" value="{{system.hp.base}}"></div>
+      <div class="stat"><span>{{localize "SWSE.BABBonus"}}</span><input type="number" name="system.babBonus" value="{{system.babBonus}}"></div>
+      {{/if}}
+    </div>
+  </div>
+
+  <div class="panel classes-panel">
+    <h3>{{localize "SWSE.ClassesAndSpecies"}}</h3>
+    <ul class="item-list">
+      {{#if species}}<li class="item" data-item-id="{{species.id}}"><img src="{{species.img}}"><a data-action="editItem">{{species.name}}</a><span class="tag">{{localize "TYPES.Item.species"}}</span>
+        {{#if editable}}<a class="ctl" data-action="deleteItem"><i class="fa-solid fa-trash"></i></a>{{/if}}</li>{{/if}}
+      {{#each classes as |c|}}
+      <li class="item" data-item-id="{{c.id}}"><img src="{{c.img}}"><a data-action="editItem">{{c.name}}</a>
+        <span class="tag">{{localize "SWSE.Level"}} {{c.system.levels}} · d{{c.system.hitDie}} · PV: {{#each c.system.hpRolls}}{{this}} {{/each}}</span>
+        {{#if ../editable}}<a class="ctl" data-action="deleteItem"><i class="fa-solid fa-trash"></i></a>{{/if}}</li>
+      {{/each}}
+    </ul>
+  </div>
+</section>

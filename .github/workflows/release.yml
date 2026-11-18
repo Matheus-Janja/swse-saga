@@ -1,0 +1,58 @@
+name: Release
+
+# Publica uma release ao enviar uma tag "vX.Y.Z".
+# Gera os compêndios (LevelDB), ajusta version/manifest/download no system.json e anexa
+# system.json + swse-saga.zip à release. O link de manifesto estável é:
+#   https://github.com/<owner>/<repo>/releases/latest/download/system.json
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Testes das regras
+        run: npm test
+
+      - name: Gerar compêndios
+        run: npm run build:packs
+
+      - name: Ajustar system.json
+        env:
+          TAG: ${{ github.ref_name }}
+          REPO: ${{ github.repository }}
+        run: |
+          node -e '
+            const fs = require("fs");
+            const tag = process.env.TAG, repo = process.env.REPO;
+            const s = JSON.parse(fs.readFileSync("system.json", "utf8"));
+            s.version = tag.replace(/^v/, "");
+            s.url = `https://github.com/${repo}`;
+            s.manifest = `https://github.com/${repo}/releases/latest/download/system.json`;
+            s.download = `https://github.com/${repo}/releases/download/${tag}/swse-saga.zip`;
+            fs.writeFileSync("system.json", JSON.stringify(s, null, 2) + "\n");
+          '
+
+      - name: Empacotar
+        run: zip -r swse-saga.zip system.json module templates styles lang packs LICENSE README.md -x "packs/*/LOCK"
+
+      - name: Publicar release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            system.json
+            swse-saga.zip
+          generate_release_notes: true

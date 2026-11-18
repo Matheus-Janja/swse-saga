@@ -1,0 +1,22 @@
+<section class="tab {{tab.cssClass}}" data-group="primary" data-tab="bio">
+  <div class="grid-3 details">
+    <label>{{localize "SWSE.Details.player"}} <input type="text" name="system.details.player" value="{{system.details.player}}"></label>
+    <label>{{localize "SWSE.Details.age"}} <input type="text" name="system.details.age" value="{{system.details.age}}"></label>
+    <label>{{localize "SWSE.Details.gender"}} <input type="text" name="system.details.gender" value="{{system.details.gender}}"></label>
+    <label>{{localize "SWSE.Details.height"}} <input type="text" name="system.details.height" value="{{system.details.height}}"></label>
+    <label>{{localize "SWSE.Details.weight"}} <input type="text" name="system.details.weight" value="{{system.details.weight}}"></label>
+    <label>{{localize "SWSE.Details.homeworld"}} <input type="text" name="system.details.homeworld" value="{{system.details.homeworld}}"></label>
+    <label class="wide">{{localize "SWSE.Details.languages"}} <input type="text" name="system.details.languages" value="{{system.details.languages}}"></label>
+    <label class="wide">{{localize "SWSE.Details.destiny"}} <input type="text" name="system.details.destiny" value="{{system.details.destiny}}"></label>
+  </div>
+  {{#if species}}
+  <div class="panel">
+    <h3>{{localize "SWSE.SpeciesTraits"}} — {{species.name}}</h3>
+    <ul class="traits">{{#each species.system.traits}}<li><strong>{{this.name}}:</strong> {{this.text}}</li>{{/each}}</ul>
+  </div>
+  {{/if}}
+  <div class="panel biography">
+    <h3>{{localize "SWSE.Biography"}}</h3>
+    {{formInput biographyField value=system.details.biography enriched=enrichedBiography name="system.details.biography" toggled=true}}
+  </div>
+</section>

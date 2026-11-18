@@ -1,0 +1,69 @@
+<section class="tab {{tab.cssClass}}" data-group="primary" data-tab="combat">
+  <div class="panel">
+    <h3>{{localize "SWSE.Weapons"}}
+      {{#if editable}}<a class="ctl" data-action="createItem" data-type="weapon"><i class="fa-solid fa-plus"></i></a>
+      <a class="ctl" data-action="openCompendium" data-pack="weapons"><i class="fa-solid fa-book-atlas"></i></a>{{/if}}</h3>
+    <p class="hint">{{localize "SWSE.AttackHint"}}</p>
+    <table class="item-table">
+      <thead><tr><th></th><th>{{localize "SWSE.Name"}}</th><th>{{localize "SWSE.Weapon.group"}}</th><th>{{localize "SWSE.Attack.Label"}}</th><th>{{localize "SWSE.Damage"}}</th><th>{{localize "SWSE.Ammo"}}</th><th></th></tr></thead>
+      <tbody>
+      {{#each weapons as |w|}}
+        <tr class="item {{#unless w.proficient}}not-proficient{{/unless}}" data-item-id="{{w.item.id}}">
+          <td><img src="{{w.item.img}}" data-action="useItem" class="rollable"></td>
+          <td><a data-action="useItem">{{w.item.name}}</a>{{#unless w.proficient}} <i class="fa-solid fa-triangle-exclamation" data-tooltip="{{localize 'SWSE.Attack.NotProficient'}}"></i>{{/unless}}</td>
+          <td>{{w.group}}</td>
+          <td><a data-action="useItem">{{swseSigned w.attack}}</a></td>
+          <td>{{w.damage}}</td>
+          <td>{{#if w.item.system.ammo.max}}{{w.item.system.ammo.value}}/{{w.item.system.ammo.max}}{{/if}}</td>
+          <td class="ctls">
+            <a data-action="toggleEquip" class="{{#if w.item.system.equipped}}on{{/if}}" data-tooltip="{{localize 'SWSE.Equipped'}}"><i class="fa-solid fa-hand-fist"></i></a>
+            <a data-action="itemToChat"><i class="fa-solid fa-comment"></i></a>
+            <a data-action="editItem"><i class="fa-solid fa-pen"></i></a>
+            {{#if ../editable}}<a data-action="deleteItem"><i class="fa-solid fa-trash"></i></a>{{/if}}
+          </td>
+        </tr>
+      {{/each}}
+      </tbody>
+    </table>
+  </div>
+  <div class="panel">
+    <h3>{{localize "SWSE.ArmorLabel"}}
+      {{#if editable}}<a class="ctl" data-action="createItem" data-type="armor"><i class="fa-solid fa-plus"></i></a>
+      <a class="ctl" data-action="openCompendium" data-pack="armor"><i class="fa-solid fa-book-atlas"></i></a>{{/if}}</h3>
+    {{#if derived.armor}}<p class="hint">{{derived.armor.name}}: Ref +{{derived.armor.reflexBonus}}, Fort +{{derived.armor.fortBonus}}, {{localize "SWSE.Armor.maxDex"}} +{{derived.armor.maxDex}}{{#unless derived.armor.proficient}} — <strong class="warn">{{localize "SWSE.ArmorNotProficient"}} ({{derived.armor.penalty}})</strong>{{/unless}}</p>{{/if}}
+    <table class="item-table">
+      <thead><tr><th></th><th>{{localize "SWSE.Name"}}</th><th>{{localize "SWSE.Armor.category"}}</th><th>Ref</th><th>Fort</th><th>{{localize "SWSE.Armor.maxDex"}}</th><th></th></tr></thead>
+      <tbody>
+      {{#each armors as |a|}}
+        <tr class="item" data-item-id="{{a.id}}">
+          <td><img src="{{a.img}}"></td>
+          <td><a data-action="editItem">{{a.name}}</a></td>
+          <td>{{a.system.category}}</td>
+          <td>+{{a.system.reflexBonus}}</td><td>+{{a.system.fortBonus}}</td><td>+{{a.system.maxDex}}</td>
+          <td class="ctls">
+            <a data-action="toggleEquip" class="{{#if a.system.equipped}}on{{/if}}" data-tooltip="{{localize 'SWSE.Equipped'}}"><i class="fa-solid fa-shirt"></i></a>
+            <a data-action="itemToChat"><i class="fa-solid fa-comment"></i></a>
+            {{#if ../editable}}<a data-action="deleteItem"><i class="fa-solid fa-trash"></i></a>{{/if}}
+          </td>
+        </tr>
+      {{/each}}
+      </tbody>
+    </table>
+  </div>
+  <div class="panel">
+    <h3>{{localize "SWSE.CustomModifiers"}} {{#if editable}}<a class="ctl" data-action="addModifier"><i class="fa-solid fa-plus"></i></a>{{/if}}</h3>
+    <p class="hint">{{localize "SWSE.CustomModifiersHint"}}</p>
+    <table class="mod-table">
+      {{#each customModifiers as |m|}}
+      <tr>
+        <td><input type="checkbox" name="system.customModifiers.{{m.index}}.disabled" {{checked m.disabled}} data-tooltip="{{localize 'SWSE.Disabled'}}"></td>
+        <td><input type="text" name="system.customModifiers.{{m.index}}.label" value="{{m.label}}" placeholder="{{localize 'SWSE.Label'}}"></td>
+        <td><select name="system.customModifiers.{{m.index}}.target">{{selectOptions ../modifierTargets selected=m.target localize=true}}</select></td>
+        <td><input type="text" class="short" name="system.customModifiers.{{m.index}}.value" value="{{m.value}}"></td>
+        <td><select name="system.customModifiers.{{m.index}}.type">{{selectOptions ../bonusTypes selected=m.type localize=true}}</select></td>
+        <td><a data-action="deleteModifier" data-index="{{m.index}}"><i class="fa-solid fa-trash"></i></a></td>
+      </tr>
+      {{/each}}
+    </table>
+  </div>
+</section>

@@ -1,0 +1,45 @@
+<header class="sheet-header swse-header">
+  <img class="portrait" src="{{actor.img}}" alt="{{actor.name}}" data-action="editImage" data-edit="img" title="{{actor.name}}">
+  <div class="header-main">
+    <div class="name-row">
+      <input class="actor-name" type="text" name="name" value="{{actor.name}}" placeholder="{{localize 'SWSE.Name'}}">
+      {{#if editable}}
+      <div class="header-buttons">
+        {{#unless isNPC}}<button type="button" data-action="openCreator" data-tooltip="{{localize 'SWSE.CharacterCreator'}}"><i class="fa-solid fa-wand-magic-sparkles"></i></button>{{/unless}}
+        <button type="button" data-action="openLevelUp" class="{{#if canLevelUp}}glow{{/if}}" data-tooltip="{{localize 'SWSE.LevelUp'}}"><i class="fa-solid fa-angles-up"></i></button>
+      </div>
+      {{/if}}
+    </div>
+    <div class="summary-row">
+      <span class="species">{{#if species}}<a data-action="editItem" data-item-id="{{species.id}}">{{species.name}}</a>{{else}}<em>{{localize "SWSE.NoSpecies"}}</em>{{/if}}</span>
+      <span class="classes">{{classSummary}}</span>
+      <span class="level">{{localize "SWSE.Level"}} {{system.level}}</span>
+      {{#if isNPC}}<label>CL <input type="number" name="system.challengeLevel" value="{{system.challengeLevel}}" class="short"></label>{{/if}}
+    </div>
+    <div class="resource-row">
+      <div class="resource hp">
+        <label>{{localize "SWSE.HP"}}</label>
+        <div class="bar"><div class="fill" style="width: {{hpPct}}%"></div></div>
+        <div class="vals"><input type="number" name="system.hp.value" value="{{system.hp.value}}"> / <span class="max">{{system.hp.max}}</span></div>
+        <label class="temp">{{localize "SWSE.TempHP"}} <input type="number" name="system.hp.temp" value="{{system.hp.temp}}"></label>
+      </div>
+      <div class="resource">
+        <label data-tooltip="{{localize 'SWSE.DamageThresholdHint'}}">{{localize "SWSE.DamageThresholdAbbr"}}</label>
+        <span class="big">{{system.damageThreshold.total}}</span>
+      </div>
+      <div class="resource">
+        <label>{{localize "SWSE.ForcePoints"}}</label>
+        <div class="vals"><input type="number" name="system.forcePoints.value" value="{{system.forcePoints.value}}"> / {{system.forcePoints.max}}
+        <a data-action="rollForcePoint" data-tooltip="{{localize 'SWSE.SpendForcePoint'}} ({{forcePointFormula}})"><i class="fa-solid fa-dice-d20"></i></a></div>
+      </div>
+      <div class="resource">
+        <label>{{localize "SWSE.DestinyPoints"}}</label>
+        <input type="number" name="system.destinyPoints.value" value="{{system.destinyPoints.value}}">
+      </div>
+      <div class="resource">
+        <label>{{localize "SWSE.Speed"}}</label>
+        <span class="big">{{system.speed.total}}</span>
+      </div>
+    </div>
+  </div>
+</header>

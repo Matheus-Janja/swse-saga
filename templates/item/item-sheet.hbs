@@ -1,0 +1,180 @@
+<div class="swse-item-sheet">
+  <header class="sheet-header">
+    <img class="portrait" src="{{item.img}}" data-action="editImage" data-edit="img" title="{{item.name}}">
+    <div class="header-fields">
+      <input class="item-name" type="text" name="name" value="{{item.name}}">
+      <div class="meta">
+        <span class="type-tag">{{localize (concat "TYPES.Item." item.type)}}</span>
+        <label>{{localize "SWSE.Key"}} <input type="text" name="system.key" value="{{system.key}}" class="key" data-tooltip="{{localize 'SWSE.KeyHint'}}"></label>
+        {{#if (or isType.weapon isType.forcePower)}}<button type="button" data-action="use"><i class="fa-solid fa-dice-d20"></i> {{localize "SWSE.Use"}}</button>{{/if}}
+      </div>
+    </div>
+  </header>
+
+  <div class="sheet-body">
+  {{#if isType.species}}
+    <fieldset><legend>{{localize "SWSE.AbilityModifiers"}}</legend>
+      <div class="ability-mods">
+        {{#each abilityList as |a|}}<label>{{localize a.label}} <input type="number" name="system.abilityMods.{{a.key}}" value="{{a.value}}"></label>{{/each}}
+      </div>
+    </fieldset>
+    <div class="grid-3">
+      <label>{{localize "SWSE.SizeLabel"}} <select name="system.size">{{selectOptions sizes selected=system.size localize=true}}</select></label>
+      <label>{{localize "SWSE.Speed"}} <input type="number" name="system.speed" value="{{system.speed}}"></label>
+      <label>{{localize "SWSE.SwimSpeed"}} <input type="number" name="system.swimSpeed" value="{{system.swimSpeed}}"></label>
+      <label>{{localize "SWSE.BonusTrainedSkills"}} <input type="number" name="system.bonusTrainedSkills" value="{{system.bonusTrainedSkills}}"></label>
+      <label>{{localize "SWSE.BonusFeatChoices"}} <input type="number" name="system.bonusFeatChoices" value="{{system.bonusFeatChoices}}"></label>
+      <label><input type="checkbox" name="system.primitive" {{checked system.primitive}}> {{localize "SWSE.Primitive"}}</label>
+    </div>
+    <label class="wide">{{localize "SWSE.BonusFeatsKeys"}} <input type="text" name="_list.bonusFeats" value="{{listText.bonusFeats}}"></label>
+    <label class="wide">{{localize "SWSE.Details.languages"}} <input type="text" name="system.languages" value="{{system.languages}}"></label>
+    <fieldset><legend>{{localize "SWSE.SpeciesTraits"}} {{#if editable}}<a data-action="addTrait"><i class="fa-solid fa-plus"></i></a>{{/if}}</legend>
+      {{#each system.traits as |t i|}}
+      <div class="trait-row">
+        <input type="text" name="system.traits.{{i}}.name" value="{{t.name}}" placeholder="{{localize 'SWSE.Name'}}">
+        <textarea name="system.traits.{{i}}.text" rows="2">{{t.text}}</textarea>
+        <a data-action="deleteTrait" data-index="{{i}}"><i class="fa-solid fa-trash"></i></a>
+      </div>
+      {{/each}}
+    </fieldset>
+  {{/if}}
+
+  {{#if isType.class}}
+    <div class="grid-3">
+      <label>{{localize "SWSE.ClassType.label"}} <select name="system.classType">{{selectOptions config.classTypes selected=system.classType localize=true}}</select></label>
+      <label>{{localize "SWSE.Level"}} <input type="number" name="system.levels" value="{{system.levels}}"></label>
+      <label>{{localize "SWSE.BAB"}} <select name="system.bab">{{selectOptions config.babProgressions selected=system.bab localize=true}}</select></label>
+      <label>{{localize "SWSE.HitDie"}} d<input type="number" name="system.hitDie" value="{{system.hitDie}}" class="short"></label>
+      <label>{{localize "SWSE.StartingHP"}} <input type="number" name="system.startingHP" value="{{system.startingHP}}"></label>
+      <label>{{localize "SWSE.TrainedSkillsCount"}} <input type="number" name="system.trainedSkills" value="{{system.trainedSkills}}"></label>
+      <label>{{localize "SWSE.Defense.reflex"}} <input type="number" name="system.defenses.reflex" value="{{system.defenses.reflex}}"></label>
+      <label>{{localize "SWSE.Defense.fortitude"}} <input type="number" name="system.defenses.fortitude" value="{{system.defenses.fortitude}}"></label>
+      <label>{{localize "SWSE.Defense.will"}} <input type="number" name="system.defenses.will" value="{{system.defenses.will}}"></label>
+      <label>{{localize "SWSE.ForcePointsBase"}} <input type="number" name="system.forcePointsBase" value="{{system.forcePointsBase}}"></label>
+      <label>{{localize "SWSE.StartingCredits"}} <input type="text" name="system.credits" value="{{system.credits}}"></label>
+      <label><input type="checkbox" name="system.isStartingClass" {{checked system.isStartingClass}}> {{localize "SWSE.StartingClass"}}</label>
+    </div>
+    <p class="hint">{{localize "SWSE.HpRolls"}}: {{#each system.hpRolls}}{{this}} {{/each}}</p>
+    <label class="wide">{{localize "SWSE.ClassSkills"}} <input type="text" name="_list.classSkills" value="{{listText.classSkills}}"></label>
+    <label class="wide">{{localize "SWSE.StartingFeats"}} <input type="text" name="_list.startingFeats" value="{{listText.startingFeats}}"></label>
+    <label class="wide">{{localize "SWSE.BonusFeats"}} <input type="text" name="_list.bonusFeats" value="{{listText.bonusFeats}}"></label>
+    <label class="wide">{{localize "SWSE.TalentTrees"}} <input type="text" name="_list.talentTrees" value="{{listText.talentTrees}}"></label>
+    {{#if system.features.length}}
+    <fieldset><legend>{{localize "SWSE.ClassFeatures"}}</legend>
+      <ul class="traits">{{#each system.features}}<li><strong>{{this.level}}º — {{this.name}}:</strong> {{this.text}}</li>{{/each}}</ul>
+    </fieldset>
+    {{/if}}
+  {{/if}}
+
+  {{#if (or isType.feat isType.talent)}}
+    {{#if isType.talent}}
+    <div class="grid-2">
+      <label>{{localize "SWSE.TalentTree"}} <input type="text" name="system.tree" value="{{system.tree}}"></label>
+      <label>{{localize "SWSE.Category"}} <select name="system.category">{{selectOptions config.talentCategories selected=system.category localize=true}}</select></label>
+    </div>
+    {{/if}}
+    <div class="grid-3">
+      <label>{{localize "SWSE.Choice.label"}} <select name="system.choice.type">{{selectOptions config.choiceTypes selected=system.choice.type localize=true}}</select></label>
+      <label>{{localize "SWSE.Choice.value"}} <input type="text" name="system.choice.value" value="{{system.choice.value}}"></label>
+      <label><input type="checkbox" name="system.repeatable" {{checked system.repeatable}}> {{localize "SWSE.Repeatable"}}</label>
+    </div>
+  {{/if}}
+
+  {{#if hasPrereqs}}
+    <label class="wide">{{localize "SWSE.Prerequisites"}} <input type="text" name="system.prerequisites.text" value="{{system.prerequisites.text}}"></label>
+  {{/if}}
+
+  {{#if isType.forcePower}}
+    <div class="grid-2">
+      <label>{{localize "SWSE.Force.Time"}} <input type="text" name="system.time" value="{{system.time}}"></label>
+      <label>{{localize "SWSE.Force.Target"}} <input type="text" name="system.target" value="{{system.target}}"></label>
+      <label>{{localize "SWSE.Force.Defense"}} <select name="system.defense"><option value=""></option>{{selectOptions config.defenses selected=system.defense localize=true}}</select></label>
+      <label>{{localize "SWSE.Force.Damage"}} <input type="text" name="system.damage" value="{{system.damage}}" data-tooltip="{{localize 'SWSE.Force.DamageHint'}}"></label>
+      <label>{{localize "SWSE.Force.Uses"}} <input type="number" name="system.uses" value="{{system.uses}}"></label>
+      <label>{{localize "SWSE.Force.Spent"}} <input type="number" name="system.spent" value="{{system.spent}}"></label>
+    </div>
+    <label class="wide">{{localize "SWSE.Force.Descriptors"}} <input type="text" name="_list.descriptors" value="{{listText.descriptors}}" placeholder="lightSide, darkSide, mindAffecting, telekinetic"></label>
+    <fieldset><legend>{{localize "SWSE.Force.DCs"}} {{#if editable}}<a data-action="addDC"><i class="fa-solid fa-plus"></i></a>{{/if}}</legend>
+      {{#each system.dcs as |d i|}}
+      <div class="dc-row">
+        <label>CD <input type="number" name="system.dcs.{{i}}.dc" value="{{d.dc}}" class="short"></label>
+        <input type="text" name="system.dcs.{{i}}.text" value="{{d.text}}">
+        <a data-action="deleteDC" data-index="{{i}}"><i class="fa-solid fa-trash"></i></a>
+      </div>
+      {{/each}}
+    </fieldset>
+    <label class="wide">{{localize "SWSE.Special"}} <textarea name="system.special" rows="3">{{system.special}}</textarea></label>
+  {{/if}}
+
+  {{#if isType.weapon}}
+    <div class="grid-3">
+      <label>{{localize "SWSE.Weapon.group"}} <select name="system.group">{{selectOptions config.weaponGroups selected=system.group localize=true}}</select></label>
+      <label>{{localize "SWSE.SizeLabel"}} <select name="system.size">{{selectOptions config.weaponSizes selected=system.size localize=true}}</select></label>
+      <label>{{localize "SWSE.Range.label"}} <select name="system.rangeType">{{selectOptions config.rangeTypes selected=system.rangeType localize=true}}</select></label>
+      <label>{{localize "SWSE.Damage"}} <input type="text" name="system.damage" value="{{system.damage}}"></label>
+      <label>{{localize "SWSE.Weapon.damage2"}} <input type="text" name="system.damage2" value="{{system.damage2}}"></label>
+      <label>{{localize "SWSE.Weapon.damageType"}} <select name="system.damageType">{{selectOptions config.damageTypes selected=system.damageType localize=true}}</select></label>
+      <label>{{localize "SWSE.Weapon.rof"}} <input type="text" name="system.rateOfFire" value="{{system.rateOfFire}}" placeholder="S, A"></label>
+      <label>{{localize "SWSE.Weapon.area"}} <input type="text" name="system.area" value="{{system.area}}"></label>
+      <label>{{localize "SWSE.Weapon.attackBonus"}} <input type="number" name="system.attackBonus" value="{{system.attackBonus}}"></label>
+      <label>{{localize "SWSE.Weapon.damageBonus"}} <input type="number" name="system.damageBonus" value="{{system.damageBonus}}"></label>
+      <label>{{localize "SWSE.Weapon.critRange"}} <input type="number" name="system.critRange" value="{{system.critRange}}"></label>
+      <label>{{localize "SWSE.Ammo"}} <input type="number" name="system.ammo.value" value="{{system.ammo.value}}" class="short"> / <input type="number" name="system.ammo.max" value="{{system.ammo.max}}" class="short"></label>
+    </div>
+    <div class="checks">
+      <label><input type="checkbox" name="system.stun" {{checked system.stun}}> {{localize "SWSE.Weapon.stun"}}</label>
+      <label><input type="checkbox" name="system.ion" {{checked system.ion}}> {{localize "SWSE.Weapon.ion"}}</label>
+      <label><input type="checkbox" name="system.accurate" {{checked system.accurate}}> {{localize "SWSE.Weapon.accurate"}}</label>
+      <label><input type="checkbox" name="system.inaccurate" {{checked system.inaccurate}}> {{localize "SWSE.Weapon.inaccurate"}}</label>
+      <label><input type="checkbox" name="system.thrown" {{checked system.thrown}}> {{localize "SWSE.Weapon.thrown"}}</label>
+      <label><input type="checkbox" name="system.double" {{checked system.double}}> {{localize "SWSE.Weapon.double"}}</label>
+      <label><input type="checkbox" name="system.reach" {{checked system.reach}}> {{localize "SWSE.Weapon.reach"}}</label>
+      <label><input type="checkbox" name="system.strDamage" {{checked system.strDamage}}> {{localize "SWSE.Weapon.strDamage"}}</label>
+      <label><input type="checkbox" name="system.noStrDamage" {{checked system.noStrDamage}}> {{localize "SWSE.Weapon.noStrDamage"}}</label>
+      <label><input type="checkbox" name="system.ignoresDR" {{checked system.ignoresDR}}> {{localize "SWSE.Weapon.ignoresDR"}}</label>
+      <label><input type="checkbox" name="system.equipped" {{checked system.equipped}}> {{localize "SWSE.Equipped"}}</label>
+    </div>
+  {{/if}}
+
+  {{#if isType.armor}}
+    <div class="grid-3">
+      <label>{{localize "SWSE.Armor.category"}} <select name="system.category"><option value="light" {{#if (eq system.category "light")}}selected{{/if}}>{{localize "SWSE.Armor.light"}}</option><option value="medium" {{#if (eq system.category "medium")}}selected{{/if}}>{{localize "SWSE.Armor.medium"}}</option><option value="heavy" {{#if (eq system.category "heavy")}}selected{{/if}}>{{localize "SWSE.Armor.heavy"}}</option></select></label>
+      <label>{{localize "SWSE.Armor.reflexBonus"}} <input type="number" name="system.reflexBonus" value="{{system.reflexBonus}}"></label>
+      <label>{{localize "SWSE.Armor.fortBonus"}} <input type="number" name="system.fortBonus" value="{{system.fortBonus}}"></label>
+      <label>{{localize "SWSE.Armor.maxDex"}} <input type="number" name="system.maxDex" value="{{system.maxDex}}"></label>
+      <label><input type="checkbox" name="system.equipped" {{checked system.equipped}}> {{localize "SWSE.Equipped"}}</label>
+    </div>
+  {{/if}}
+
+  {{#if (or isType.weapon isType.armor isType.equipment)}}
+    <div class="grid-3">
+      <label>{{localize "SWSE.Cost"}} <input type="number" name="system.cost" value="{{system.cost}}"></label>
+      <label>{{localize "SWSE.Weight"}} <input type="number" step="0.1" name="system.weight" value="{{system.weight}}"></label>
+      <label>{{localize "SWSE.Quantity"}} <input type="number" name="system.quantity" value="{{system.quantity}}"></label>
+      <label>{{localize "SWSE.AvailabilityLabel"}} <select name="system.availability">{{selectOptions config.availability selected=system.availability localize=true}}</select></label>
+      {{#if isType.equipment}}<label><input type="checkbox" name="system.equipped" {{checked system.equipped}}> {{localize "SWSE.Equipped"}}</label>{{/if}}
+    </div>
+  {{/if}}
+
+  {{#if hasModifiers}}
+    <fieldset><legend>{{localize "SWSE.Modifiers"}} {{#if editable}}<a data-action="addModifier"><i class="fa-solid fa-plus"></i></a>{{/if}}</legend>
+      <p class="hint">{{localize "SWSE.ModifiersHint"}}</p>
+      <table class="mod-table">
+      {{#each modifiers as |m|}}
+        <tr>
+          <td><input type="checkbox" name="system.modifiers.{{m.index}}.disabled" {{checked m.disabled}} data-tooltip="{{localize 'SWSE.Disabled'}}"></td>
+          <td><select name="system.modifiers.{{m.index}}.target">{{selectOptions ../modifierTargets selected=m.target localize=true}}</select></td>
+          <td><input type="text" class="short" name="system.modifiers.{{m.index}}.value" value="{{m.value}}"></td>
+          <td><select name="system.modifiers.{{m.index}}.type">{{selectOptions ../bonusTypes selected=m.type localize=true}}</select></td>
+          <td><a data-action="deleteModifier" data-index="{{m.index}}"><i class="fa-solid fa-trash"></i></a></td>
+        </tr>
+      {{/each}}
+      </table>
+    </fieldset>
+  {{/if}}
+
+    <fieldset class="description"><legend>{{localize "SWSE.Description"}}</legend>
+      {{formInput descriptionField value=system.description enriched=enrichedDescription name="system.description" toggled=true}}
+    </fieldset>
+  </div>
+</div>

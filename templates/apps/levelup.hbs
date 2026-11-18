@@ -1,0 +1,123 @@
+<div class="wizard">
+  <nav class="wizard-steps">
+    {{#each steps as |st|}}
+    <span class="wstep {{#if st.active}}active{{/if}} {{#if st.done}}done{{/if}}"><span class="n">{{st.n}}</span> {{st.label}}</span>
+    {{/each}}
+  </nav>
+
+  <section class="wizard-content">
+    {{#if error}}<p class="wizard-error"><i class="fa-solid fa-triangle-exclamation"></i> {{error}}</p>{{/if}}
+    <p class="hint">{{localize "SWSE.LU.Intro"}} <strong>{{newLevel}}</strong>{{#if chosen}} — {{chosen.name}} {{chosen.level}}{{/if}}</p>
+
+    {{#if isStep.class}}
+    <h2>{{localize "SWSE.LU.Step.class"}}</h2>
+    {{#if ownedClasses.length}}
+    <h4>{{localize "SWSE.LU.CurrentClasses"}}</h4>
+    <ul class="choice-list inline">
+      {{#each ownedClasses as |c|}}
+      <li class="choice {{#if c.selected}}selected{{/if}}" data-action="selectClass" data-id="{{c.id}}"><img src="{{c.img}}"><div><strong>{{c.name}}</strong><small>{{localize "SWSE.Level"}} {{c.level}} → {{swseAdd c.level 1}}</small></div></li>
+      {{/each}}
+    </ul>
+    {{/if}}
+    <h4>{{localize "SWSE.LU.NewClass"}}</h4>
+    <ul class="choice-list inline">
+      {{#each baseClasses as |c|}}
+      <li class="choice {{#if c.selected}}selected{{/if}}" data-action="selectClass" data-id="{{c.id}}"><img src="{{c.img}}"><div><strong>{{c.name}}</strong></div></li>
+      {{/each}}
+    </ul>
+    <h4>{{localize "SWSE.ClassType.prestige"}}</h4>
+    <ul class="pick-list">
+      {{#each prestigeClasses as |c|}}
+      <li class="{{#if c.selected}}selected{{/if}} {{#unless c.ok}}unavailable{{/unless}}">
+        <a data-action="selectClass" data-id="{{c.id}}" data-blocked="{{#unless c.ok}}true{{/unless}}"><i class="fa-regular {{#if c.selected}}fa-circle-dot{{else}}fa-circle{{/if}}"></i> {{c.name}}</a>
+        <small>{{c.prereq}}{{#if c.missing.length}} — <span class="warn">{{#each c.missing}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}</span>{{/if}}</small>
+        <a class="info" data-action="showItem" data-uuid="{{c.uuid}}"><i class="fa-solid fa-circle-info"></i></a>
+      </li>
+      {{/each}}
+    </ul>
+    {{/if}}
+
+    {{#if isStep.hp}}
+    <h2>{{localize "SWSE.LU.Step.hp"}}</h2>
+    <p>{{localize "SWSE.HitDie"}}: d{{chosen.hitDie}} · Con {{swseSigned conMod}} · {{localize "SWSE.Settings.HpMethod"}}: {{hpMethod}}</p>
+    <p><button type="button" data-action="rollHP"><i class="fa-solid fa-dice"></i> {{localize "SWSE.LU.RollHP"}}</button>
+      {{localize "SWSE.LU.OrType"}} <input type="number" name="hp" value="{{hp}}" class="short" min="1" max="{{chosen.hitDie}}"></p>
+    {{#if hpRoll}}<p class="points">{{hpRoll}} → +{{hp}} {{swseSigned conMod}} {{localize "SWSE.HP"}}</p>{{/if}}
+    {{/if}}
+
+    {{#if isStep.abilities}}
+    <h2>{{localize "SWSE.LU.Step.abilities"}}</h2>
+    <p class="hint">{{localize "SWSE.LU.AbilitiesHint"}}</p>
+    <ul class="skill-pick">
+      {{#each abilities as |a|}}
+      <li class="{{#if a.selected}}selected{{/if}}" data-action="toggleIncrease" data-ability="{{a.key}}"><i class="fa-regular {{#if a.selected}}fa-square-check{{else}}fa-square{{/if}}"></i> {{a.label}} ({{a.total}}{{#if a.selected}} → {{swseAdd a.total 1}}{{/if}})</li>
+      {{/each}}
+    </ul>
+    {{/if}}
+
+    {{#if isStep.skill}}
+    <h2>{{localize "SWSE.LU.Step.skill"}}</h2>
+    <p class="hint">{{localize "SWSE.LU.SkillHint"}}</p>
+    <ul class="skill-pick">
+      {{#each skillList as |s|}}
+      <li class="{{#if s.selected}}selected{{/if}}" data-action="pickSkill" data-skill="{{s.key}}"><i class="fa-regular {{#if s.selected}}fa-circle-dot{{else}}fa-circle{{/if}}"></i> {{s.label}}</li>
+      {{/each}}
+    </ul>
+    {{/if}}
+
+    {{#if (or isStep.multiclass isStep.feats isStep.talent isStep.forceExtras)}}
+    <label class="filter"><input type="checkbox" name="filter" {{checked filter}}> {{localize "SWSE.CG.OnlyAvailable"}}</label>
+    {{/if}}
+
+    {{#if isStep.multiclass}}
+    <h2>{{localize "SWSE.LU.Step.multiclass"}}</h2>
+    <p class="hint">{{localize "SWSE.LU.MulticlassHint"}}</p>
+    {{> pickList list=multiclassList slot="multiclassFeat" action="pickFeat"}}
+    {{/if}}
+
+    {{#if isStep.feats}}
+    <h2>{{localize "SWSE.LU.Step.feats"}}</h2>
+    {{#if gains.levelFeat}}<h4>{{localize "SWSE.LU.Gain.levelFeat"}}</h4>{{> pickList list=levelFeatList slot="levelFeat" action="pickFeat"}}{{/if}}
+    {{#if gains.bonusFeat}}<h4>{{localize "SWSE.LU.Gain.bonusFeat"}} ({{chosen.name}})</h4>{{> pickList list=bonusFeatList slot="bonusFeat" action="pickFeat"}}{{/if}}
+    {{/if}}
+
+    {{#if isStep.talent}}
+    <h2>{{localize "SWSE.LU.Step.talent"}}</h2>
+    {{#each talentGroups as |g|}}
+    <h4>{{g.tree}}</h4>
+    {{> pickList list=g.list slot="talent" action="pickTalent"}}
+    {{/each}}
+    {{/if}}
+
+    {{#if isStep.forceExtras}}
+    <h2>{{localize "SWSE.LU.Step.forceExtras"}}</h2>
+    {{#if gains.technique}}<h4>{{localize "SWSE.LU.Gain.technique"}}</h4>{{> pickList list=techniqueList slot="technique" action="pickTalent"}}{{/if}}
+    {{#if gains.secret}}<h4>{{localize "SWSE.LU.Gain.secret"}}</h4>{{> pickList list=secretList slot="secret" action="pickTalent"}}{{/if}}
+    {{/if}}
+
+    {{#if isStep.powers}}
+    <h2>{{localize "SWSE.LU.Step.powers"}}</h2>
+    <p class="points">{{localize "SWSE.CG.PowersChosen"}}: <strong>{{powersChosen}}</strong> / {{powersAllowed}}</p>
+    <ul class="pick-list powers">
+      {{#each powerList as |p|}}
+      <li class="{{#if p.count}}selected{{/if}}"><img src="{{p.img}}"> <strong>{{p.name}}</strong> <small>{{p.time}}</small>
+        <span class="counter"><a data-action="removePower" data-id="{{p.id}}"><i class="fa-solid fa-minus"></i></a> {{p.count}} <a data-action="addPower" data-id="{{p.id}}"><i class="fa-solid fa-plus"></i></a></span></li>
+      {{/each}}
+    </ul>
+    {{/if}}
+
+    {{#if isStep.review}}
+    <h2>{{localize "SWSE.LU.Step.review"}}</h2>
+    <ul class="review">{{#each review}}<li>{{this}}</li>{{/each}}</ul>
+    {{/if}}
+  </section>
+
+  <footer class="wizard-footer">
+    <button type="button" data-action="prev" {{#if isFirst}}disabled{{/if}}><i class="fa-solid fa-chevron-left"></i> {{localize "SWSE.CG.Back"}}</button>
+    {{#if isLast}}
+    <button type="button" class="primary" data-action="finish"><i class="fa-solid fa-check"></i> {{localize "SWSE.LU.Apply"}}</button>
+    {{else}}
+    <button type="button" class="primary" data-action="next">{{localize "SWSE.CG.Next"}} <i class="fa-solid fa-chevron-right"></i></button>
+    {{/if}}
+  </footer>
+</div>

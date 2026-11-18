@@ -1,0 +1,17 @@
+<section class="tab {{tab.cssClass}}" data-group="primary" data-tab="skills">
+  <p class="hint">{{localize "SWSE.SkillsHint"}}</p>
+  <table class="skill-table">
+    <thead><tr><th>{{localize "SWSE.Trained"}}</th><th>{{localize "SWSE.Skill.label"}}</th><th>{{localize "SWSE.Ability.label"}}</th><th>{{localize "SWSE.Total"}}</th><th>{{localize "SWSE.Misc"}}</th></tr></thead>
+    <tbody>
+    {{#each skills as |s|}}
+      <tr class="{{#unless s.usable}}disabled{{/unless}} {{#if s.trained}}trained{{/if}}">
+        <td><input type="checkbox" name="system.skills.{{s.key}}.trained" {{checked s.trained}}>{{#if s.trainedByFeat}} <i class="fa-solid fa-graduation-cap" data-tooltip="Skill Training"></i>{{/if}}</td>
+        <td><a data-action="rollSkill" data-skill="{{s.key}}">{{s.label}}</a>{{#if s.focus}} <i class="fa-solid fa-bullseye" data-tooltip="Skill Focus"></i>{{/if}}{{#if s.armor}} <small data-tooltip="{{localize 'SWSE.ArmorCheck'}}">*</small>{{/if}}</td>
+        <td>{{s.ability}}</td>
+        <td class="total"><a data-action="rollSkill" data-skill="{{s.key}}" data-tooltip="{{s.tooltip}}">{{swseSigned s.total}}</a></td>
+        <td><input type="number" name="system.skills.{{s.key}}.misc" value="{{s.misc}}"></td>
+      </tr>
+    {{/each}}
+    </tbody>
+  </table>
+</section>

@@ -1,0 +1,23 @@
+<section class="tab {{tab.cssClass}}" data-group="primary" data-tab="gear">
+  <div class="panel">
+    <h3>{{localize "SWSE.Equipment"}}
+      {{#if editable}}<a class="ctl" data-action="createItem" data-type="equipment"><i class="fa-solid fa-plus"></i></a>
+      <a class="ctl" data-action="openCompendium" data-pack="equipment"><i class="fa-solid fa-book-atlas"></i></a>{{/if}}</h3>
+    <p class="hint">{{localize "SWSE.Credits"}}: <input type="number" name="system.credits" value="{{system.credits}}" class="short"> · {{localize "SWSE.TotalWeight"}}: {{totalWeight}} kg</p>
+    <table class="item-table">
+      <thead><tr><th></th><th>{{localize "SWSE.Name"}}</th><th>{{localize "SWSE.Quantity"}}</th><th>{{localize "SWSE.Weight"}}</th><th>{{localize "SWSE.Cost"}}</th><th></th></tr></thead>
+      <tbody>
+      {{#each equipment as |e|}}
+        <tr class="item" data-item-id="{{e.id}}">
+          <td><img src="{{e.img}}"></td>
+          <td><a data-action="itemToChat">{{e.name}}</a></td>
+          <td>{{e.system.quantity}}</td><td>{{e.system.weight}}</td><td>{{e.system.cost}}</td>
+          <td class="ctls"><a data-action="toggleEquip" class="{{#if e.system.equipped}}on{{/if}}" data-tooltip="{{localize 'SWSE.Equipped'}}"><i class="fa-solid fa-check"></i></a>
+            <a data-action="editItem"><i class="fa-solid fa-pen"></i></a>
+            {{#if @root.editable}}<a data-action="deleteItem"><i class="fa-solid fa-trash"></i></a>{{/if}}</td>
+        </tr>
+      {{/each}}
+      </tbody>
+    </table>
+  </div>
+</section>

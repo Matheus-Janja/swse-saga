@@ -1,0 +1,6 @@
+node_modules/
+packs/
+*.zip
+.DS_Store
+Thumbs.db
+packs-src/

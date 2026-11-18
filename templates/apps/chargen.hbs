@@ -1,0 +1,242 @@
+<div class="wizard">
+  <nav class="wizard-steps">
+    {{#each steps as |st|}}
+    <a class="wstep {{#if st.active}}active{{/if}} {{#if st.done}}done{{/if}}" data-action="goto" data-step="{{st.key}}"><span class="n">{{st.n}}</span> {{st.label}}</a>
+    {{/each}}
+  </nav>
+
+  <section class="wizard-content">
+    {{#if error}}<p class="wizard-error"><i class="fa-solid fa-triangle-exclamation"></i> {{error}}</p>{{/if}}
+
+    {{!-- 1. ATRIBUTOS --}}
+    {{#if isStep.abilities}}
+    <h2>{{localize "SWSE.CG.Step.abilities"}}</h2>
+    <p class="hint">{{localize "SWSE.CG.AbilitiesHint"}}</p>
+    <div class="method-select">
+      {{#each methods as |m|}}
+      <label><input type="radio" name="method" value="{{m.key}}" {{#if (eq m.key @root.state.method)}}checked{{/if}}> {{m.label}}</label>
+      {{/each}}
+    </div>
+
+    {{#if (eq state.method "pointBuy")}}
+    <p class="points">{{localize "SWSE.CG.PointsLeft"}}: <strong class="{{#if (lt pbLeft 0)}}warn{{/if}}">{{pbLeft}}</strong> / 25</p>
+    <table class="wizard-abilities">
+      <thead><tr><th></th><th>{{localize "SWSE.Base"}}</th><th>{{localize "SWSE.CG.Cost"}}</th><th>{{localize "SWSE.SpeciesAbbr"}}</th><th>{{localize "SWSE.Total"}}</th><th>{{localize "SWSE.Mod"}}</th></tr></thead>
+      <tbody>
+      {{#each abilities as |a|}}
+      <tr><th>{{a.label}}</th>
+        <td class="pb"><a data-action="pbDec" data-ability="{{a.key}}"><i class="fa-solid fa-minus"></i></a> <strong>{{a.pb}}</strong> <a data-action="pbInc" data-ability="{{a.key}}"><i class="fa-solid fa-plus"></i></a></td>
+        <td>{{a.cost}}</td><td>{{swseSigned a.species}}</td><td><strong>{{a.final}}</strong></td><td>{{swseSigned a.mod}}</td></tr>
+      {{/each}}
+      </tbody>
+    </table>
+    {{else}}
+      {{#if (eq state.method "roll")}}
+      <p><button type="button" data-action="rollAbilities"><i class="fa-solid fa-dice"></i> {{localize "SWSE.CG.Roll4d6"}}</button>
+        {{#if canReroll}}<span class="hint">{{localize "SWSE.CG.CanReroll"}}</span>{{/if}}</p>
+      {{/if}}
+      {{#if pool.length}}
+      <p class="pool">{{localize "SWSE.CG.Values"}}: {{#each pool as |p|}}<span class="chip">{{p.value}}</span>{{/each}}</p>
+      <table class="wizard-abilities">
+        <thead><tr><th></th><th>{{localize "SWSE.CG.Assign"}}</th><th>{{localize "SWSE.SpeciesAbbr"}}</th><th>{{localize "SWSE.Total"}}</th><th>{{localize "SWSE.Mod"}}</th></tr></thead>
+        <tbody>
+        {{#each abilities as |a|}}
+        <tr><th>{{a.label}}</th>
+          <td><select name="assign.{{a.key}}"><option value="">—</option>
+            {{#each @root.pool as |p|}}<option value="{{p.index}}" {{#if (eq p.index a.assign)}}selected{{/if}}>{{p.value}}</option>{{/each}}
+          </select></td>
+          <td>{{swseSigned a.species}}</td><td><strong>{{a.final}}</strong></td><td>{{#if a.final}}{{swseSigned a.mod}}{{/if}}</td></tr>
+        {{/each}}
+        </tbody>
+      </table>
+      {{/if}}
+    {{/if}}
+    {{/if}}
+
+    {{!-- 2. ESPÉCIE --}}
+    {{#if isStep.species}}
+    <h2>{{localize "SWSE.CG.Step.species"}}</h2>
+    <div class="choice-layout">
+      <ul class="choice-list">
+        {{#each speciesList as |sp|}}
+        <li class="choice {{#if sp.selected}}selected{{/if}}" data-action="selectSpecies" data-id="{{sp.id}}">
+          <img src="{{sp.img}}"><div><strong>{{sp.name}}</strong><small>{{sp.mods}}</small></div>
+        </li>
+        {{/each}}
+      </ul>
+      <div class="choice-detail">
+        {{#if selectedSpecies}}
+        <h3>{{selectedSpecies.name}}</h3>
+        {{{selectedSpecies.description}}}
+        <p><strong>{{localize "SWSE.AbilityModifiers"}}:</strong> {{selectedSpecies.mods}} · <strong>{{localize "SWSE.SizeLabel"}}:</strong> {{selectedSpecies.size}} · <strong>{{localize "SWSE.Speed"}}:</strong> {{selectedSpecies.speed}}</p>
+        <ul class="traits">{{#each selectedSpecies.traits}}<li><strong>{{this.name}}:</strong> {{this.text}}</li>{{/each}}</ul>
+        {{else}}<p class="hint">{{localize "SWSE.CG.PickSpecies"}}</p>{{/if}}
+      </div>
+    </div>
+    {{/if}}
+
+    {{!-- 3. CLASSE --}}
+    {{#if isStep.class}}
+    <h2>{{localize "SWSE.CG.Step.class"}}</h2>
+    <div class="choice-layout">
+      <ul class="choice-list">
+        {{#each classList as |c|}}
+        <li class="choice {{#if c.selected}}selected{{/if}}" data-action="selectClass" data-id="{{c.id}}">
+          <img src="{{c.img}}"><div><strong>{{c.name}}</strong><small>PV {{c.hp}} · BBA +{{c.bab}}</small></div>
+        </li>
+        {{/each}}
+      </ul>
+      <div class="choice-detail">
+        {{#if selectedClass}}
+        <h3>{{selectedClass.name}}</h3>
+        {{{selectedClass.description}}}
+        <dl class="facts">
+          <dt>{{localize "SWSE.StartingHP"}}</dt><dd>{{selectedClass.hp}} + Con · d{{selectedClass.hitDie}}/{{localize "SWSE.Level"}}</dd>
+          <dt>{{localize "SWSE.BAB"}}</dt><dd>+{{selectedClass.bab}}</dd>
+          <dt>{{localize "SWSE.Defenses"}}</dt><dd>{{selectedClass.defenses}}</dd>
+          <dt>{{localize "SWSE.TrainedSkillsCount"}}</dt><dd>{{selectedClass.trained}} + Int</dd>
+          <dt>{{localize "SWSE.ClassSkills"}}</dt><dd>{{selectedClass.skills}}</dd>
+          <dt>{{localize "SWSE.StartingFeats"}}</dt><dd>{{selectedClass.feats}}</dd>
+          <dt>{{localize "SWSE.TalentTrees"}}</dt><dd>{{selectedClass.trees}}</dd>
+          <dt>{{localize "SWSE.StartingCredits"}}</dt><dd>{{selectedClass.credits}}</dd>
+        </dl>
+        {{else}}<p class="hint">{{localize "SWSE.CG.PickClass"}}</p>{{/if}}
+      </div>
+    </div>
+    {{/if}}
+
+    {{!-- 4. PERÍCIAS --}}
+    {{#if isStep.skills}}
+    <h2>{{localize "SWSE.CG.Step.skills"}}</h2>
+    <p class="points">{{localize "SWSE.CG.TrainedChosen"}}: <strong>{{trainedCount}}</strong> / {{trainedAllowed}}</p>
+    <p class="hint">{{localize "SWSE.CG.SkillsHint"}}</p>
+    <ul class="skill-pick">
+      {{#each skillList as |s|}}
+      <li class="{{#if s.checked}}selected{{/if}}" data-action="toggleSkill" data-skill="{{s.key}}"><i class="fa-regular {{#if s.checked}}fa-square-check{{else}}fa-square{{/if}}"></i> {{s.label}} <small>({{s.ability}})</small></li>
+      {{/each}}
+    </ul>
+    {{/if}}
+
+    {{!-- 5. FEATS --}}
+    {{#if isStep.feats}}
+    <h2>{{localize "SWSE.CG.Step.feats"}}</h2>
+    <div class="auto-feats">
+      <h4>{{localize "SWSE.CG.AutoFeats"}}</h4>
+      <ul>{{#each autoFeats as |f|}}<li class="{{#unless f.ok}}struck{{/unless}}">{{f.name}} <small>({{f.source}}){{#unless f.ok}} — {{localize "SWSE.CG.PrereqNotMet"}}: {{f.missing}}{{/unless}}</small></li>{{/each}}</ul>
+    </div>
+    <label class="filter"><input type="checkbox" name="featFilter" {{checked state.featFilter}}> {{localize "SWSE.CG.OnlyAvailable"}}</label>
+    {{#if speciesFeatSlots}}
+    <h4>{{localize "SWSE.CG.SpeciesFeat"}} ({{speciesFeatSlots}})</h4>
+    <ul class="pick-list">
+      {{#each speciesFeatList as |f|}}
+      <li class="{{#if f.selected}}selected{{/if}} {{#unless f.ok}}unavailable{{/unless}}">
+        <a data-action="toggleSpeciesFeat" data-id="{{f.id}}"><i class="fa-regular {{#if f.selected}}fa-square-check{{else}}fa-square{{/if}}"></i> {{f.name}}{{#if f.choiceValue}} ({{f.choiceValue}}){{/if}}</a>
+        <small>{{f.prereqText}}{{#if f.missing.length}} — <span class="warn">{{#each f.missing}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}</span>{{/if}}</small>
+        <a class="info" data-action="showItem" data-uuid="{{f.uuid}}"><i class="fa-solid fa-circle-info"></i></a>
+      </li>
+      {{/each}}
+    </ul>
+    {{/if}}
+    <h4>{{localize "SWSE.CG.LevelFeat"}} (1)</h4>
+    <ul class="pick-list">
+      {{#each featList as |f|}}
+      <li class="{{#if f.selected}}selected{{/if}} {{#unless f.ok}}unavailable{{/unless}}">
+        <a data-action="toggleFeat" data-id="{{f.id}}"><i class="fa-regular {{#if f.selected}}fa-square-check{{else}}fa-square{{/if}}"></i> {{f.name}}{{#if f.choiceValue}} ({{f.choiceValue}}){{/if}}</a>
+        <small>{{f.prereqText}}{{#if f.missing.length}} — <span class="warn">{{#each f.missing}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}</span>{{/if}}</small>
+        <a class="info" data-action="showItem" data-uuid="{{f.uuid}}"><i class="fa-solid fa-circle-info"></i></a>
+      </li>
+      {{/each}}
+    </ul>
+    {{/if}}
+
+    {{!-- 6. TALENTO --}}
+    {{#if isStep.talent}}
+    <h2>{{localize "SWSE.CG.Step.talent"}}</h2>
+    <p class="hint">{{localize "SWSE.CG.TalentHint"}}</p>
+    <label class="filter"><input type="checkbox" name="talentFilter" {{checked state.talentFilter}}> {{localize "SWSE.CG.OnlyAvailable"}}</label>
+    {{#each talentGroups as |g|}}
+    <h4>{{g.tree}}{{#if g.force}} <small>({{localize "SWSE.TalentCategory.forceTalent"}})</small>{{/if}}</h4>
+    <ul class="pick-list">
+      {{#each g.list as |t|}}
+      <li class="{{#if t.selected}}selected{{/if}} {{#unless t.ok}}unavailable{{/unless}}">
+        <a data-action="selectTalent" data-id="{{t.id}}"><i class="fa-regular {{#if t.selected}}fa-circle-dot{{else}}fa-circle{{/if}}"></i> {{t.name}}{{#if t.choiceValue}} ({{t.choiceValue}}){{/if}}</a>
+        <small>{{t.prereqText}}{{#if t.missing.length}} — <span class="warn">{{#each t.missing}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}</span>{{/if}}</small>
+        <a class="info" data-action="showItem" data-uuid="{{t.uuid}}"><i class="fa-solid fa-circle-info"></i></a>
+      </li>
+      {{/each}}
+    </ul>
+    {{/each}}
+    {{/if}}
+
+    {{!-- 7. FORÇA --}}
+    {{#if isStep.force}}
+    <h2>{{localize "SWSE.CG.Step.force"}}</h2>
+    <p class="points">{{localize "SWSE.CG.PowersChosen"}}: <strong>{{powersChosen}}</strong> / {{powersAllowed}}</p>
+    <p class="hint">{{localize "SWSE.CG.PowersHint"}}</p>
+    <ul class="pick-list powers">
+      {{#each powerList as |p|}}
+      <li class="{{#if p.count}}selected{{/if}}">
+        <img src="{{p.img}}"> <strong>{{p.name}}</strong> <small>{{p.time}}{{#if p.descriptors}} · {{p.descriptors}}{{/if}}</small>
+        <span class="counter"><a data-action="removePower" data-id="{{p.id}}"><i class="fa-solid fa-minus"></i></a> {{p.count}} <a data-action="addPower" data-id="{{p.id}}"><i class="fa-solid fa-plus"></i></a></span>
+      </li>
+      {{/each}}
+    </ul>
+    {{/if}}
+
+    {{!-- 8. EQUIPAMENTO --}}
+    {{#if isStep.equipment}}
+    <h2>{{localize "SWSE.CG.Step.equipment"}}</h2>
+    <div class="grid-2">
+      <label>{{localize "SWSE.Name"}} <input type="text" name="name" value="{{state.name}}"></label>
+      <label>{{localize "SWSE.CG.StartingCredits"}} ({{creditsFormula}})
+        <input type="number" name="credits" value="{{credits}}" class="short">
+        <button type="button" data-action="rollCredits"><i class="fa-solid fa-dice"></i></button></label>
+    </div>
+    <p class="points">{{localize "SWSE.CG.Spent"}}: {{spent}} · {{localize "SWSE.CG.Left"}}: <strong>{{left}}</strong></p>
+    {{#if freeItems}}<p class="hint">{{localize "SWSE.CG.FreeItems"}}: {{freeItems}}</p>{{/if}}
+    {{#if purchases.length}}
+    <ul class="cart">{{#each purchases as |p|}}<li>{{p.name}} <small>{{p.cost}} cr</small> <a data-action="unbuy" data-index="{{p.index}}"><i class="fa-solid fa-xmark"></i></a></li>{{/each}}</ul>
+    {{/if}}
+    {{#each shop as |sec|}}
+    <details class="shop"><summary>{{sec.label}}</summary>
+      <ul class="pick-list">
+        {{#each sec.list as |i|}}
+        <li class="{{#unless i.affordable}}unavailable{{/unless}}"><img src="{{i.img}}"> {{i.name}} <small>{{i.cost}} cr{{#if i.availability}} · {{i.availability}}{{/if}}</small>
+          <a class="info" data-action="showItem" data-uuid="{{i.uuid}}"><i class="fa-solid fa-circle-info"></i></a>
+          <a data-action="buy" data-uuid="{{i.uuid}}"><i class="fa-solid fa-cart-plus"></i></a></li>
+        {{/each}}
+      </ul>
+    </details>
+    {{/each}}
+    {{/if}}
+
+    {{!-- 9. REVISÃO --}}
+    {{#if isStep.review}}
+    <h2>{{localize "SWSE.CG.Step.review"}}</h2>
+    {{#if review.problems.length}}<ul class="wizard-error">{{#each review.problems}}<li>{{this}}</li>{{/each}}</ul>{{/if}}
+    <dl class="facts">
+      <dt>{{localize "SWSE.Name"}}</dt><dd>{{review.name}}</dd>
+      <dt>{{localize "TYPES.Item.species"}}</dt><dd>{{review.species}}</dd>
+      <dt>{{localize "TYPES.Item.class"}}</dt><dd>{{review.cls}} 1</dd>
+      <dt>{{localize "SWSE.Abilities"}}</dt><dd>{{review.abilities}}</dd>
+      <dt>{{localize "SWSE.HP"}}</dt><dd>{{review.hp}}</dd>
+      <dt>{{localize "SWSE.TrainedSkills"}}</dt><dd>{{review.skills}}</dd>
+      <dt>{{localize "SWSE.Feats"}}</dt><dd>{{review.feats}}</dd>
+      <dt>{{localize "SWSE.Talents"}}</dt><dd>{{review.talent}}</dd>
+      <dt>{{localize "SWSE.ForcePowers"}}</dt><dd>{{review.powers}}</dd>
+      <dt>{{localize "SWSE.Equipment"}}</dt><dd>{{review.items}}</dd>
+      <dt>{{localize "SWSE.Credits"}}</dt><dd>{{review.credits}}</dd>
+    </dl>
+    <p class="hint">{{localize "SWSE.CG.ReviewHint"}}</p>
+    {{/if}}
+  </section>
+
+  <footer class="wizard-footer">
+    <button type="button" data-action="prev" {{#if isFirst}}disabled{{/if}}><i class="fa-solid fa-chevron-left"></i> {{localize "SWSE.CG.Back"}}</button>
+    {{#if isLast}}
+    <button type="button" class="primary" data-action="finish"><i class="fa-solid fa-check"></i> {{localize "SWSE.CG.Finish"}}</button>
+    {{else}}
+    <button type="button" class="primary" data-action="next">{{localize "SWSE.CG.Next"}} <i class="fa-solid fa-chevron-right"></i></button>
+    {{/if}}
+  </footer>
+</div>

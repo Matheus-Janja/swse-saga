@@ -1,0 +1,15 @@
+{
+  "name": "swse-saga",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Star Wars Saga Edition system for Foundry VTT",
+  "scripts": {
+    "build:packs": "node tools/build-packs.mjs",
+    "test": "node tools/test-calc.mjs",
+    "build": "npm run build:packs"
+  },
+  "devDependencies": {
+    "@foundryvtt/foundryvtt-cli": "^3.0.5"
+  }
+}
