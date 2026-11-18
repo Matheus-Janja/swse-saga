@@ -2,62 +2,231 @@
   "id": "swse-saga",
   "title": "Star Wars RPG - Saga Edition",
   "description": "Sistema não oficial para Star Wars Roleplaying Game: Saga Edition. Ficha automatizada, criação de personagem guiada, subida de nível, ataques automatizados por armas, feats e talentos, e compêndios com o conteúdo do Livro Básico.",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "compatibility": {
     "minimum": "13",
     "verified": "14.370"
   },
   "authors": [
-    { "name": "Matheus-Janja" }
+    {
+      "name": "Matheus-Janja"
+    }
   ],
-  "esmodules": ["module/swse.mjs"],
-  "styles": ["styles/swse.css"],
+  "esmodules": [
+    "module/swse.mjs"
+  ],
+  "styles": [
+    "styles/swse.css"
+  ],
   "languages": [
-    { "lang": "pt-BR", "name": "Português (Brasil)", "path": "lang/pt-BR.json" },
-    { "lang": "en", "name": "English", "path": "lang/en.json" }
+    {
+      "lang": "pt-BR",
+      "name": "Português (Brasil)",
+      "path": "lang/pt-BR.json"
+    },
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "lang/en.json"
+    }
   ],
   "documentTypes": {
     "Actor": {
-      "character": { "htmlFields": ["details.biography"] },
-      "npc": { "htmlFields": ["details.biography"] }
+      "character": {
+        "htmlFields": [
+          "details.biography"
+        ]
+      },
+      "npc": {
+        "htmlFields": [
+          "details.biography"
+        ]
+      }
     },
     "Item": {
-      "species": { "htmlFields": ["description"] },
-      "class": { "htmlFields": ["description"] },
-      "feat": { "htmlFields": ["description"] },
-      "talent": { "htmlFields": ["description"] },
-      "forcePower": { "htmlFields": ["description"] },
-      "weapon": { "htmlFields": ["description"] },
-      "armor": { "htmlFields": ["description"] },
-      "equipment": { "htmlFields": ["description"] }
+      "species": {
+        "htmlFields": [
+          "description"
+        ]
+      },
+      "class": {
+        "htmlFields": [
+          "description"
+        ]
+      },
+      "feat": {
+        "htmlFields": [
+          "description"
+        ]
+      },
+      "talent": {
+        "htmlFields": [
+          "description"
+        ]
+      },
+      "forcePower": {
+        "htmlFields": [
+          "description"
+        ]
+      },
+      "weapon": {
+        "htmlFields": [
+          "description"
+        ]
+      },
+      "armor": {
+        "htmlFields": [
+          "description"
+        ]
+      },
+      "equipment": {
+        "htmlFields": [
+          "description"
+        ]
+      }
     }
   },
   "packs": [
-    { "name": "species", "label": "Espécies", "path": "packs/species", "type": "Item", "system": "swse-saga", "ownership": { "PLAYER": "OBSERVER", "ASSISTANT": "OWNER" } },
-    { "name": "classes", "label": "Classes", "path": "packs/classes", "type": "Item", "system": "swse-saga", "ownership": { "PLAYER": "OBSERVER", "ASSISTANT": "OWNER" } },
-    { "name": "feats", "label": "Feats (Talentos Gerais)", "path": "packs/feats", "type": "Item", "system": "swse-saga", "ownership": { "PLAYER": "OBSERVER", "ASSISTANT": "OWNER" } },
-    { "name": "talents", "label": "Talents (Árvores de Talento)", "path": "packs/talents", "type": "Item", "system": "swse-saga", "ownership": { "PLAYER": "OBSERVER", "ASSISTANT": "OWNER" } },
-    { "name": "force-powers", "label": "Poderes, Técnicas e Segredos da Força", "path": "packs/force-powers", "type": "Item", "system": "swse-saga", "ownership": { "PLAYER": "OBSERVER", "ASSISTANT": "OWNER" } },
-    { "name": "weapons", "label": "Armas", "path": "packs/weapons", "type": "Item", "system": "swse-saga", "ownership": { "PLAYER": "OBSERVER", "ASSISTANT": "OWNER" } },
-    { "name": "armor", "label": "Armaduras", "path": "packs/armor", "type": "Item", "system": "swse-saga", "ownership": { "PLAYER": "OBSERVER", "ASSISTANT": "OWNER" } },
-    { "name": "equipment", "label": "Equipamentos", "path": "packs/equipment", "type": "Item", "system": "swse-saga", "ownership": { "PLAYER": "OBSERVER", "ASSISTANT": "OWNER" } },
-    { "name": "macros", "label": "Macros SWSE", "path": "packs/macros", "type": "Macro", "system": "swse-saga", "ownership": { "PLAYER": "OBSERVER", "ASSISTANT": "OWNER" } }
+    {
+      "name": "species",
+      "label": "Espécies",
+      "path": "packs/species",
+      "type": "Item",
+      "system": "swse-saga",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      }
+    },
+    {
+      "name": "classes",
+      "label": "Classes",
+      "path": "packs/classes",
+      "type": "Item",
+      "system": "swse-saga",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      }
+    },
+    {
+      "name": "feats",
+      "label": "Feats (Talentos Gerais)",
+      "path": "packs/feats",
+      "type": "Item",
+      "system": "swse-saga",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      }
+    },
+    {
+      "name": "talents",
+      "label": "Talents (Árvores de Talento)",
+      "path": "packs/talents",
+      "type": "Item",
+      "system": "swse-saga",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      }
+    },
+    {
+      "name": "force-powers",
+      "label": "Poderes, Técnicas e Segredos da Força",
+      "path": "packs/force-powers",
+      "type": "Item",
+      "system": "swse-saga",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      }
+    },
+    {
+      "name": "weapons",
+      "label": "Armas",
+      "path": "packs/weapons",
+      "type": "Item",
+      "system": "swse-saga",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      }
+    },
+    {
+      "name": "armor",
+      "label": "Armaduras",
+      "path": "packs/armor",
+      "type": "Item",
+      "system": "swse-saga",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      }
+    },
+    {
+      "name": "equipment",
+      "label": "Equipamentos",
+      "path": "packs/equipment",
+      "type": "Item",
+      "system": "swse-saga",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      }
+    },
+    {
+      "name": "npcs",
+      "label": "PdMs (Livro Básico)",
+      "path": "packs/npcs",
+      "type": "Actor",
+      "system": "swse-saga",
+      "ownership": {
+        "PLAYER": "NONE",
+        "ASSISTANT": "OWNER"
+      }
+    },
+    {
+      "name": "macros",
+      "label": "Macros SWSE",
+      "path": "packs/macros",
+      "type": "Macro",
+      "system": "swse-saga",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      }
+    }
   ],
   "packFolders": [
     {
       "name": "Star Wars Saga Edition",
       "sorting": "m",
       "color": "#1b2a3a",
-      "packs": ["species", "classes", "feats", "talents", "force-powers", "weapons", "armor", "equipment", "macros"]
+      "packs": [
+        "species",
+        "classes",
+        "feats",
+        "talents",
+        "force-powers",
+        "weapons",
+        "armor",
+        "equipment",
+        "npcs",
+        "macros"
+      ]
     }
   ],
   "socket": true,
-  "grid": { "distance": 1.5, "units": "m" },
+  "grid": {
+    "distance": 1.5,
+    "units": "m"
+  },
   "primaryTokenAttribute": "hp",
   "secondaryTokenAttribute": "forcePoints",
   "initiative": "1d20 + @skills.initiative.total",
   "url": "https://github.com/Matheus-Janja/swse-saga",
   "manifest": "https://github.com/Matheus-Janja/swse-saga/releases/latest/download/system.json",
-  "download": "https://github.com/Matheus-Janja/swse-saga/releases/download/v0.1.2/swse-saga.zip",
+  "download": "https://github.com/Matheus-Janja/swse-saga/releases/download/v0.2.0/swse-saga.zip",
   "license": "LICENSE"
 }

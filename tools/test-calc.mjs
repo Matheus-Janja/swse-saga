@@ -8,7 +8,9 @@ import species from "./data/species.mjs";
 import classes from "./data/classes.mjs";
 import feats from "./data/feats.mjs";
 import talents from "./data/talents.mjs";
-import { armor } from "./data/gear.mjs";
+import { armor, weapons } from "./data/gear.mjs";
+import forcePowers from "./data/force-powers.mjs";
+import { buildNpcs } from "./build-npcs.mjs";
 
 const find = (list, key) => structuredClone(list.find(i => i.system.key === key));
 const clone = x => structuredClone(x);
@@ -117,6 +119,21 @@ t("Zabrak: +1 em todas as Defesas; Improved Defenses acumula (tipos diferentes)"
   const so = find(classes, "soldier"); so.system.hpRolls = [30];
   const d = computeActor(sys({ str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10 }), [find(species, "zabrak"), so, find(feats, "improved-defenses")]);
   assert.equal(d.defenses.will.total, 10 + 1 + 0 + 0 + 2);
+});
+
+t("Dano soma ½ nível heroico (níveis não heroicos não contam)", () => {
+  const nh = find(classes, "nonheroic"); nh.system.levels = 6; nh.system.hpRolls = [3, 3, 3, 3, 3, 3];
+  const so = find(classes, "soldier"); so.system.levels = 3; so.system.hpRolls = [30, 6, 6];
+  const d = computeActor(sys({ str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10 }), [nh, so]);
+  assert.equal(d.halfLevel, 4);
+  assert.equal(d.damageHalfLevel, 1);
+});
+
+t("PdMs do livro batem com os blocos de estatística", () => {
+  let i = 0;
+  const { actors, report } = buildNpcs({ species, classes, feats, talents, powers: forcePowers, weapons, armor }, () => `id${i++}`.padEnd(16, "x"), {});
+  assert.deepEqual(report, []);
+  assert.ok(actors.length >= 40);
 });
 
 console.log(`\n${n} testes passaram.`);

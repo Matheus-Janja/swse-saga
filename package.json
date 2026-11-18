@@ -1,6 +1,6 @@
 {
   "name": "swse-saga",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
   "description": "Star Wars Saga Edition system for Foundry VTT",

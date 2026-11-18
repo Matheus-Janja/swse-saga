@@ -47,7 +47,7 @@ jobs:
           '
 
       - name: Empacotar
-        run: zip -r swse-saga.zip system.json module templates styles lang packs LICENSE README.md -x "packs/*/LOCK"
+        run: zip -r swse-saga.zip system.json module templates styles lang packs assets LICENSE README.md -x "packs/*/LOCK"
 
       - name: Publicar release
         uses: softprops/action-gh-release@v2

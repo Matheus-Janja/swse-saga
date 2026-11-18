@@ -178,6 +178,12 @@ export default [
   }),
 
   /* ---------------- NÃO HEROICA ---------------- */
+  cls("Beast", "beast", {
+    classType: "nonheroic", bab: "threeQuarter", hitDie: 8, startingHP: 0, trainedSkills: 1, defenses: { reflex: 0, fortitude: 0, will: 0 },
+    description: "<p>Animais e formas de vida não sencientes (Int 1–2). Não somam nível às Defesas, não ganham talentos, Pontos da Força nem de Destino. Armas naturais causam ½ nível de dano extra.</p>",
+    classSkills: ["acrobatics", "climb", "endurance", "initiative", "jump", "perception", "stealth", "survival", "swim"],
+    talentLevels: "", bonusFeatLevels: "", forcePointsBase: 0
+  }),
   cls("Nonheroic", "nonheroic", {
     classType: "nonheroic", bab: "threeQuarter", hitDie: 4, startingHP: 0, trainedSkills: 1, defenses: { reflex: 0, fortitude: 0, will: 0 },
     description: "<p>Personagens coadjuvantes. Não somam nível às Defesas, não ganham talentos nem Pontos da Força.</p>",

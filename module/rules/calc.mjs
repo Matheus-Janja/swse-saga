@@ -119,6 +119,8 @@ export function computeActor(sys, items, opts = {}) {
   d.heroicLevel = heroicLevel;
   d.level = characterLevel;
   d.halfLevel = Math.floor(characterLevel / 2);
+  // Dano: ½ nível heroico (níveis não heroicos não contam; feras somam ½ nível de fera nas armas naturais)
+  d.damageHalfLevel = Math.floor((heroicLevel + (classLevels.beast ?? 0)) / 2);
   d.classLevels = classLevels;
   d.bab = bab;
 
@@ -162,7 +164,8 @@ export function computeActor(sys, items, opts = {}) {
     const total = (Number(a.base) || 10) + speciesBonus + (Number(a.increase) || 0) + (Number(a.misc) || 0) + mod(`abilities.${key}`);
     d.abilities[key] = { total, mod: abilityMod(total), speciesBonus };
   }
-  const isDroid = !!species?.system.droid;
+  const isDroid = !!species?.system.droid || !!sys.isDroid;
+  d.isDroid = isDroid;
   if (isDroid) d.abilities.con = { total: 0, mod: 0, speciesBonus: 0, none: true };
 
   // --- Condição ---

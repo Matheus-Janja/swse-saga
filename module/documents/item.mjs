@@ -1,15 +1,10 @@
 import { attackWithWeapon } from "../rolls/attack.mjs";
 import { useForcePower } from "../rolls/force.mjs";
 
+const ICON = n => `systems/swse-saga/assets/icons/${n}.svg`;
 const DEFAULT_ICONS = {
-  species: "icons/environment/people/group.webp",
-  class: "icons/sundries/books/book-embossed-blue.webp",
-  feat: "icons/skills/targeting/crosshair-pointed-orange.webp",
-  talent: "icons/magic/symbols/star-yellow.webp",
-  forcePower: "icons/magic/lightning/bolt-strike-blue.webp",
-  weapon: "icons/weapons/guns/gun-pistol-flintlock-white.webp",
-  armor: "icons/equipment/chest/breastplate-banded-steel.webp",
-  equipment: "icons/containers/bags/pack-leather-brown.webp"
+  species: ICON("species"), class: ICON("class"), feat: ICON("feat"), talent: ICON("talent"),
+  forcePower: ICON("force"), weapon: ICON("blaster-pistol"), armor: ICON("armor"), equipment: ICON("equipment")
 };
 
 export class SWSEItem extends Item {

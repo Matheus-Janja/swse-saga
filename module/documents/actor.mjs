@@ -182,8 +182,15 @@ export class SWSEActor extends Actor {
   async applyDamage(amount, opts = {}) {
     amount = Math.max(0, Math.floor(Number(amount) || 0));
     const type = opts.type ?? "normal";
-    const isDroid = !!this.species?.system.droid || this.system.isDroid;
+    const isDroid = !!this.system.derived?.isDroid;
     const dt = this.system.damageThreshold.total - (opts.thresholdReduction || 0);
+    // Shield Rating: reduz o dano; dano >= SR reduz o SR em 5
+    const sr = this.system.shieldRating || 0;
+    let srUpdate = null;
+    if (sr > 0 && amount > 0 && type !== "stun") {
+      if (amount >= sr) srUpdate = Math.max(0, sr - 5);
+      amount = Math.max(0, amount - sr);
+    }
     let dr = opts.ignoreDR ? 0 : Math.max(0, (this.system.damageReduction || 0) - (opts.drReduction || 0));
     const hp = this.system.hp;
     let toHp = Math.max(0, amount - dr);
@@ -227,6 +234,7 @@ export class SWSEActor extends Actor {
       else if (amount >= dt) status = game.i18n.localize("SWSE.Chat.Dead");
       else { status = game.i18n.localize("SWSE.Chat.Unconscious"); updates["system.condition.step"] = 5; }
     } else if (step >= 5) status = game.i18n.localize("SWSE.Chat.Helpless");
+    if (srUpdate !== null) { updates["system.shieldRating"] = srUpdate; notes.push(game.i18n.format("SWSE.Chat.ShieldDown", { sr: srUpdate })); }
     await this.update(updates);
 
     const condLabel = game.i18n.localize(SWSE.conditionTrack[updates["system.condition.step"] ?? step].label);

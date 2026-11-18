@@ -40,8 +40,13 @@ Clique na arma (ou use a macro *Atacar*). O diálogo mostra só o que o personag
 ### Poderes da Força
 Teste de Use the Force com tabela de CDs destacando o nível alcançado, comparação com a defesa dos alvos, dano rolado automaticamente, controle do conjunto (usos gastos), recuperação com 20 natural e aumento do Lado Sombrio em poderes sombrios.
 
+### PdMs do Livro Básico
+Compêndio **PdMs (Livro Básico)** com 46 fichas prontas, organizadas em pastas: personagens principais e coadjuvantes do Cap. 15 (Darth Vader, Obi-Wan, Padmé, Luke, Leia, Han, Palpatine, Chewbacca, Lando, R2-D2, C-3PO, Yoda, Boba Fett, General Grievous), arquétipos do Cap. 16 (Império, Rebelião, República, Fringe), feras (acklay, dewback, nexu, rancor, reek, tauntaun, wampa) e os droides de exemplo do Cap. 11 (com a errata do Droideka, IG-100 e 3PO).
+
+Cada PdM é montado com espécie, classes, feats, talentos, poderes e armas reais do compêndio, então ataques e testes funcionam com a mesma automação dos personagens. O build calcula cada ficha com o motor de regras e ajusta os campos "Outros" para que Defesas, PV, Limiar, BBA, perícias e bônus de ataque fiquem idênticos ao livro (um teste automatizado garante isso). Detalhes que não são automatizados (sentidos, imunidades, sistemas de droides, posses, ataques múltiplos) estão na aba Biografia.
+
 ### Compêndios
-Espécies (17), classes heroicas, de prestígio e não heroica, 69 feats, todas as árvores de talento do livro básico (classes, Força e prestígio), 16 poderes da Força, técnicas e segredos, armas, armaduras, equipamentos e macros. Erratas oficiais de out/2008 aplicadas.
+Espécies (21, incluindo Aqualish, Hutt, Neimoidian e Yuuzhan Vong do Cap. 16), classes heroicas, de prestígio e não heroica, 69 feats, todas as árvores de talento do livro básico (classes, Força e prestígio), 16 poderes da Força, técnicas e segredos, armas, armaduras, equipamentos e macros. Erratas oficiais de out/2008 aplicadas.
 
 ## Desenvolvimento
 
@@ -56,7 +61,7 @@ Para publicar uma versão: atualize `version` no `system.json`, faça commit e c
 Os dados do compêndio ficam em `tools/data/*.mjs` (um arquivo por tipo); as regras estão em `module/rules/calc.mjs`.
 
 ## Limitações atuais
-- Droides como personagens jogadores, veículos/naves e criaturas ainda não têm ficha própria.
+- Droides como personagens jogadores (construção por grau/sistemas) e veículos/naves ainda não têm ficha própria; droides PdM usam a ficha de PdM com a opção "É droide".
 - Muitos talentos de uso situacional são descritos no item mas não automatizados (o cartão de chat indica o efeito).
 
 ## Aviso legal

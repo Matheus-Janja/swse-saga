@@ -35,6 +35,7 @@
       </div>
       <div class="defense-row small">
         <span>{{localize "SWSE.DamageReduction"}}: <strong>{{system.damageReduction}}</strong></span>
+        <label class="misc">{{localize "SWSE.ShieldRating"}} <input type="number" name="system.shieldRating" value="{{system.shieldRating}}"></label>
       </div>
     </div>
   </div>
@@ -77,6 +78,9 @@
       <div class="stat"><span>{{localize "SWSE.NPCLevel"}}</span><input type="number" name="system.npcLevel" value="{{system.npcLevel}}"></div>
       <div class="stat"><span>{{localize "SWSE.BaseHP"}}</span><input type="number" name="system.hp.base" value="{{system.hp.base}}"></div>
       <div class="stat"><span>{{localize "SWSE.BABBonus"}}</span><input type="number" name="system.babBonus" value="{{system.babBonus}}"></div>
+      <div class="stat"><span>{{localize "SWSE.SizeLabel"}}</span><select name="system.size">{{selectOptions sizes selected=system.size localize=true}}</select></div>
+      <div class="stat"><span>{{localize "SWSE.IsDroid"}}</span><input type="checkbox" name="system.isDroid" {{checked system.isDroid}}></div>
+      <div class="stat"><span>{{localize "SWSE.BaseSpeed"}}</span><input type="number" name="system.speed.base" value="{{system.speed.base}}"></div>
       {{/if}}
     </div>
   </div>

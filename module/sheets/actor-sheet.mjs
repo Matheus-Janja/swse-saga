@@ -147,6 +147,7 @@ export class SWSEActorSheet extends HandlebarsApplicationMixin(foundry.applicati
     for (const [k, v] of Object.entries(SWSE.abilities)) context.modifierTargets[`abilities.${k}`] = v;
     for (const [k, v] of Object.entries(SWSE.skills)) context.modifierTargets[`skills.${k}`] = v.label;
     context.bonusTypes = SWSE.bonusTypes;
+    context.sizes = Object.fromEntries(Object.entries(SWSE.sizes).map(([k, v]) => [k, v.label]));
     context.customModifiers = sys.customModifiers.map((m, i) => ({ ...m, index: i }));
     context.xpNext = SWSE.xpTable[Math.min(sys.level, 19)] ?? "—";
     context.canLevelUp = sys.xp >= (SWSE.xpTable[sys.level] ?? Infinity);

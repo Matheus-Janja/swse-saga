@@ -17,6 +17,8 @@ import talents from "./data/talents.mjs";
 import forcePowers from "./data/force-powers.mjs";
 import { weapons, armor, equipment } from "./data/gear.mjs";
 import macros from "./data/macros.mjs";
+import { buildNpcs } from "./build-npcs.mjs";
+import { iconFor, ICON } from "./build-packs-icons.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const SRC = path.join(ROOT, "packs-src");
@@ -33,9 +35,10 @@ const slug = s => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g
 const stats = { coreVersion: "14.370", systemId: "swse-saga", systemVersion: "0.1.0" };
 
 function itemDoc(pack, data, folder = null) {
+  delete data.system.img;
   const _id = makeId(`${pack}:${data.type}:${data.system.tree ?? ""}:${data.name}`);
   return {
-    _id, _key: `!items!${_id}`, name: data.name, type: data.type, img: data.img,
+    _id, _key: `!items!${_id}`, name: data.name, type: data.type, img: iconFor(data.type, data.system),
     system: data.system, effects: [], folder, sort: 0, flags: {}, ownership: { default: 0 }, _stats: stats
   };
 }
@@ -89,8 +92,18 @@ packs.armor = armor.map(d => itemDoc("armor", d));
 }
 packs.macros = macros.map(m => {
   const _id = makeId(`macros:${m.name}`);
-  return { _id, _key: `!macros!${_id}`, ...m, folder: null, sort: 0, flags: {}, ownership: { default: 0 }, _stats: stats };
+  return { _id, _key: `!macros!${_id}`, ...m, img: ICON("macro"), folder: null, sort: 0, flags: {}, ownership: { default: 0 }, _stats: stats };
 });
+
+// PdMs (Cap. 11, 15 e 16)
+{
+  const { folders, actors, report } = buildNpcs({ species, classes, feats, talents, powers: forcePowers, weapons, armor }, makeId, stats);
+  if (report.length) {
+    console.error(`Divergências nos PdMs:\n  ${report.join("\n  ")}`);
+    process.exitCode = 1;
+  }
+  packs.npcs = [...folders, ...actors];
+}
 
 // Checagem de IDs duplicados
 for (const [name, docs] of Object.entries(packs)) {

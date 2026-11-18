@@ -1,129 +1,33 @@
 import { SWSE, SYSTEM_ID } from "../config.mjs";
+import { weaponProfileFrom, isProficientCtx, effectiveGroup as groupCtx, unarmedDamageCtx } from "../rules/weapon.mjs";
 
 const signed = n => (n >= 0 ? `+${n}` : `${n}`);
-const GROUP_FEAT = {
-  simple: "weapon-proficiency-simple",
-  pistols: "weapon-proficiency-pistols",
-  rifles: "weapon-proficiency-rifles",
-  heavy: "weapon-proficiency-heavy",
-  lightsabers: "weapon-proficiency-lightsabers",
-  advancedMelee: "weapon-proficiency-advanced-melee"
-};
 
 /** Adiciona n dados ao primeiro termo XdY de uma fórmula. */
 export function addDice(formula, n) {
   if (!n) return formula;
-  return formula.replace(/(\d+)d(\d+)/, (_, x, y) => `${Number(x) + n}d${y}`);
+  return formula.replace(/(d+)d(d+)/, (_, x, y) => `${Number(x) + n}d${y}`);
 }
 
-/** Dano desarmado: 1d3 (Pequeno) / 1d4 (Médio), +1 passo por Martial Arts I/II/III. */
-export function unarmedDamage(actor, weapon) {
-  if (!["unarmed", "combat-gloves"].includes(weapon.system.key)) return weapon.system.damage;
-  const steps = ["1d2", "1d3", "1d4", "1d6", "1d8", "1d10", "1d12", "2d8"];
-  const sizeOrder = SWSE.sizes[actor.derived.size ?? "medium"]?.order ?? 4;
-  let idx = Math.max(0, sizeOrder - 2); // pequeno = 1d3, médio = 1d4, grande = 1d6
-  idx += ["martial-arts-i", "martial-arts-ii", "martial-arts-iii"].filter(k => actor.hasFeature(k)).length;
-  return steps[Math.min(idx, steps.length - 1)];
-}
-
-/** Grupo efetivo da arma, considerando familiaridade por espécie. */
-export function effectiveGroup(actor, weapon) {
-  const sp = actor.species?.system.key;
-  return SWSE.weaponFamiliarity[sp]?.[weapon.system.key] ?? weapon.system.group;
-}
-
-/** Chaves que um feat/talento de escolha pode ter para casar com esta arma. */
-function matches(actor, key, weapon) {
-  const group = effectiveGroup(actor, weapon);
-  const choices = actor.featureChoices(key);
-  return choices.filter(c => c === group || c === weapon.system.key || c === weapon.name).length;
-}
-
-export function isProficient(actor, weapon) {
-  if (weapon.system.key === "unarmed") return true;
-  const group = effectiveGroup(actor, weapon);
-  if (group === "exotic") {
-    return actor.hasFeature("exotic-weapon-mastery")
-      || actor.featureChoices("exotic-weapon-proficiency").some(c => c === weapon.system.key || c === weapon.name);
-  }
-  return actor.hasFeature(GROUP_FEAT[group]);
-}
-
-/**
- * Informações estáticas do ataque com uma arma (sem opções situacionais).
- */
-export function weaponProfile(actor, weapon) {
+/** Contexto puro (rules/weapon.mjs) a partir de um ator do Foundry. */
+export function weaponCtx(actor) {
   const sys = actor.system;
-  const w = weapon.system;
-  const melee = w.rangeType === "melee";
-  const group = effectiveGroup(actor, weapon);
-  const sizeOrder = s => SWSE.sizes[s]?.order ?? 4;
-  const wielder = sizeOrder(actor.derived.size ?? "medium");
-  const wsize = sizeOrder(w.size);
-  const light = wsize < wielder || w.key === "unarmed";
-  const twoHanded = wsize === wielder + 1 || w.twoHanded;
-  const proficient = isProficient(actor, weapon);
-  const str = sys.abilities.str.mod;
-  const dex = sys.abilities.dex.mod;
-  const lightsaber = group === "lightsabers";
-
-  // Atributo de ataque
-  let atkAbility = melee ? "str" : "dex";
-  if (melee && (light || lightsaber) && actor.hasFeature("weapon-finesse") && dex > str) atkAbility = "dex";
-  const abilityMod = sys.abilities[atkAbility].mod;
-
-  // Atributo de dano
-  let dmgAbilityMod = 0;
-  let dmgAbilityLabel = "";
-  if (!w.noStrDamage && (melee || w.thrown || w.strDamage)) {
-    let base = str;
-    dmgAbilityLabel = "For";
-    if (lightsaber && melee && actor.hasFeature("ataru") && dex > str) { base = dex; dmgAbilityLabel = "Des"; }
-    dmgAbilityMod = melee && twoHanded && base > 0 ? base * 2 : base;
-  }
-
-  const mods = actor.derived.modifiers ?? {};
-  const m = t => mods[t]?.total ?? 0;
-  const armorPenalty = actor.derived.armor?.penalty ?? 0;
-
-  const attackParts = {
-    bab: sys.bab,
-    ability: abilityMod,
-    weaponFocus: matches(actor, "weapon-focus", weapon) ? 1 : 0,
-    greaterWeaponFocus: matches(actor, "greater-weapon-focus", weapon) ? 1 : 0,
-    proficiency: proficient ? 0 : -5,
-    armor: armorPenalty,
-    condition: sys.conditionPenalty,
-    mods: m("attack.all") + m(melee ? "attack.melee" : "attack.ranged"),
-    weapon: w.attackBonus || 0
-  };
-
-  const damageParts = {
-    halfLevel: sys.halfLevel,
-    ability: dmgAbilityMod,
-    specialization: matches(actor, "weapon-specialization", weapon) ? 2 : 0,
-    greaterSpecialization: matches(actor, "greater-weapon-specialization", weapon) ? 2 : 0,
-    meleeSmash: melee && actor.hasFeature("melee-smash") ? 1 : 0,
-    trustySidearm: group === "pistols" ? Math.floor(actor.classLevel("gunslinger") / 2) : 0,
-    mods: m("damage.all") + m(melee ? "damage.melee" : "damage.ranged"),
-    weapon: w.damageBonus || 0
-  };
-
   return {
-    melee, group, light, twoHanded, proficient, lightsaber, atkAbility, dmgAbilityLabel,
-    attackParts, damageParts,
-    attackBonus: Object.values(attackParts).reduce((a, b) => a + b, 0),
-    damageBonus: Object.values(damageParts).reduce((a, b) => a + b, 0),
-    autofire: /A/.test(w.rateOfFire || ""),
-    autofireOnly: (w.rateOfFire || "").trim() === "A",
-    critRange: lightsaber && actor.hasFeature("vaapad") ? Math.min(19, w.critRange || 20) : (w.critRange || 20),
-    critMultiplier: matches(actor, "triple-crit", weapon) ? 3 : (w.critMultiplier || 2),
-    thresholdReduction: matches(actor, "greater-devastating-attack", weapon) ? 10 : matches(actor, "devastating-attack", weapon) ? 5 : 0,
-    drReduction: matches(actor, "greater-penetrating-attack", weapon) ? 10 : matches(actor, "penetrating-attack", weapon) ? 5 : 0,
-    canDouble: matches(actor, "double-attack", weapon) > 0,
-    canTriple: matches(actor, "triple-attack", weapon) > 0,
-    multiattackReduction: 2 * (actor.countFeature(`multiattack-proficiency-${group}`) || 0)
+    abilities: sys.abilities, bab: sys.bab, halfLevel: sys.halfLevel, damageHalfLevel: actor.derived.damageHalfLevel, conditionPenalty: sys.conditionPenalty,
+    size: actor.derived.size ?? "medium", species: actor.species?.system.key ?? "",
+    modifiers: actor.derived.modifiers ?? {}, armorPenalty: actor.derived.armor?.penalty ?? 0,
+    features: actor.items.filter(i => ["feat", "talent"].includes(i.type)).map(i => ({ key: i.system.key, choice: i.system.choice?.value })),
+    classLevels: actor.derived.classLevels ?? {}
   };
+}
+
+export const unarmedDamage = (actor, weapon) => unarmedDamageCtx(weaponCtx(actor), weapon);
+export const effectiveGroup = (actor, weapon) => groupCtx(weaponCtx(actor), weapon);
+export const isProficient = (actor, weapon) => isProficientCtx(weaponCtx(actor), weapon);
+
+/** Informações estáticas do ataque com uma arma (sem opções situacionais). */
+export function weaponProfile(actor, weapon) {
+  return weaponProfileFrom(weaponCtx(actor), weapon);
 }
 
 /** Monta o HTML do diálogo de ataque com apenas as opções que o personagem pode usar. */

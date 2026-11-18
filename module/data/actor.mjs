@@ -55,6 +55,8 @@ class SWSEActorData extends foundry.abstract.TypeDataModel {
       defenses: new fields.SchemaField({ reflex: defense(), fortitude: defense(), will: defense() }),
       damageThreshold: new fields.SchemaField({ misc: num(0) }),
       damageReduction: num(0),
+      shieldRating: num(0, { min: 0 }),
+      isDroid: new fields.BooleanField({ initial: false }),
       speed: new fields.SchemaField({ base: num(6), misc: num(0) }),
       babBonus: num(0),
       size: new fields.StringField({ initial: "medium" }),

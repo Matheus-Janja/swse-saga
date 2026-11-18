@@ -449,7 +449,8 @@
       "DroidImmuneStun": "Droides são imunes a atordoamento.",
       "Unconscious": "INCONSCIENTE",
       "Dead": "MORTO",
-      "Helpless": "INDEFESO"
+      "Helpless": "INDEFESO",
+      "ShieldDown": "Escudo reduzido para SR {sr}."
     },
     "Force": {
       "Use": "Usar poder",
@@ -607,6 +608,9 @@
       "languages": "Idiomas",
       "destiny": "Destino"
     },
-    "Prereq": "Pré-requisito"
+    "Prereq": "Pré-requisito",
+    "ShieldRating": "Escudo (SR)",
+    "IsDroid": "É droide",
+    "BaseSpeed": "Desloc. base"
   }
 }

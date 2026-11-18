@@ -176,6 +176,45 @@ export default [
       { name: "Skills", text: "Pode escolher 10 em Climb sob pressão e rerrolar Persuasion para intimidar (segundo resultado)." }
     ]
   }),
+  sp("Aqualish", "aqualish", {
+    abilityMods: { con: 2, wis: -2, cha: -2 }, swimSpeed: 4, languages: "Basic, Aqualish", bonusFeats: ["toughness"],
+    description: "<p>Humanoides de rosto de morsa, agressivos e respeitadores da força bruta (Cap. 16).</p>",
+    rerolls: [reroll("swim", "Expert Swimmer")],
+    traits: [
+      { name: "Breathe Underwater", text: "Não se afoga na água." },
+      { name: "Expert Swimmer", text: "Pode rerrolar Swim (segundo resultado) e escolher 10 sob pressão." },
+      { name: "Bonus Feat", text: "Recebe Toughness." }
+    ]
+  }),
+  sp("Hutt", "hutt", {
+    abilityMods: { str: 2, con: 2, int: 2, dex: -6 }, size: "large", speed: 2, languages: "Basic, Huttese",
+    description: "<p>Enormes seres lesmoides, megalomaníacos e manipuladores (Cap. 16).</p>",
+    rerolls: [reroll("persuasion", "Hutt Persuasion", "best")],
+    traits: [
+      { name: "Large Size", text: "−1 de tamanho em Reflexos, −5 em Stealth, +5 no Limiar de Dano; carga dobrada." },
+      { name: "Force Resistance", text: "+5 de espécie na Vontade contra testes de Use the Force." },
+      { name: "Supreme Stability", text: "Não pode ser derrubado nem sofrer Trip." },
+      { name: "Skills", text: "Pode rerrolar Persuasion, ficando com o melhor." }
+    ]
+  }),
+  sp("Neimoidian", "neimoidian", {
+    abilityMods: { int: 2, wis: 2, str: -2 }, languages: "Basic, Neimoidian, Pak Pak",
+    description: "<p>Ávidos por riqueza e controle, a base da Federação de Comércio (Cap. 16).</p>",
+    rerolls: [reroll("deception", "Neimoidian Deception")], conditionalFeats: [cond("deception")],
+    traits: [
+      { name: "Conditional Bonus Feat", text: "Se treinado em Deception, recebe Skill Focus (Deception)." },
+      { name: "Skills", text: "Pode rerrolar Deception, ficando com o segundo resultado." }
+    ]
+  }),
+  sp("Yuuzhan Vong", "yuuzhan-vong", {
+    abilityMods: { str: 2, wis: -2 }, languages: "Yuuzhan Vong",
+    description: "<p>Conquistadores extragalácticos mestres da biotecnologia, desconectados da Força (Cap. 16).</p>",
+    traits: [
+      { name: "Force Immunity", text: "Não pode pegar Force Sensitivity, usar Use the Force nem ganhar Pontos da Força; imune a efeitos da Força contra a Vontade." },
+      { name: "Technophobic", text: "−5 em ataques e perícias com armas ou ferramentas mecânicas." },
+      { name: "Weapon Familiarity", text: "Com Weapon Proficiency (simple weapons), é proficiente com o amphistaff." }
+    ]
+  }),
   sp("Zabrak", "zabrak", {
     languages: "Basic, Zabrak",
     description: "<p>Humanoides com chifres vestigiais, determinados e autoconfiantes.</p>",
