@@ -77,6 +77,16 @@ export class CharacterCreator extends HandlebarsApplicationMixin(ApplicationV2) 
 
   get title() { return `${L("SWSE.CharacterCreator")}${this.actor ? `: ${this.actor.name}` : ""}`; }
 
+  /** Limita a altura inicial à área visível da tela. */
+  _initializeApplicationOptions(options) {
+    options = super._initializeApplicationOptions(options);
+    if (options.position?.height && typeof options.position.height === "number") {
+      options.position.height = Math.min(options.position.height, window.innerHeight - 40);
+    }
+    return options;
+  }
+
+
   /* ------------------------------------------------------------ */
   /*  Estado derivado                                             */
   /* ------------------------------------------------------------ */

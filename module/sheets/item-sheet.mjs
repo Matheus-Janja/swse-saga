@@ -26,6 +26,16 @@ export class SWSEItemSheet extends HandlebarsApplicationMixin(foundry.applicatio
 
   get title() { return `${game.i18n.localize(`TYPES.Item.${this.item.type}`)}: ${this.item.name}`; }
 
+  /** Limita a altura inicial à área visível da tela. */
+  _initializeApplicationOptions(options) {
+    options = super._initializeApplicationOptions(options);
+    if (options.position?.height && typeof options.position.height === "number") {
+      options.position.height = Math.min(options.position.height, window.innerHeight - 40);
+    }
+    return options;
+  }
+
+
   async _prepareContext(options) {
     const context = await super._prepareContext(options);
     const item = this.item;

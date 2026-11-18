@@ -217,3 +217,33 @@
 .swse-card .dc-tiers li.failed { opacity: 0.55; }
 .swse-card .descriptors { font-style: italic; font-size: 0.85em; margin: 0; }
 .swse-card .note { font-size: 0.85em; color: #555; }
+
+/* ---------- Rolagem: cabeçalho e abas fixos, conteúdo rola ---------- */
+.swse.sheet .window-content,
+.swse.swse-wizard .window-content {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-height: 0;
+}
+.swse.sheet .swse-header,
+.swse.sheet nav.tabs { flex: 0 0 auto; }
+.swse.sheet.actor section.tab.active {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 4px;
+}
+.swse-item-sheet { display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; }
+.swse-item-sheet .sheet-header { flex: 0 0 auto; }
+.swse-item-sheet .sheet-body { flex: 1 1 auto; min-height: 0; overflow-y: auto; padding-right: 4px; }
+.swse-wizard .wizard { flex: 1 1 auto; min-height: 0; height: auto; }
+.swse-wizard .wizard-content { min-height: 0; }
+
+/* Barra de rolagem no tema */
+.swse ::-webkit-scrollbar { width: 10px; }
+.swse ::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.3); border-radius: 5px; }
+.swse ::-webkit-scrollbar-thumb { background: var(--swse-border); border-radius: 5px; border: 1px solid var(--swse-accent); }
+.swse ::-webkit-scrollbar-thumb:hover { background: var(--swse-accent); }
+.swse * { scrollbar-color: var(--swse-accent) rgba(0, 0, 0, 0.3); }
