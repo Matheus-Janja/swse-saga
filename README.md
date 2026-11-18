@@ -75,6 +75,13 @@ Marque **"Personagem droide"** no primeiro passo da criação (Cap. 11):
 - **Início de combate**: todos ficam surpresos até o primeiro turno (configurável). **Recuperar** (+1 passo na trilha) na ficha; −10 na trilha reduz o deslocamento à metade; atordoamento/íon a 0 PV levam ao fim da trilha.
 - Macros: *Aplicar Efeito aos Selecionados* e *Alternar Condição*.
 
+### Talentos e feats automatizados
+178 dos 273 feats e talentos do Livro Básico têm efeito mecânico (a descrição no compêndio indica "Automático"):
+- **Passivos** (calculados na ficha ou no ataque): bônus de Defesas/perícias/dano, armaduras, *Niman*, *Force Intuition/Perception/Pilot/Persuasion/Deception/Treatment* (usam Use the Force e contam como treinadas), *Dark Side Scourge*, *Dark Scourge*, *Uncanny Dodge II*, *Elusive Target*, *Knack* (rerrolagem), *Resist the Dark Side*, *Force Power Mastery/Adept*, *Dark Side Master*, *Devastating Power*, *Force Point Recovery* (fim do combate) e os de combate veicular.
+- **Opções no ataque**: *Melee Defense*, *Powerful Charge*, *Charging Fire*, *Acrobatic Strike*, *Skirmisher*, *Knockdown Shot* (derruba ao aplicar dano), **Desarmar** (*Improved Disarm*, *Ranged Disarm*).
+- **Ativáveis (botão ⚡ na ficha ou arrastando para a barra de macros)**: *Block* e *Deflect* (penalidade acumulada, *Shii-Cho*, *Soresu*), *Lightsaber Defense* (*Makashi*, *Jar'Kai*), *Battle Meditation*, *Born Leader*, *Inspire Confidence*, *Rally*, *Bolster Ally*, *Dark Presence*, *Fool's Luck*, *Cover Fire*, *Walk the Line*, *Adept/Master Negotiator*, *Deceptive Shot*, *Shift Defense I–III*, *Deployment/Field/Assault Tactics*, *Outmaneuver*, *Resilience*, *Indomitable*, *Shake It Off*, *Equilibrium*, *Damage Reduction 10*, *Force Focus*, *Telekinetic Savant*, *Channel Anger*, *Force Talisman*, *Attune/Empower Weapon*, *Dark Healing*, *Extreme Effort* e outros. Talentos que afetam aliados aplicam o efeito aos tokens marcados (T).
+- Os restantes são narrativos ou dependem do posicionamento no mapa (Cleave, Mobility, Running Attack, Harm's Way, formas de sabre de reação etc.); a descrição de cada um continua no item.
+
 ### Compêndios
 Espécies (21, incluindo Aqualish, Hutt, Neimoidian e Yuuzhan Vong do Cap. 16), classes heroicas, de prestígio e não heroica, 69 feats, todas as árvores de talento do livro básico (classes, Força e prestígio), 16 poderes da Força, técnicas e segredos, armas, armaduras, equipamentos e macros. Erratas oficiais de out/2008 aplicadas.
 

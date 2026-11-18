@@ -158,6 +158,11 @@ export function computeActor(sys, items, opts = {}) {
   const st = statusEffects(statuses, { acrobaticsTrained, uncannyDodge: has("uncanny-dodge-i") });
   d.status = { ...st, list: [...statuses] };
   for (const m of st.mods) rawMods.push({ target: m.target, value: Number(m.value), type: m.type, source: m.source });
+  // Niman: +1 em Reflexos e Vontade empunhando um sabre de luz
+  if (has("niman") && items.some(i => i.type === "weapon" && i.system.equipped && i.system.group === "lightsabers")) {
+    rawMods.push({ target: "defenses.reflex", value: 1, type: "untyped", source: "Niman" });
+    rawMods.push({ target: "defenses.will", value: 1, type: "untyped", source: "Niman" });
+  }
   for (const eff of opts.effects ?? []) {
     for (const m of eff.modifiers ?? []) {
       if (m.disabled || !m.target) continue;
@@ -292,6 +297,21 @@ export function computeActor(sys, items, opts = {}) {
     if (isDroid && cfg.force) usable = false;
     if (basicProcessor && !trained && !["acrobatics", "climb", "jump", "perception"].includes(key)) usable = false;
     d.skills[key] = { total: sum(parts), parts, trained, focus: focus.has(key), ability, usable };
+  }
+
+  // Talentos que usam Use the Force no lugar de outra perícia (e contam como treinados nela)
+  const FORCE_SUB = { "force-intuition": "initiative", "force-perception": "perception", "force-pilot": "pilot", "force-persuasion": "persuasion", "force-deception": "deception", "force-treatment": "treatInjury" };
+  const utf = d.skills.useTheForce;
+  for (const [talent, skill] of Object.entries(FORCE_SUB)) {
+    if (!has(talent) || !utf.usable) continue;
+    const s = d.skills[skill];
+    s.trained = true;
+    s.usable = true;
+    if (utf.total > s.total) {
+      s.total = utf.total;
+      s.parts = { useTheForce: utf.total };
+      s.substitute = talent;
+    }
   }
 
   // --- Ataque ---

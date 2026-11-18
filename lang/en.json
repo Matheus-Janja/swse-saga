@@ -376,7 +376,8 @@
       "specialization": "Weapon Specialization",
       "greaterSpecialization": "Greater Weapon Specialization",
       "meleeSmash": "Melee Smash",
-      "trustySidearm": "Trusty Sidearm"
+      "trustySidearm": "Trusty Sidearm",
+      "useTheForce": "Use the Force"
     },
     "Weapon": {
       "group": "Group",
@@ -446,7 +447,10 @@
       "BonusStepsNote": "If it deals damage, the target also moves down the condition track ({list}).",
       "DevastatingNote": "Devastating Attack: target's damage threshold treated as {n} lower.",
       "StunningStrikeNote": "Stunning Strike: −1 extra step if damage exceeds threshold.",
-      "Flanking": "Flanking (+2)"
+      "Flanking": "Flanking (+2)",
+      "Disarm": "Disarm (target +10 Ref)",
+      "DisarmNote": "Disarm: on a hit the target drops its weapon. On a miss, the target gets a free attack against you.",
+      "DisarmNoteSafe": "Disarm: on a hit the target drops its weapon (no free attack on a miss)."
     },
     "Chat": {
       "TookDamage": "Took {amount} damage ({type}; rolled: {raw}).",
@@ -808,7 +812,12 @@
       "helpless": "helpless: +5 melee",
       "aim-cover": "aimed: ignores cover",
       "concealment": "concealment −2",
-      "total-concealment": "total concealment −5"
+      "total-concealment": "total concealment −5",
+      "no-flank": "Uncanny Dodge II: no flanking",
+      "dark-scourge": "Dark Scourge +1",
+      "dark-side-scourge": "Dark Side Scourge +Cha damage",
+      "disarm": "disarm: +10 Ref",
+      "elusive-target": "Elusive Target: −5"
     },
     "Effect": {
       "Conditions": "Conditions",
@@ -874,6 +883,41 @@
       "NoAttackAllOut": "After all-out movement, gunners can't attack until your next turn.",
       "OutsideDogfight": "While in a dogfight you can't attack targets outside it.",
       "InDogfight": "In a dogfight with"
+    },
+    "Talent": {
+      "Use": "Use talent/feat",
+      "NeedTarget": "Target (T) the token(s) first.",
+      "NeedSaber": "Requires an equipped lightsaber.",
+      "AppliedTo": "Applied to: {names}.",
+      "Steps": "step(s) on the condition track",
+      "SpendFPFor10": "Spend a Force Point for +10 (instead of +5)?",
+      "NextCheck": "(for the next check; delete the effect afterwards)",
+      "ForceHazeNote": "You and creatures up to your class level are hidden; anyone entering line of sight makes Use the Force vs Will to notice. Lasts up to 1 minute or until one attacks.",
+      "VsFear": "to Will vs fear",
+      "Intimidate": "intimidate",
+      "ConditionCleared": "condition track restored to normal.",
+      "NothingToRecover": "No spent telekinetic powers.",
+      "RageNote": "+2 rage to melee attack and damage for {n} rounds; afterwards −1 step on the condition track (apply manually). No concentration skills.",
+      "InspireFearNote": "Inspire Fear is passive: enemies of equal or lower level take the penalty on attacks and checks against you (apply it to them as an effect if you wish).",
+      "SituationalNote": "(situational bonus: apply to the attack/defense when it applies)",
+      "FieldTacticsNote": "Field Tactics: you and allies within 10 squares gain +10 cover (instead of +5) until your next turn — use the Improved cover status on them.",
+      "AssaultTacticsNote": "Assault Tactics: you and allies deal +1d6 damage to the designated target until your next turn (use the extra damage field).",
+      "OutmaneuverNote": "Outmaneuver: enemies in line of sight lose competence, insight, morale and dodge bonuses to attacks/Reflex until your next turn.",
+      "Penalize": "penalized defense",
+      "Boost": "boosted defense",
+      "DarkHealingResult": "Drained {n} HP.",
+      "KnockdownNote": "Knockdown Shot: if the aimed attack hits, the target falls prone (applied when you click apply damage).",
+      "RollTwice": "Roll twice and keep the better (spends a Force Point)",
+      "FPCost": "spends a Force Point",
+      "DarkAdeptNote": "Dark Side Adept / Embrace the Dark Side: you may reroll this check and keep the second result.",
+      "TelekineticPowerNote": "Telekinetic Power: natural 20 — you may use this power again immediately as a free action.",
+      "AttackToNegate": "Attack result to negate",
+      "NegatePenalty": "Cumulative penalty: −{n} ({uses} use(s) since your last turn).",
+      "Vs": "vs",
+      "Negated": "Attack negated!",
+      "NotNegated": "Failed to negate the attack.",
+      "RedirectNote": "Redirect Shot: you may make an immediate ranged attack with the deflected bolt.",
+      "ExtremeEffortNote": "Extreme Effort: +5 on the next Strength check or Strength-based skill (Climb, Jump, Swim) this round."
     }
   }
 }

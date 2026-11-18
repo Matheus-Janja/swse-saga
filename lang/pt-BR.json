@@ -376,7 +376,8 @@
       "specialization": "Weapon Specialization",
       "greaterSpecialization": "Greater Weapon Specialization",
       "meleeSmash": "Melee Smash",
-      "trustySidearm": "Trusty Sidearm"
+      "trustySidearm": "Trusty Sidearm",
+      "useTheForce": "Use the Force"
     },
     "Weapon": {
       "group": "Grupo",
@@ -446,7 +447,10 @@
       "BonusStepsNote": "Se causar dano, o alvo também desce na trilha de condição ({list}).",
       "DevastatingNote": "Devastating Attack: Limiar de Dano do alvo tratado como {n} menor.",
       "StunningStrikeNote": "Stunning Strike: −1 passo adicional se o dano exceder o Limiar.",
-      "Flanking": "Flanqueando (+2)"
+      "Flanking": "Flanqueando (+2)",
+      "Disarm": "Desarmar (alvo +10 Ref)",
+      "DisarmNote": "Desarmar: se acertar, o alvo larga a arma. Se errar, o alvo faz um ataque gratuito contra você.",
+      "DisarmNoteSafe": "Desarmar: se acertar, o alvo larga a arma (se errar, sem ataque gratuito)."
     },
     "Chat": {
       "TookDamage": "Sofreu {amount} de dano ({type}; rolado: {raw}).",
@@ -808,7 +812,12 @@
       "helpless": "indefeso: +5 no corpo a corpo",
       "aim-cover": "mirou: ignora cobertura",
       "concealment": "camuflagem −2",
-      "total-concealment": "camuflagem total −5"
+      "total-concealment": "camuflagem total −5",
+      "no-flank": "Uncanny Dodge II: sem flanqueio",
+      "dark-scourge": "Dark Scourge +1",
+      "dark-side-scourge": "Dark Side Scourge +Car dano",
+      "disarm": "desarmar: +10 Ref",
+      "elusive-target": "Elusive Target: −5"
     },
     "Effect": {
       "Conditions": "Condições",
@@ -874,6 +883,41 @@
       "NoAttackAllOut": "Após movimento total, os artilheiros não podem atacar até o próximo turno.",
       "OutsideDogfight": "Em dogfight, você não pode atacar alvos fora dele.",
       "InDogfight": "Em dogfight com"
+    },
+    "Talent": {
+      "Use": "Usar talento/feat",
+      "NeedTarget": "Marque (T) o(s) alvo(s) primeiro.",
+      "NeedSaber": "Precisa de um sabre de luz equipado.",
+      "AppliedTo": "Aplicado a: {names}.",
+      "Steps": "passo(s) na trilha de condição",
+      "SpendFPFor10": "Gastar um Ponto da Força para +10 (em vez de +5)?",
+      "NextCheck": "(vale para o próximo teste; apague o efeito depois)",
+      "ForceHazeNote": "Você e criaturas até seu nível de classe ficam ocultos; quem entrar na linha de visão faz Use the Force contra a Vontade dele para notar. Dura até 1 minuto ou até um oculto atacar.",
+      "VsFear": "na Vontade contra medo",
+      "Intimidate": "intimidar",
+      "ConditionCleared": "trilha de condição restaurada ao normal.",
+      "NothingToRecover": "Nenhum poder telecinético gasto.",
+      "RageNote": "+2 de fúria no ataque e dano corpo a corpo por {n} rodadas; depois, −1 passo na trilha de condição (aplique manualmente). Sem perícias de concentração.",
+      "InspireFearNote": "Inspire Fear é passivo: inimigos de nível igual ou menor sofrem a penalidade nos ataques e testes contra você (aplique como efeito neles, se quiser).",
+      "SituationalNote": "(bônus situacional: aplique no ataque/defesa quando valer)",
+      "FieldTacticsNote": "Field Tactics: você e aliados a até 10 quadrados recebem +10 de cobertura (em vez de +5) até seu próximo turno — use o status Cobertura melhorada neles.",
+      "AssaultTacticsNote": "Assault Tactics: você e aliados causam +1d6 de dano ao alvo designado até seu próximo turno (use o campo de dano extra no ataque).",
+      "OutmaneuverNote": "Outmaneuver: inimigos em linha de visão perdem bônus de competência, intuição, moral e esquiva nos ataques/Reflexos até seu próximo turno.",
+      "Penalize": "defesa penalizada",
+      "Boost": "defesa beneficiada",
+      "DarkHealingResult": "Drenou {n} PV.",
+      "KnockdownNote": "Knockdown Shot: se o ataque mirado acertar, o alvo cai (aplicado ao clicar em aplicar dano).",
+      "RollTwice": "Rolar duas vezes e ficar com o melhor (gasta Ponto da Força)",
+      "FPCost": "gasta Ponto da Força",
+      "DarkAdeptNote": "Dark Side Adept / Embrace the Dark Side: você pode rerrolar este teste e ficar com o segundo resultado.",
+      "TelekineticPowerNote": "Telekinetic Power: 20 natural — pode usar este poder de novo imediatamente como ação livre.",
+      "AttackToNegate": "Resultado do ataque a negar",
+      "NegatePenalty": "Penalidade acumulada: −{n} ({uses} uso(s) desde seu último turno).",
+      "Vs": "contra",
+      "Negated": "Ataque negado!",
+      "NotNegated": "Não conseguiu negar o ataque.",
+      "RedirectNote": "Redirect Shot: você pode fazer um ataque à distância imediato com o disparo desviado.",
+      "ExtremeEffortNote": "Extreme Effort: +5 no próximo teste de Força ou perícia de Força (Climb, Jump, Swim) nesta rodada."
     }
   }
 }

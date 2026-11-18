@@ -3,6 +3,7 @@ import { weaponProfile } from "../rolls/attack.mjs";
 import { promptChoice } from "../helpers/choices.mjs";
 import { fixArrayFields } from "../helpers/form.mjs";
 import { STATUSES } from "../rules/effects.mjs";
+import { hasTalentAction } from "../helpers/talent-actions.mjs";
 import { effectDialog, durationLabel } from "../helpers/effects.mjs";
 
 const { HandlebarsApplicationMixin } = foundry.applications.api;
@@ -27,6 +28,7 @@ export class SWSEActorSheet extends HandlebarsApplicationMixin(foundry.applicati
       recover: SWSEActorSheet.#onRecover,
       toggleStatus: SWSEActorSheet.#onToggleStatus,
       createEffect: SWSEActorSheet.#onCreateEffect,
+      useTalent: SWSEActorSheet.#onUseTalent,
       editEffect: SWSEActorSheet.#onEditEffect,
       toggleEffect: SWSEActorSheet.#onToggleEffect,
       deleteEffect: SWSEActorSheet.#onDeleteEffect,
@@ -174,6 +176,7 @@ export class SWSEActorSheet extends HandlebarsApplicationMixin(foundry.applicati
         duration: durationLabel(e)
       };
     });
+    context.actionKeys = actor.items.filter(i => ["feat", "talent"].includes(i.type) && hasTalentAction(i.system.key)).map(i => i.system.key);
     context.statusSummary = context.statusList.filter(s => s.active).map(s => s.label).join(", ");
     context.xpNext = SWSE.xpTable[Math.min(sys.level, 19)] ?? "—";
     context.canLevelUp = sys.xp >= (SWSE.xpTable[sys.level] ?? Infinity);
@@ -338,6 +341,7 @@ export class SWSEActorSheet extends HandlebarsApplicationMixin(foundry.applicati
   }
 
   static #onRecover() { this.actor.recover(); }
+  static #onUseTalent(event, target) { SWSEActorSheet.#item.call(this, target)?.use(); }
   static #onToggleStatus(event, target) { this.actor.toggleStatusEffect(target.dataset.status); }
   static #onCreateEffect() { effectDialog(this.actor); }
   static async #onEditEffect(event, target) {

@@ -68,6 +68,9 @@ export function onRenderChatMessage(message, html) {
         const amount = Number(btn.dataset.amount) || 0;
         await requestDamage(actor, amount, damageOpts(payload, target?.crit));
         if (payload.bonusSteps && target?.hit) await stepsFor(actor, payload.bonusSteps);
+        for (const s of payload.statusOnHit ?? []) {
+          if (target?.hit && !actor.statuses?.has(s)) await requestEffect(actor, { name: game.i18n.localize(`SWSE.Status.${s}`), img: `systems/${SYSTEM_ID}/assets/icons/status/${s}.svg`, statuses: [s] });
+        }
       } else if (action === "apply-selected") {
         const tokens = canvas.tokens?.controlled ?? [];
         if (!tokens.length) return ui.notifications.warn(game.i18n.localize("SWSE.Warn.SelectTokens"));

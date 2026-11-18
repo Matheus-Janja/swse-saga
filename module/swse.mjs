@@ -16,6 +16,7 @@ import { LevelUpApp } from "./apps/levelup.mjs";
 import { attackWithWeapon } from "./rolls/attack.mjs";
 import { onRenderChatMessage, registerSocket, requestDamage } from "./rolls/damage.mjs";
 import * as api from "./helpers/api.mjs";
+import { registerTalentHooks, TALENT_ACTIONS } from "./helpers/talent-actions.mjs";
 import { configureStatusEffects, registerEffectHooks, effectDialog, effectToSelected, toggleStatusPrompt } from "./helpers/effects.mjs";
 
 Hooks.once("init", () => {
@@ -49,6 +50,7 @@ Hooks.once("init", () => {
   registerHandlebars();
   configureStatusEffects();
   registerEffectHooks();
+  registerTalentHooks();
 
   game.swse = {
     config: SWSE,

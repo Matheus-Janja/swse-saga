@@ -7,6 +7,7 @@
         {{#each feats as |f|}}
         <li class="item" data-item-id="{{f.id}}">
           <img src="{{f.img}}"><a data-action="itemToChat" data-tooltip="{{f.system.prerequisites.text}}">{{f.displayName}}</a>
+          {{#if (swseIncludes @root.actionKeys f.system.key)}}<a class="ctl use-talent" data-action="useTalent" data-tooltip="{{localize 'SWSE.Talent.Use'}}"><i class="fa-solid fa-bolt"></i></a>{{/if}}
           {{#if f.system.choice.type}}<a class="ctl" data-action="editChoice" data-tooltip="{{localize 'SWSE.Choice.prompt'}}"><i class="fa-solid fa-list"></i></a>{{/if}}
           <a class="ctl" data-action="editItem"><i class="fa-solid fa-pen"></i></a>
           {{#if ../editable}}<a class="ctl" data-action="deleteItem"><i class="fa-solid fa-trash"></i></a>{{/if}}
@@ -23,6 +24,7 @@
         {{#each t.list as |i|}}
         <li class="item" data-item-id="{{i.id}}">
           <img src="{{i.img}}"><a data-action="itemToChat">{{i.displayName}}</a>
+          {{#if (swseIncludes @root.actionKeys i.system.key)}}<a class="ctl use-talent" data-action="useTalent" data-tooltip="{{localize 'SWSE.Talent.Use'}}"><i class="fa-solid fa-bolt"></i></a>{{/if}}
           {{#if i.system.choice.type}}<a class="ctl" data-action="editChoice"><i class="fa-solid fa-list"></i></a>{{/if}}
           <a class="ctl" data-action="editItem"><i class="fa-solid fa-pen"></i></a>
           {{#if @root.editable}}<a class="ctl" data-action="deleteItem"><i class="fa-solid fa-trash"></i></a>{{/if}}

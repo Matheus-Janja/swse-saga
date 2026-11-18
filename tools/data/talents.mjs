@@ -104,7 +104,7 @@ push(
   t("Fool's Luck", "fools-luck", "Ação padrão + Ponto da Força: até o fim do encontro, escolha +1 de competência em ataques, +5 em perícias ou +1 em todas as Defesas (errata)."),
   t("Fortune's Favor", "fortunes-favor", "Ao conseguir um acerto crítico, ganha uma ação padrão gratuita a ser usada até o fim do turno."),
   t("Gambler", "gambler", "+2 de competência em testes de Sabedoria para apostar. Repetível (+2 cada).", {}, { repeatable: true }),
-  t("Knack", "knack", "1/dia, rerrola um teste de perícia e fica com o melhor. Repetível (+1 uso/dia).", {}, { repeatable: true }),
+  t("Knack", "knack", "1/dia, rerrola um teste de perícia e fica com o melhor. Repetível (+1 uso/dia). (Botão de rerrolagem nos testes.)", {}, { repeatable: true, rerolls: [{ skill: "all", keep: "best", label: "Knack (1/dia)" }] }),
   t("Lucky Shot", "lucky-shot", "1/dia, rerrola uma jogada de ataque e fica com a melhor. Repetível (+1 uso/dia).", pre("Knack", { talents: ["knack"] }), { repeatable: true })
 );
 tree("Misfortune");

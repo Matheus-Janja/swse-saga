@@ -287,3 +287,6 @@
 .swse.vehicle .vc-buttons button { line-height: 22px; font-size: .8em; padding: 0 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .swse.vehicle .vc-buttons button.active { border-color: var(--swse-accent); color: var(--swse-accent); }
 .swse.vehicle .dogfight-list .chip { display: inline-block; border: 1px solid var(--swse-red); border-radius: 10px; padding: 0 8px; margin: 0 2px; }
+
+.swse .item-list .ctl.use-talent { color: var(--swse-accent); }
+.swse .item-list .ctl.use-talent:hover { text-shadow: 0 0 6px var(--swse-accent); }

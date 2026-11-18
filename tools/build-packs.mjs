@@ -21,6 +21,8 @@ import { droidSpecies, droidSystems, DROID_FOLDERS } from "./data/droids.mjs";
 import { buildNpcs } from "./build-npcs.mjs";
 import { buildVehicles } from "./build-vehicles.mjs";
 import { iconFor, ICON } from "./build-packs-icons.mjs";
+import { TALENT_ACTIONS } from "../module/helpers/talent-actions.mjs";
+const TALENT_ACTION_KEYS = new Set(Object.keys(TALENT_ACTIONS));
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const SRC = path.join(ROOT, "packs-src");
@@ -33,12 +35,25 @@ function makeId(seed) {
   for (let i = 0; i < 16; i++) id += ALNUM[h[i] % ALNUM.length];
   return id;
 }
+/** Marca na descrição se o feat/talento é automatizado (passivo ou com botão de uso na ficha). */
+const PASSIVE_AUTO = new Set(["force-intuition", "force-perception", "force-pilot", "force-persuasion", "force-deception", "force-treatment", "niman",
+  "dark-scourge", "dark-side-scourge", "uncanny-dodge-ii", "knockdown-shot", "powerful-charge", "melee-defense", "charging-fire", "acrobatic-strike",
+  "skirmisher", "knack", "force-power-mastery", "force-power-adept", "dark-side-master", "devastating-power", "resist-the-dark-side",
+  "force-point-recovery", "telekinetic-power", "makashi", "jar-kai", "elusive-dogfighter", "relentless-pursuit", "dogfight-gunner", "expert-gunner", "vehicular-evasion", "full-throttle", "improved-disarm", "ranged-disarm", "elusive-target", "shii-cho", "soresu", "redirect-shot"]);
+function markAutomation(data) {
+  const key = data.system.key;
+  const d = data.system.description ?? "";
+  if (/Automático|botão ⚡/.test(d)) return;
+  if (TALENT_ACTION_KEYS.has(key)) data.system.description = `${d}<p><em>Automático: use o botão ⚡ na ficha (ou arraste para a barra de macros).</em></p>`;
+  else if (PASSIVE_AUTO.has(key)) data.system.description = `${d}<p><em>Automático.</em></p>`;
+}
 const slug = s => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 const stats = { coreVersion: "14.370", systemId: "swse-saga", systemVersion: "0.1.0" };
 
 function itemDoc(pack, data, folder = null) {
   delete data.system.img;
   delete data.folder;
+  if (["feat", "talent"].includes(data.type)) markAutomation(data);
   const _id = makeId(`${pack}:${data.type}:${data.system.tree ?? ""}:${data.name}`);
   return {
     _id, _key: `!items!${_id}`, name: data.name, type: data.type, img: iconFor(data.type, data.system),

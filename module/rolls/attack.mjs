@@ -66,7 +66,11 @@ function dialogContent(actor, weapon, p) {
     ${check("rapidStrike", L("SWSE.Attack.RapidStrike"), p.melee && has("rapid-strike"))}
     ${check("mightySwing", L("SWSE.Attack.MightySwing"), p.melee && has("mighty-swing"))}
     ${p.melee && has("power-attack") ? row(`<label>${L("SWSE.Attack.PowerAttack")} (0–${bab})</label><input type="number" name="powerAttack" value="0" min="0" max="${bab}">`) : ""}
-    ${check("charge", L("SWSE.Attack.Charge"), p.melee)}
+    ${check("charge", L("SWSE.Attack.Charge") + (p.melee && has("powerful-charge") ? " + Powerful Charge" : "") + (ranged ? " (Charging Fire)" : ""), p.melee || has("charging-fire"))}
+    ${check("disarm", L("SWSE.Attack.Disarm") + (has("improved-disarm") ? " (Improved Disarm +5)" : ""), p.melee || has("ranged-disarm"))}
+    ${check("acrobaticStrike", "Acrobatic Strike (+2)", has("acrobatic-strike"))}
+    ${check("skirmisher", "Skirmisher (+1)", has("skirmisher"))}
+    ${p.melee && has("melee-defense") ? row(`<label>Melee Defense (0–${bab})</label><input type="number" name="meleeDefense" value="0" min="0" max="${bab}">`) : ""}
     ${check("flanking", L("SWSE.Attack.Flanking"), p.melee)}
     ${check("flatFooted", L("SWSE.Attack.FlatFooted") + (sneak ? ` (Sneak Attack +${Math.min(sneak, 10)}d6)` : ""), true)}
     ${check("huntersTarget", L("SWSE.Attack.HuntersTarget"), has("hunters-target"))}
@@ -176,12 +180,14 @@ export async function resolveAttack(actor, weapon, p, f) {
       atk.push(["Power Attack", -pa]);
       dmg.push(["Power Attack", p.twoHanded ? pa * 2 : pa]);
     }
-    if (f.charge) {
-      atk.push([L("SWSE.Attack.Charge"), 2]);
-      notes.push(L("SWSE.Attack.ChargeNote"));
-      if (actor.isOwner && !actor.derived.status?.list?.includes("charging")) {
-        await actor.addEffect({ name: L("SWSE.Status.charging"), img: "systems/swse-saga/assets/icons/status/charging.svg", statuses: ["charging"], rounds: 0 });
-      }
+    if (f.charge && has("powerful-charge") && ["medium", "large", "huge", "gargantuan", "colossal"].includes(actor.derived.size)) {
+      atk.push(["Powerful Charge", 2]);
+      dmg.push(["Powerful Charge", Math.floor((actor.system.heroicLevel || 0) / 2)]);
+    }
+    const md = Math.clamp(Number(f.meleeDefense) || 0, 0, actor.system.bab);
+    if (md) {
+      atk.push(["Melee Defense", -md]);
+      if (actor.isOwner) await actor.addEffect({ name: `Melee Defense (+${md})`, rounds: 0, modifiers: [{ target: "defenses.reflex", value: String(md), type: "dodge", label: "", disabled: false }] });
     }
     if (f.flanking) atk.push([L("SWSE.Attack.Flanking"), 2]);
     if (f.rage) {
@@ -189,6 +195,21 @@ export async function resolveAttack(actor, weapon, p, f) {
       atk.push([L("SWSE.Attack.Rage"), r]); dmg.push([L("SWSE.Attack.Rage"), r]);
     }
   }
+  if (f.charge) {
+    if (p.melee) atk.push([L("SWSE.Attack.Charge"), 2]);
+    notes.push(L("SWSE.Attack.ChargeNote"));
+    if (actor.isOwner && !actor.derived.status?.list?.includes("charging")) {
+      await actor.addEffect({ name: L("SWSE.Status.charging"), img: "systems/swse-saga/assets/icons/status/charging.svg", statuses: ["charging"], rounds: 0 });
+    }
+  }
+  if (f.acrobaticStrike) atk.push(["Acrobatic Strike", 2]);
+  if (f.disarm) {
+    if (p.melee && has("improved-disarm")) atk.push(["Improved Disarm", 5]);
+    notes.push(L(p.melee && !has("improved-disarm") ? "SWSE.Attack.DisarmNote" : "SWSE.Attack.DisarmNoteSafe"));
+  }
+  if (f.skirmisher) atk.push(["Skirmisher", 1]);
+  const statusOnHit = [];
+  if (!p.melee && f.aim && has("knockdown-shot")) { statusOnHit.push("prone"); notes.push(L("SWSE.Talent.KnockdownNote")); }
   if (f.familiarFoe) atk.push(["Familiar Foe", Math.floor(actor.classLevel("bounty-hunter") / 2)]);
   if (f.huntersTarget) dmg.push(["Hunter's Target", actor.classLevel("bounty-hunter")]);
   let sneakDice = 0;
@@ -238,12 +259,25 @@ export async function resolveAttack(actor, weapon, p, f) {
     const results = targets.map(({ token, actor: ta }) => {
       const tStatus = ta.system.derived?.status ?? {};
       const adj = targetAdjustment(tStatus, { melee: p.melee, aim: !!f.aim, keenShot: !p.melee && has("keen-shot") });
+      // Desarmar: o alvo recebe +10 na Reflexos
+      if (f.disarm) { adj.delta += 10; adj.notes.push("disarm"); }
+      // Elusive Target: atirar contra quem está em corpo a corpo fica −5 mais difícil
+      if (!p.melee && f.intoMelee && ta.hasFeature?.("elusive-target")) { adj.delta += 5; adj.notes.push("elusive-target"); }
+      // Uncanny Dodge II: não pode ser flanqueado
+      if (f.flanking && ta.hasFeature?.("uncanny-dodge-ii")) { adj.delta += 2; adj.notes.push("no-flank"); }
+      // Dark Scourge: +1 no ataque contra Jedi
+      if (has("dark-scourge") && (ta.classLevel?.("jedi") || ta.classLevel?.("jedi-knight") || ta.classLevel?.("jedi-master"))) { adj.delta -= 1; adj.notes.push("dark-scourge"); }
       const reflex = (ta.system.defenses?.reflex?.total ?? 10) + adj.delta;
+      // Dark Side Scourge: +Car (mín. 1) no dano corpo a corpo contra quem tem Lado Sombrio 1+
+      let scourge = 0;
+      if (p.melee && has("dark-side-scourge") && (ta.system.darkSide?.value ?? 0) > 0) { scourge = Math.max(1, actor.system.abilities.cha.mod); adj.notes.push("dark-side-scourge"); }
       let hit = !autoMiss && (autoHit || atkRoll.total >= reflex);
       if (area && !autoMiss && atkRoll.total < 10) hit = false;
       const isCrit = hit && crit && !area && (nat === 20 || atkRoll.total >= reflex);
       let amount = isCrit ? critDamage : baseDamage;
       if (hit && sneakRoll) amount += sneakRoll.total;
+      if (hit) amount += scourge;
+      if (f.disarm) amount = 0;
       const evasion = ta.hasFeature?.("evasion");
       let mult = 1;
       if (area) mult = hit ? (evasion ? 0.5 : 1) : (evasion ? 0 : 0.5);
@@ -269,6 +303,7 @@ export async function resolveAttack(actor, weapon, p, f) {
     drReduction: p.drReduction,
     extraSteps: p.melee && has("stunning-strike") ? 1 : 0,
     bonusSteps: bonusSteps.length,
+    statusOnHit,
     area,
     attacks: attacks.map(a => ({ base: a.baseDamage, crit: a.critDamage, sneak: a.sneakRoll?.total ?? 0, results: a.results }))
   };

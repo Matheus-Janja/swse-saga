@@ -289,4 +289,20 @@ t("Combate veicular: movimento total, Vehicle Dodge, efeitos de dogfight e Dogfi
   });
 }
 
+t("Talentos: Use the Force no lugar de perícias (Force Intuition, Force Pilot) e Niman", () => {
+  const je = find(classes, "jedi"); je.system.hpRolls = [30];
+  const saber = structuredClone(weapons.find(w => w.system.key === "lightsaber")); saber.system.equipped = true;
+  const s = sys({ str: 10, dex: 12, con: 10, int: 10, wis: 10, cha: 16 });
+  s.skills = { useTheForce: { trained: true } };
+  const items = [find(species, "human"), je, find(feats, "force-sensitivity"), find(talents, "force-intuition"), find(talents, "force-pilot")];
+  const d = computeActor(s, items);
+  assert.equal(d.skills.initiative.total, d.skills.useTheForce.total);
+  assert.equal(d.skills.pilot.trained, true);
+  assert.equal(d.skills.perception.total < d.skills.useTheForce.total, true); // sem Force Perception
+  const base = computeActor(s, [...items, saber]);
+  const niman = computeActor(s, [...items, saber, find(talents, "niman")]);
+  assert.equal(niman.defenses.reflex.total - base.defenses.reflex.total, 1);
+  assert.equal(niman.defenses.will.total - base.defenses.will.total, 1);
+});
+
 console.log(`\n${n} testes passaram.`);

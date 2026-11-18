@@ -19,6 +19,13 @@ export async function useForcePower(actor, power) {
   const dark = sys.descriptors.includes("darkSide");
   const light = sys.descriptors.includes("lightSide");
   const canFP = !dark && !(light && actor.system.darkSide.value > 0) && actor.system.forcePoints.value > 0;
+  const hasFP = actor.system.forcePoints.value > 0;
+  const choice = k => actor.featureChoices(k).includes(sys.key);
+  // Force Power Mastery: escolher 10 com este poder. Force Power Adept / Dark Side Master: rolar duas vezes (Ponto da Força).
+  const canTake10 = choice("force-power-mastery");
+  const canTwice = hasFP && (choice("force-power-adept") || (dark && actor.hasFeature("dark-side-master")));
+  const canDevastate = hasFP && actor.hasFeature("devastating-power") && !!sys.damage;
+  const rerollNote = dark && (actor.hasFeature("dark-side-adept") || actor.hasFeature("embrace-the-dark-side"));
   const res = await foundry.applications.api.DialogV2.wait({
     window: { title: power.name },
     content: `<div class="swse-dialog">
@@ -26,17 +33,23 @@ export async function useForcePower(actor, power) {
       <div class="form-group"><label>${L("SWSE.SituationalBonus")}</label><input type="text" name="bonus" value=""></div>
       <div class="form-group"><label>${L("SWSE.SpendForcePoint")}${canFP ? "" : ` (${L("SWSE.Force.FPNotAllowed")})`}</label>
         <input type="checkbox" name="forcePoint" ${canFP ? "" : "disabled"}></div>
+      ${canTake10 ? `<div class="form-group"><label>Force Power Mastery: ${L("SWSE.Take10")}</label><input type="checkbox" name="take10"></div>` : ""}
+      ${canTwice ? `<div class="form-group"><label>${L("SWSE.Talent.RollTwice")}</label><input type="checkbox" name="twice"></div>` : ""}
+      ${canDevastate ? `<div class="form-group"><label>Devastating Power (${L("SWSE.Talent.FPCost")}, +50% ${L("SWSE.Attack.Dice")})</label><input type="checkbox" name="devastating"></div>` : ""}
     </div>`,
     buttons: [{ action: "use", label: L("SWSE.Force.Use"), default: true, callback: (e, b) => new foundry.applications.ux.FormDataExtended(b.form).object }],
     rejectClose: false
   });
   if (!res) return;
 
-  let formula = `1d20 ${signed(actor.system.skills.useTheForce.total)}`;
+  let d20 = "1d20";
+  if (res.take10 && canTake10) d20 = "10";
+  else if (res.twice && canTwice && (await actor.spendForcePoint())) d20 = "2d20kh";
+  let formula = `${d20} ${signed(actor.system.skills.useTheForce.total)}`;
   if (res.bonus) formula += ` ${/^[+-]/.test(res.bonus) ? res.bonus : "+" + res.bonus}`;
   if (res.forcePoint && canFP && (await actor.spendForcePoint())) formula += ` + ${actor.forcePointFormula}`;
   const roll = await new Roll(formula).evaluate();
-  const nat = roll.dice[0].total;
+  const nat = roll.dice[0]?.total ?? 10;
   const total = roll.total;
 
   // Maior CD alcançada
@@ -52,7 +65,9 @@ export async function useForcePower(actor, power) {
   if (defense && targets.length) {
     targetHtml = `<ul class="target-results">`;
     for (const t of targets) {
-      const def = t.actor.system.defenses?.[defense]?.total ?? 10;
+      // Resist the Dark Side: +5 nas Defesas contra poderes [dark side]
+      const resist = dark && t.actor.hasFeature?.("resist-the-dark-side") ? 5 : 0;
+      const def = (t.actor.system.defenses?.[defense]?.total ?? 10) + resist;
       const success = total >= def;
       results.push({ uuid: t.actor.uuid, name: t.name, hit: success });
       targetHtml += `<li class="${success ? "hit" : "miss"}"><span class="tname">${t.name}</span><span class="tdef">${L(`SWSE.Defense.${defense}`)} ${game.user.isGM ? def : "—"}</span><span class="tstatus">${success ? L("SWSE.Success") : L("SWSE.Failure")}</span></li>`;
@@ -65,6 +80,9 @@ export async function useForcePower(actor, power) {
   let dmgFormula = "";
   if (sys.damage === "tier") dmgFormula = reached?.text.match(/\d+d\d+/)?.[0] ?? "";
   else if (sys.damage && (reached || !tiers.length)) dmgFormula = sys.damage;
+  if (dmgFormula && res.devastating && canDevastate && (await actor.spendForcePoint())) {
+    dmgFormula = dmgFormula.replace(/(\d+)d(\d+)/, (_, x, y) => `${Math.floor(Number(x) * 1.5)}d${y}`);
+  }
   if (dmgFormula) dmgRoll = await new Roll(dmgFormula).evaluate();
 
   const updates = { "system.spent": Math.min(sys.uses, sys.spent + 1) };
@@ -98,6 +116,8 @@ export async function useForcePower(actor, power) {
     ${buttons}
     ${sys.special ? `<p class="special"><strong>${L("SWSE.Special")}:</strong> ${sys.special}</p>` : ""}
     ${dark ? `<p class="note">${L("SWSE.Force.DarkSideIncrease")}</p>` : ""}
+    ${rerollNote ? `<p class="note">${L("SWSE.Talent.DarkAdeptNote")}</p>` : ""}
+    ${nat === 20 && sys.descriptors.includes("telekinetic") && actor.hasFeature("telekinetic-power") ? `<p class="note">${L("SWSE.Talent.TelekineticPowerNote")}</p>` : ""}
   </div>`;
   return ChatMessage.create({
     speaker: ChatMessage.getSpeaker({ actor }),
