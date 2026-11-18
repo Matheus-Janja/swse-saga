@@ -15,7 +15,7 @@ export class LevelUpApp extends HandlebarsApplicationMixin(ApplicationV2) {
   constructor(options = {}) {
     super(options);
     this.actor = options.actor;
-    this.state = {
+    this.wiz = {
       step: "class",
       classId: null,       // id do doc no compêndio (classe nova) ou "owned:<itemId>"
       hp: null, hpRoll: "",
@@ -63,7 +63,7 @@ export class LevelUpApp extends HandlebarsApplicationMixin(ApplicationV2) {
 
   /** Documento da classe escolhida (do ator ou do compêndio) e se é nova. */
   get chosen() {
-    const id = this.state.classId;
+    const id = this.wiz.classId;
     if (!id) return null;
     if (id.startsWith("owned:")) {
       const item = this.actor.items.get(id.slice(6));
@@ -102,8 +102,8 @@ export class LevelUpApp extends HandlebarsApplicationMixin(ApplicationV2) {
       p.level = this.newCharLevel;
       p.bab = this.actor.system.bab + (babAt(c.doc.system.bab, c.newLevel) - babAt(c.doc.system.bab, c.newLevel - 1));
     }
-    for (const a of this.state.increases) p.abilities[a] += 1;
-    if (this.state.newSkill) p.trained.add(this.state.newSkill);
+    for (const a of this.wiz.increases) p.abilities[a] += 1;
+    if (this.wiz.newSkill) p.trained.add(this.wiz.newSkill);
     const add = sel => {
       if (!sel) return;
       const doc = this.findDoc(sel.id);
@@ -111,7 +111,7 @@ export class LevelUpApp extends HandlebarsApplicationMixin(ApplicationV2) {
       if (doc.type === "feat") p.feats.push({ key: doc.system.key, choice: sel.choice });
       else p.talents.push({ key: doc.system.key, choice: sel.choice, tree: doc.system.tree, category: doc.system.category });
     };
-    [this.state.multiclassFeat, this.state.levelFeat, this.state.bonusFeat, this.state.talent, this.state.technique, this.state.secret].forEach(add);
+    [this.wiz.multiclassFeat, this.wiz.levelFeat, this.wiz.bonusFeat, this.wiz.talent, this.wiz.technique, this.wiz.secret].forEach(add);
     return p;
   }
 
@@ -122,7 +122,7 @@ export class LevelUpApp extends HandlebarsApplicationMixin(ApplicationV2) {
 
   /** Int aumentou o modificador? Concede uma perícia treinada nova. */
   intGain() {
-    if (!this.state.increases.includes("int")) return false;
+    if (!this.wiz.increases.includes("int")) return false;
     const t = this.actor.system.abilities.int.total;
     return abilityMod(t + 1) > abilityMod(t);
   }
@@ -133,9 +133,9 @@ export class LevelUpApp extends HandlebarsApplicationMixin(ApplicationV2) {
     const ftOwned = this.actor.countFeature("force-training");
     const wis = this.actor.system.abilities.wis.total;
     const wisNow = Math.max(1, 1 + abilityMod(wis));
-    const wisNew = Math.max(1, 1 + abilityMod(wis + (this.state.increases.includes("wis") ? 1 : 0)));
+    const wisNew = Math.max(1, 1 + abilityMod(wis + (this.wiz.increases.includes("wis") ? 1 : 0)));
     n += ftOwned * (wisNew - wisNow);
-    for (const sel of [this.state.multiclassFeat, this.state.levelFeat, this.state.bonusFeat]) {
+    for (const sel of [this.wiz.multiclassFeat, this.wiz.levelFeat, this.wiz.bonusFeat]) {
       if (sel && this.findDoc(sel.id)?.system.key === "force-training") n += wisNew;
     }
     return n;
@@ -155,8 +155,8 @@ export class LevelUpApp extends HandlebarsApplicationMixin(ApplicationV2) {
     return out;
   }
 
-  validate(step = this.state.step) {
-    const s = this.state;
+  validate(step = this.wiz.step) {
+    const s = this.wiz;
     const g = this.gains();
     switch (step) {
       case "class": return this.chosen ? null : L("SWSE.CG.ErrClass");
@@ -185,12 +185,12 @@ export class LevelUpApp extends HandlebarsApplicationMixin(ApplicationV2) {
 
   async _prepareContext(options) {
     this._data ??= await loadCompendia();
-    if (this._classUuid && !this.state.classId) {
+    if (this._classUuid && !this.wiz.classId) {
       const doc = this._data.classes.find(c => c.uuid === this._classUuid);
-      if (doc) this.state.classId = doc.id;
+      if (doc) this.wiz.classId = doc.id;
       this._classUuid = null;
     }
-    const s = this.state;
+    const s = this.wiz;
     const ctx = { state: s, isStep: { [s.step]: true }, actor: this.actor, newLevel: this.newCharLevel };
     const steps = this.steps();
     if (!steps.includes(s.step)) s.step = steps[0];
@@ -280,7 +280,7 @@ export class LevelUpApp extends HandlebarsApplicationMixin(ApplicationV2) {
   }
 
   reviewLines() {
-    const s = this.state;
+    const s = this.wiz;
     const c = this.chosen;
     const name = sel => {
       if (!sel) return null;
@@ -309,8 +309,8 @@ export class LevelUpApp extends HandlebarsApplicationMixin(ApplicationV2) {
 
   static #onForm(event, form, formData) {
     const d = foundry.utils.expandObject(formData.object);
-    if ("filter" in d) this.state.filter = !!d.filter;
-    if ("hp" in d && d.hp !== "" && d.hp !== null) this.state.hp = Number(d.hp);
+    if ("filter" in d) this.wiz.filter = !!d.filter;
+    if ("hp" in d && d.hp !== "" && d.hp !== null) this.wiz.hp = Number(d.hp);
     this.render();
   }
 
@@ -318,23 +318,23 @@ export class LevelUpApp extends HandlebarsApplicationMixin(ApplicationV2) {
     const err = this.validate();
     if (err && err !== "warn") return ui.notifications.warn(err);
     const steps = this.steps();
-    const i = steps.indexOf(this.state.step);
-    if (i < steps.length - 1) this.state.step = steps[i + 1];
+    const i = steps.indexOf(this.wiz.step);
+    if (i < steps.length - 1) this.wiz.step = steps[i + 1];
     this.render();
   }
 
   static #onPrev() {
     const steps = this.steps();
-    const i = steps.indexOf(this.state.step);
-    if (i > 0) this.state.step = steps[i - 1];
+    const i = steps.indexOf(this.wiz.step);
+    if (i > 0) this.wiz.step = steps[i - 1];
     this.render();
   }
 
   static #onSelectClass(event, target) {
     const id = target.dataset.id;
     if (target.dataset.blocked === "true" && enforcePrereqs()) return ui.notifications.warn(L("SWSE.LU.PrereqsNotMet"));
-    if (this.state.classId !== id) {
-      Object.assign(this.state, { classId: id, hp: null, hpRoll: "", multiclassFeat: null, bonusFeat: null, talent: null, technique: null, secret: null });
+    if (this.wiz.classId !== id) {
+      Object.assign(this.wiz, { classId: id, hp: null, hpRoll: "", multiclassFeat: null, bonusFeat: null, talent: null, technique: null, secret: null });
     }
     this.render();
   }
@@ -343,28 +343,28 @@ export class LevelUpApp extends HandlebarsApplicationMixin(ApplicationV2) {
     const c = this.chosen;
     if (!c) return;
     const r = await rollHitPoints(c.doc.system.hitDie);
-    this.state.hp = r.value;
-    this.state.hpRoll = r.roll ? `1d${c.doc.system.hitDie} = ${r.value}` : `${r.value}`;
+    this.wiz.hp = r.value;
+    this.wiz.hpRoll = r.roll ? `1d${c.doc.system.hitDie} = ${r.value}` : `${r.value}`;
     if (r.roll) r.roll.toMessage({ speaker: ChatMessage.getSpeaker({ actor: this.actor }), flavor: `${L("SWSE.LevelUp")}: ${L("SWSE.HP")} (${c.doc.name})` });
     this.render();
   }
 
   static #onToggleIncrease(event, target) {
     const a = target.dataset.ability;
-    const inc = this.state.increases;
-    if (inc.includes(a)) this.state.increases = inc.filter(x => x !== a);
+    const inc = this.wiz.increases;
+    if (inc.includes(a)) this.wiz.increases = inc.filter(x => x !== a);
     else if (inc.length < 2) inc.push(a);
     else ui.notifications.warn(L("SWSE.LU.ErrIncreases"));
     this.render();
   }
 
   static #onPickSkill(event, target) {
-    this.state.newSkill = target.dataset.skill;
+    this.wiz.newSkill = target.dataset.skill;
     this.render();
   }
 
   async #pick(slot, id) {
-    const s = this.state;
+    const s = this.wiz;
     if (s[slot]?.id === id) { s[slot] = null; return this.render(); }
     const doc = this.findDoc(id);
     let choice = doc.system.choice?.value ?? "";
@@ -380,16 +380,16 @@ export class LevelUpApp extends HandlebarsApplicationMixin(ApplicationV2) {
   static #onPickTalent(event, target) { return this.#pick(target.dataset.slot ?? "talent", target.dataset.id); }
 
   static #onAddPower(event, target) {
-    const n = Object.values(this.state.powers).reduce((a, b) => a + b, 0);
+    const n = Object.values(this.wiz.powers).reduce((a, b) => a + b, 0);
     if (n >= this.newPowers()) return ui.notifications.warn(L("SWSE.CG.ErrTooManyPowers"));
-    this.state.powers[target.dataset.id] = (this.state.powers[target.dataset.id] ?? 0) + 1;
+    this.wiz.powers[target.dataset.id] = (this.wiz.powers[target.dataset.id] ?? 0) + 1;
     this.render();
   }
 
   static #onRemovePower(event, target) {
     const id = target.dataset.id;
-    if (!this.state.powers[id]) return;
-    if (!--this.state.powers[id]) delete this.state.powers[id];
+    if (!this.wiz.powers[id]) return;
+    if (!--this.wiz.powers[id]) delete this.wiz.powers[id];
     this.render();
   }
 
@@ -400,9 +400,9 @@ export class LevelUpApp extends HandlebarsApplicationMixin(ApplicationV2) {
   static async #onFinish() {
     for (const st of this.steps()) {
       const err = this.validate(st);
-      if (err && err !== "warn") { this.state.step = st; this.render(); return ui.notifications.warn(err); }
+      if (err && err !== "warn") { this.wiz.step = st; this.render(); return ui.notifications.warn(err); }
     }
-    const s = this.state;
+    const s = this.wiz;
     const actor = this.actor;
     const c = this.chosen;
 

@@ -17,7 +17,7 @@ export class CharacterCreator extends HandlebarsApplicationMixin(ApplicationV2) 
     super(options);
     this.actor = options.actor ?? null;
     const methods = game.settings.get(SYSTEM_ID, "abilityMethods");
-    this.state = {
+    this.wiz = {
       step: "abilities",
       method: methods === "all" ? "pointBuy" : methods,
       pb: Object.fromEntries(ABIL.map(a => [a, 8])),
@@ -81,13 +81,12 @@ export class CharacterCreator extends HandlebarsApplicationMixin(ApplicationV2) 
   /*  Estado derivado                                             */
   /* ------------------------------------------------------------ */
 
-  get data() { return this._data; }
-  get species() { return this._data?.species.find(s => s.id === this.state.speciesId) ?? null; }
-  get cls() { return this._data?.classes.find(c => c.id === this.state.classId) ?? null; }
+  get species() { return this._data?.species.find(s => s.id === this.wiz.speciesId) ?? null; }
+  get cls() { return this._data?.classes.find(c => c.id === this.wiz.classId) ?? null; }
 
   /** Valores de atributo antes da espécie. */
   baseScores() {
-    const s = this.state;
+    const s = this.wiz;
     if (s.method === "pointBuy") return { ...s.pb };
     const out = {};
     for (const a of ABIL) {
@@ -124,7 +123,7 @@ export class CharacterCreator extends HandlebarsApplicationMixin(ApplicationV2) 
         if (doc) out.push({ doc, source: sp.name, ok: true });
       }
       for (const c of sp.system.conditionalFeats) {
-        if (!this.state.trained.includes(c.skill)) continue;
+        if (!this.wiz.trained.includes(c.skill)) continue;
         const doc = this._data.feats.find(f => f.system.key === c.feat);
         if (doc) out.push({ doc, source: sp.name, ok: true, choice: c.skill });
       }
@@ -147,22 +146,22 @@ export class CharacterCreator extends HandlebarsApplicationMixin(ApplicationV2) 
     const cls = this.cls;
     const feats = [];
     if (includeAuto && this._data) for (const f of this.autoFeats().filter(f => f.ok)) feats.push({ key: f.doc.system.key, choice: f.choice });
-    for (const f of [...this.state.feats, ...this.state.speciesFeats]) {
+    for (const f of [...this.wiz.feats, ...this.wiz.speciesFeats]) {
       const doc = this._data?.feats.find(d => d.id === f.id);
       if (doc) feats.push({ key: doc.system.key, choice: f.choice });
     }
     const talents = [];
-    if (this.state.talent) {
-      const t = this._data?.talents.find(d => d.id === this.state.talent.id);
-      if (t) talents.push({ key: t.system.key, choice: this.state.talent.choice, tree: t.system.tree, category: t.system.category });
+    if (this.wiz.talent) {
+      const t = this._data?.talents.find(d => d.id === this.wiz.talent.id);
+      if (t) talents.push({ key: t.system.key, choice: this.wiz.talent.choice, tree: t.system.tree, category: t.system.category });
     }
     return {
       abilities: Object.fromEntries(ABIL.map(a => [a, scores[a] ?? 10])),
       bab: cls ? babAt(cls.system.bab, 1) : 0,
       level: 1,
-      trained: new Set(this.state.trained),
+      trained: new Set(this.wiz.trained),
       feats, talents,
-      forcePowers: new Set(Object.keys(this.state.powers).map(id => this._data?.powers.find(p => p.id === id)?.system.key).filter(Boolean)),
+      forcePowers: new Set(Object.keys(this.wiz.powers).map(id => this._data?.powers.find(p => p.id === id)?.system.key).filter(Boolean)),
       species: this.species?.system.key ?? "",
       size: this.species?.system.size ?? "medium",
       darkSide: 0,
@@ -182,8 +181,8 @@ export class CharacterCreator extends HandlebarsApplicationMixin(ApplicationV2) 
   }
 
   /** Valida o passo atual; retorna mensagem de erro ou null. */
-  validate(step = this.state.step) {
-    const s = this.state;
+  validate(step = this.wiz.step) {
+    const s = this.wiz;
     switch (step) {
       case "abilities": {
         const base = this.baseScores();
@@ -217,7 +216,7 @@ export class CharacterCreator extends HandlebarsApplicationMixin(ApplicationV2) 
 
   async _prepareContext(options) {
     this._data ??= await loadCompendia();
-    const s = this.state;
+    const s = this.wiz;
     const ctx = { state: s, step: s.step, isStep: { [s.step]: true } };
     const methodsSetting = game.settings.get(SYSTEM_ID, "abilityMethods");
     ctx.methods = [
@@ -348,7 +347,7 @@ export class CharacterCreator extends HandlebarsApplicationMixin(ApplicationV2) 
     return [...d.weapons, ...d.armor, ...d.equipment].find(x => x.uuid === uuid);
   }
 
-  purchaseTotal() { return this.state.purchases.reduce((a, u) => a + (this.findByUuid(u)?.system.cost ?? 0), 0); }
+  purchaseTotal() { return this.wiz.purchases.reduce((a, u) => a + (this.findByUuid(u)?.system.cost ?? 0), 0); }
 
   /** Itens gratuitos: ataque desarmado e, para Jedi, o sabre de luz. */
   freeItems() {
@@ -363,7 +362,7 @@ export class CharacterCreator extends HandlebarsApplicationMixin(ApplicationV2) 
   }
 
   reviewData() {
-    const s = this.state;
+    const s = this.wiz;
     const scores = this.finalScores();
     const feats = this.autoFeats().filter(f => f.ok).map(f => f.doc.name + (f.choice ? ` (${skillLabel(f.choice)})` : ""))
       .concat([...s.feats, ...s.speciesFeats].map(f => {
@@ -391,7 +390,7 @@ export class CharacterCreator extends HandlebarsApplicationMixin(ApplicationV2) 
 
   static async #onForm(event, form, formData) {
     const d = foundry.utils.expandObject(formData.object);
-    const s = this.state;
+    const s = this.wiz;
     if (d.method && d.method !== s.method) {
       s.method = d.method;
       s.assign = Object.fromEntries(ABIL.map(a => [a, ""]));
@@ -410,16 +409,16 @@ export class CharacterCreator extends HandlebarsApplicationMixin(ApplicationV2) 
     const err = this.validate();
     if (err && err !== "warn") return ui.notifications.warn(err);
     const steps = this.steps();
-    const i = steps.indexOf(this.state.step);
-    if (i < steps.length - 1) this.state.step = steps[i + 1];
-    if (this.state.step === "equipment" && this.state.credits === null) CharacterCreator.#onRollCredits.call(this);
+    const i = steps.indexOf(this.wiz.step);
+    if (i < steps.length - 1) this.wiz.step = steps[i + 1];
+    if (this.wiz.step === "equipment" && this.wiz.credits === null) CharacterCreator.#onRollCredits.call(this);
     this.render();
   }
 
   static #onPrev() {
     const steps = this.steps();
-    const i = steps.indexOf(this.state.step);
-    if (i > 0) this.state.step = steps[i - 1];
+    const i = steps.indexOf(this.wiz.step);
+    if (i > 0) this.wiz.step = steps[i - 1];
     this.render();
   }
 
@@ -429,15 +428,15 @@ export class CharacterCreator extends HandlebarsApplicationMixin(ApplicationV2) 
     // Só permite pular para frente se os passos anteriores forem válidos
     for (const st of steps.slice(0, steps.indexOf(to))) {
       const err = this.validate(st);
-      if (err && err !== "warn") { this.state.step = st; return this.render(); }
+      if (err && err !== "warn") { this.wiz.step = st; return this.render(); }
     }
-    this.state.step = to;
+    this.wiz.step = to;
     this.render();
   }
 
   static #onPbInc(event, target) {
     const a = target.dataset.ability;
-    const s = this.state;
+    const s = this.wiz;
     if (s.pb[a] >= 18) return;
     s.pb[a]++;
     if (pointBuySpent(s.pb) > SWSE.pointBuyTotal) s.pb[a]--;
@@ -446,12 +445,12 @@ export class CharacterCreator extends HandlebarsApplicationMixin(ApplicationV2) 
 
   static #onPbDec(event, target) {
     const a = target.dataset.ability;
-    if (this.state.pb[a] > 8) this.state.pb[a]--;
+    if (this.wiz.pb[a] > 8) this.wiz.pb[a]--;
     this.render();
   }
 
   static async #onRollAbilities() {
-    const s = this.state;
+    const s = this.wiz;
     s.pool = [];
     s.rolledDetail = [];
     for (let i = 0; i < 6; i++) {
@@ -468,29 +467,29 @@ export class CharacterCreator extends HandlebarsApplicationMixin(ApplicationV2) 
   }
 
   static #onUseArray() {
-    this.state.pool = [...SWSE.standardArray];
+    this.wiz.pool = [...SWSE.standardArray];
     this.render();
   }
 
   static #onSelectSpecies(event, target) {
-    this.state.speciesId = target.dataset.id;
-    this.state.speciesFeats = [];
+    this.wiz.speciesId = target.dataset.id;
+    this.wiz.speciesFeats = [];
     this.render();
   }
 
   static #onSelectClass(event, target) {
-    if (this.state.classId !== target.dataset.id) {
-      this.state.classId = target.dataset.id;
-      this.state.trained = [];
-      this.state.talent = null;
-      this.state.credits = null;
+    if (this.wiz.classId !== target.dataset.id) {
+      this.wiz.classId = target.dataset.id;
+      this.wiz.trained = [];
+      this.wiz.talent = null;
+      this.wiz.credits = null;
     }
     this.render();
   }
 
   static #onToggleSkill(event, target) {
     const k = target.dataset.skill;
-    const s = this.state;
+    const s = this.wiz;
     if (s.trained.includes(k)) s.trained = s.trained.filter(x => x !== k);
     else if (s.trained.length < this.trainedAllowed()) s.trained.push(k);
     else ui.notifications.warn(L("SWSE.CG.ErrTooManySkills"));
@@ -498,7 +497,7 @@ export class CharacterCreator extends HandlebarsApplicationMixin(ApplicationV2) 
   }
 
   async #toggleFeatIn(listName, id, max) {
-    const s = this.state;
+    const s = this.wiz;
     const list = s[listName];
     const idx = list.findIndex(f => f.id === id);
     if (idx >= 0) { list.splice(idx, 1); return this.render(); }
@@ -518,39 +517,39 @@ export class CharacterCreator extends HandlebarsApplicationMixin(ApplicationV2) 
 
   static async #onSelectTalent(event, target) {
     const id = target.dataset.id;
-    if (this.state.talent?.id === id) { this.state.talent = null; return this.render(); }
+    if (this.wiz.talent?.id === id) { this.wiz.talent = null; return this.render(); }
     const doc = this._data.talents.find(t => t.id === id);
     let choice = doc.system.choice?.value ?? "";
     if (doc.system.choice?.type && !choice) {
       choice = await promptChoice(this.actor, doc.toObject(), this.profile());
       if (choice === null) return;
     }
-    this.state.talent = { id, choice };
+    this.wiz.talent = { id, choice };
     this.render();
   }
 
   static #onAddPower(event, target) {
     const id = target.dataset.id;
-    const n = Object.values(this.state.powers).reduce((a, b) => a + b, 0);
+    const n = Object.values(this.wiz.powers).reduce((a, b) => a + b, 0);
     if (n >= this.powersAllowed()) return ui.notifications.warn(L("SWSE.CG.ErrTooManyPowers"));
-    this.state.powers[id] = (this.state.powers[id] ?? 0) + 1;
+    this.wiz.powers[id] = (this.wiz.powers[id] ?? 0) + 1;
     this.render();
   }
 
   static #onRemovePower(event, target) {
     const id = target.dataset.id;
-    if (!this.state.powers[id]) return;
-    this.state.powers[id]--;
-    if (!this.state.powers[id]) delete this.state.powers[id];
+    if (!this.wiz.powers[id]) return;
+    this.wiz.powers[id]--;
+    if (!this.wiz.powers[id]) delete this.wiz.powers[id];
     this.render();
   }
 
   static async #onRollCredits() {
     const formula = this.cls?.system.credits;
-    if (!formula) { this.state.credits = 0; return this.render(); }
+    if (!formula) { this.wiz.credits = 0; return this.render(); }
     const r = await new Roll(formula).evaluate();
-    this.state.credits = r.total;
-    this.state.creditsRoll = `${formula} = ${r.total}`;
+    this.wiz.credits = r.total;
+    this.wiz.creditsRoll = `${formula} = ${r.total}`;
     ChatMessage.create({ speaker: ChatMessage.getSpeaker({ actor: this.actor }), content: `<div class="swse-card"><h3>${L("SWSE.CG.StartingCredits")}</h3><p>${formula} = <strong>${r.total}</strong></p></div>`, rolls: [r] });
     this.render();
   }
@@ -558,13 +557,13 @@ export class CharacterCreator extends HandlebarsApplicationMixin(ApplicationV2) 
   static #onBuy(event, target) {
     const d = this.findByUuid(target.dataset.uuid);
     if (!d) return;
-    if (d.system.cost > (this.state.credits ?? 0) - this.purchaseTotal()) return ui.notifications.warn(L("SWSE.CG.NotEnoughCredits"));
-    this.state.purchases.push(d.uuid);
+    if (d.system.cost > (this.wiz.credits ?? 0) - this.purchaseTotal()) return ui.notifications.warn(L("SWSE.CG.NotEnoughCredits"));
+    this.wiz.purchases.push(d.uuid);
     this.render();
   }
 
   static #onUnbuy(event, target) {
-    this.state.purchases.splice(Number(target.dataset.index), 1);
+    this.wiz.purchases.splice(Number(target.dataset.index), 1);
     this.render();
   }
 
@@ -580,7 +579,7 @@ export class CharacterCreator extends HandlebarsApplicationMixin(ApplicationV2) 
   static async #onFinish() {
     const problems = this.reviewData().problems;
     if (problems.length) return ui.notifications.error(problems.join(" | "));
-    const s = this.state;
+    const s = this.wiz;
     let actor = this.actor;
     if (!actor) actor = await Actor.implementation.create({ name: s.name || L("SWSE.CG.NewHero"), type: "character" });
     else {

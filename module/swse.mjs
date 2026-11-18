@@ -46,8 +46,8 @@ Hooks.once("init", () => {
     LevelUpApp,
     attackWithWeapon,
     requestDamage,
-    openCharacterCreator: actor => new CharacterCreator({ actor }).render({ force: true }),
-    openLevelUp: (actor, opts = {}) => new LevelUpApp({ actor, ...opts }).render({ force: true }),
+    openCharacterCreator: actor => openApp(() => new CharacterCreator({ actor })),
+    openLevelUp: (actor, opts = {}) => openApp(() => new LevelUpApp({ actor, ...opts })),
     ...api
   };
 
@@ -66,6 +66,18 @@ Hooks.once("init", () => {
 Hooks.once("ready", () => {
   registerSocket();
 });
+
+/** Abre um assistente mostrando qualquer erro ao usuário (em vez de falhar em silêncio). */
+async function openApp(factory) {
+  try {
+    const app = factory();
+    await app.render({ force: true });
+    return app;
+  } catch (err) {
+    console.error(`${SYSTEM_ID} |`, err);
+    ui.notifications.error(`Star Wars Saga Edition: ${err.message}`);
+  }
+}
 
 function registerSettings() {
   game.settings.register(SYSTEM_ID, "hpMethod", {
@@ -117,7 +129,7 @@ Hooks.on("createActor", (actor, options, userId) => {
   if (userId !== game.user.id || actor.type !== "character") return;
   if (!game.settings.get(SYSTEM_ID, "autoOpenCreator")) return;
   if (actor.items.size || actor.system.creationComplete) return;
-  setTimeout(() => new CharacterCreator({ actor }).render({ force: true }), 250);
+  setTimeout(() => game.swse.openCharacterCreator(actor), 250);
 });
 
 /* Arrastar armas/poderes para a barra de macros cria uma macro de uso */
