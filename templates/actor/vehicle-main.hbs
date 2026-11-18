@@ -1,0 +1,106 @@
+<section class="tab {{tab.cssClass}}" data-group="primary" data-tab="main">
+  <div class="grid-2">
+    <div class="panel defenses">
+      <h3>{{localize "SWSE.Defenses"}}</h3>
+      <div class="defense-row">
+        <span class="defense-value" data-tooltip="{{refTooltip}}">{{system.defenses.reflex.total}}</span>
+        <span class="defense-label">{{localize "SWSE.Defense.reflex"}} <small>({{localize "SWSE.FlatFooted"}} {{system.defenses.reflex.flatFooted}})</small></span>
+        <label class="misc">{{localize "SWSE.Misc"}} <input type="number" name="system.defenses.reflex.misc" value="{{system.defenses.reflex.misc}}"></label>
+      </div>
+      <div class="defense-row">
+        <span class="defense-value">{{system.defenses.fortitude.total}}</span>
+        <span class="defense-label">{{localize "SWSE.Defense.fortitude"}}</span>
+        <label class="misc">{{localize "SWSE.Misc"}} <input type="number" name="system.defenses.fortitude.misc" value="{{system.defenses.fortitude.misc}}"></label>
+      </div>
+      <div class="defense-row small">
+        <label>{{localize "SWSE.Vehicle.Armor"}} <input type="number" name="system.armor" value="{{system.armor}}"></label>
+        <label>{{localize "SWSE.DamageThreshold"}} {{localize "SWSE.Misc"}} <input type="number" name="system.damageThreshold.misc" value="{{system.damageThreshold.misc}}"></label>
+      </div>
+      <div class="defense-row small">
+        <label>{{localize "SWSE.Vehicle.Maneuver"}} <select name="system.maneuver">{{selectOptions maneuvers selected=system.maneuver localize=true}}</select></label>
+        <label><input type="checkbox" name="system.stationary" {{checked system.stationary}}> {{localize "SWSE.Vehicle.Stationary"}}</label>
+      </div>
+      <p class="hint">{{localize "SWSE.Vehicle.RefHint"}}</p>
+    </div>
+    <div class="panel abilities">
+      <h3>{{localize "SWSE.Abilities"}}</h3>
+      <div class="vehicle-abilities">
+        <label>{{localize "SWSE.AbilityAbbr.str"}} <input type="number" name="system.abilities.str" value="{{system.abilities.str}}"> <strong>{{swseSigned derived.abilities.str.mod}}</strong></label>
+        <label>{{localize "SWSE.AbilityAbbr.dex"}} <input type="number" name="system.abilities.dex" value="{{system.abilities.dex}}"> <strong>{{swseSigned derived.abilities.dex.mod}}</strong></label>
+        <label>{{localize "SWSE.AbilityAbbr.int"}} <input type="number" name="system.abilities.int" value="{{system.abilities.int}}"> <strong>{{swseSigned derived.abilities.int.mod}}</strong></label>
+      </div>
+      <h3>{{localize "SWSE.Vehicle.Skills"}}</h3>
+      <table class="skill-table">
+        {{#each skills as |s|}}
+        <tr><td><a data-action="rollSkill" data-skill="{{s.key}}">{{s.label}}</a>{{#if s.byCrew}} <i class="fa-solid fa-user" data-tooltip="{{localize 'SWSE.Vehicle.ByCrew'}}"></i>{{/if}}</td>
+          <td class="total"><a data-action="rollSkill" data-skill="{{s.key}}" data-tooltip="{{s.tooltip}}">{{swseSigned s.total}}</a></td>
+          <td><input type="number" name="system.skills.{{s.key}}.misc" value="{{s.misc}}" data-tooltip="{{localize 'SWSE.Vehicle.CrewMiscHint'}}"></td></tr>
+        {{/each}}
+      </table>
+    </div>
+  </div>
+
+  <div class="panel condition-track">
+    <h3>{{localize "SWSE.Condition.label"}}
+      <span class="ctl-group">
+        <button type="button" data-action="rechargeShields" data-tooltip="{{localize 'SWSE.Vehicle.RechargeHint'}}"><i class="fa-solid fa-shield-halved"></i> {{localize "SWSE.Vehicle.Recharge"}}</button>
+        <button type="button" data-action="reroutePower" data-tooltip="{{localize 'SWSE.Vehicle.RerouteHint'}}"><i class="fa-solid fa-bolt"></i> {{localize "SWSE.Vehicle.Reroute"}}</button>
+        <button type="button" data-action="resetShields"><i class="fa-solid fa-rotate"></i> SR</button>
+      </span>
+    </h3>
+    <ol class="track">
+      {{#each conditionTrack as |c|}}
+      <li class="step step-{{c.step}} {{#if c.active}}active{{/if}}" data-action="setCondition" data-step="{{c.step}}"><span class="lbl">{{c.label}}</span></li>
+      {{/each}}
+    </ol>
+  </div>
+
+  <div class="panel crew-panel">
+    <h3>{{localize "SWSE.Vehicle.Crew"}}
+      <span class="ctl-group">
+        <label>{{localize "SWSE.Vehicle.CrewQuality"}} <select name="system.crewQuality">{{selectOptions crewQualities selected=system.crewQuality localize=true}}</select></label>
+        <label>{{localize "SWSE.Vehicle.CrewBab"}} <input type="number" name="system.crewBab" value="{{system.crewBab}}"></label>
+      </span>
+    </h3>
+    <p class="hint">{{localize "SWSE.Vehicle.CrewHint"}}</p>
+    <div class="crew-slots">
+      {{#each crewSlots as |c|}}
+      <div class="crew-slot {{#if c.actor}}filled{{/if}}" data-crew-slot="{{c.role}}">
+        <span class="role">{{c.label}}</span>
+        {{#if c.actor}}<img src="{{c.actor.img}}"><a data-action="openCrew" data-uuid="{{c.uuid}}">{{c.actor.name}}</a>
+          <a class="ctl" data-action="clearCrew" data-role="{{c.role}}"><i class="fa-solid fa-xmark"></i></a>
+        {{else}}<em>{{localize "SWSE.Vehicle.DefaultCrew"}}</em>{{/if}}
+      </div>
+      {{/each}}
+      {{#each gunnerSlots as |g|}}
+      <div class="crew-slot {{#if g.actor}}filled{{/if}}" data-crew-slot="gunner" data-index="{{g.index}}">
+        <span class="role">{{g.label}}</span>
+        {{#if g.actor}}<img src="{{g.actor.img}}"><a data-action="openCrew" data-uuid="{{g.uuid}}">{{g.actor.name}}</a>{{else}}<em>{{localize "SWSE.Vehicle.DefaultCrew"}}</em>{{/if}}
+        <a class="ctl" data-action="clearCrew" data-role="gunner" data-index="{{g.index}}"><i class="fa-solid fa-xmark"></i></a>
+      </div>
+      {{/each}}
+      <div class="crew-slot add" data-crew-slot="gunner"><a data-action="addGunner"><i class="fa-solid fa-plus"></i> {{localize "SWSE.Role.gunner"}}</a></div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h3>{{localize "SWSE.Vehicle.Weapons"}} {{#if editable}}<a class="ctl" data-action="createWeapon"><i class="fa-solid fa-plus"></i></a>{{/if}}</h3>
+    <p class="hint">{{localize "SWSE.Vehicle.WeaponsHint"}}</p>
+    <table class="item-table">
+      <thead><tr><th></th><th>{{localize "SWSE.Name"}}</th><th>{{localize "SWSE.Vehicle.Station"}}</th><th>{{localize "SWSE.Attack.Label"}}</th><th>{{localize "SWSE.Damage"}}</th><th>{{localize "SWSE.Ammo"}}</th><th></th></tr></thead>
+      <tbody>
+      {{#each weapons as |w|}}
+      <tr class="item" data-item-id="{{w.item.id}}">
+        <td><img src="{{w.item.img}}" class="rollable" data-action="useItem"></td>
+        <td><a data-action="useItem">{{w.item.name}}</a>{{#if w.item.system.area}} <small>({{w.item.system.area}})</small>{{/if}}<br><small>{{w.type}}</small></td>
+        <td>{{w.station}}<br><small>{{w.operator}}</small></td>
+        <td><a data-action="useItem">{{swseSigned w.attack}}</a></td>
+        <td>{{w.damage}}</td>
+        <td>{{#if w.item.system.ammo.max}}{{w.item.system.ammo.value}}/{{w.item.system.ammo.max}}{{/if}}</td>
+        <td class="ctls"><a data-action="editItem"><i class="fa-solid fa-pen"></i></a>{{#if @root.editable}}<a data-action="deleteItem"><i class="fa-solid fa-trash"></i></a>{{/if}}</td>
+      </tr>
+      {{/each}}
+      </tbody>
+    </table>
+  </div>
+</section>

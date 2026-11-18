@@ -6,7 +6,7 @@
       <div class="meta">
         <span class="type-tag">{{localize (concat "TYPES.Item." item.type)}}</span>
         <label>{{localize "SWSE.Key"}} <input type="text" name="system.key" value="{{system.key}}" class="key" data-tooltip="{{localize 'SWSE.KeyHint'}}"></label>
-        {{#if (or isType.weapon isType.forcePower)}}<button type="button" data-action="use"><i class="fa-solid fa-dice-d20"></i> {{localize "SWSE.Use"}}</button>{{/if}}
+        {{#if (or isType.weapon isType.forcePower isType.vehicleWeapon)}}<button type="button" data-action="use"><i class="fa-solid fa-dice-d20"></i> {{localize "SWSE.Use"}}</button>{{/if}}
       </div>
     </div>
   </header>
@@ -134,6 +134,28 @@
       <label><input type="checkbox" name="system.ignoresDR" {{checked system.ignoresDR}}> {{localize "SWSE.Weapon.ignoresDR"}}</label>
       <label><input type="checkbox" name="system.equipped" {{checked system.equipped}}> {{localize "SWSE.Equipped"}}</label>
     </div>
+  {{/if}}
+
+  {{#if isType.vehicleWeapon}}
+    <div class="grid-3">
+      <label>{{localize "SWSE.Vehicle.WeaponType"}} <select name="system.weaponType">{{selectOptions config.vehicleWeaponTypes selected=system.weaponType localize=true}}</select></label>
+      <label>{{localize "SWSE.Vehicle.Station"}} <select name="system.station">{{selectOptions config.vehicleStations selected=system.station localize=true}}</select></label>
+      <label>{{localize "SWSE.Role.gunner"}} nº <input type="number" name="system.gunner" value="{{system.gunner}}"></label>
+      <label>{{localize "SWSE.Damage"}} <input type="text" name="system.damage" value="{{system.damage}}"></label>
+      <label>{{localize "SWSE.Vehicle.Multiplier"}} × <input type="number" name="system.multiplier" value="{{system.multiplier}}"></label>
+      <label>{{localize "SWSE.Weapon.area"}} <input type="text" name="system.area" value="{{system.area}}"></label>
+      <label>{{localize "SWSE.Weapon.attackBonus"}} <input type="number" name="system.attackBonus" value="{{system.attackBonus}}"></label>
+      <label>{{localize "SWSE.Weapon.damageBonus"}} <input type="number" name="system.damageBonus" value="{{system.damageBonus}}"></label>
+      <label>{{localize "SWSE.Vehicle.Penetration"}} <input type="number" name="system.penetration" value="{{system.penetration}}"></label>
+      <label>{{localize "SWSE.Vehicle.TractorGrapple"}} <input type="number" name="system.grapple" value="{{system.grapple}}"></label>
+      <label>{{localize "SWSE.Vehicle.Count"}} <input type="number" name="system.count" value="{{system.count}}"></label>
+      <label>{{localize "SWSE.Ammo"}} <input type="number" name="system.ammo.value" value="{{system.ammo.value}}" class="short"> / <input type="number" name="system.ammo.max" value="{{system.ammo.max}}" class="short"></label>
+    </div>
+    <div class="checks">
+      <label><input type="checkbox" name="system.autofire" {{checked system.autofire}}> Autofire</label>
+      <label><input type="checkbox" name="system.ion" {{checked system.ion}}> {{localize "SWSE.Weapon.ion"}}</label>
+    </div>
+    <label class="wide">{{localize "SWSE.Special"}} <input type="text" name="system.special" value="{{system.special}}"></label>
   {{/if}}
 
   {{#if isType.armor}}

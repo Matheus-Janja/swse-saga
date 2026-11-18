@@ -246,6 +246,12 @@ SWSE.modifierTargets = {
   "grapple": "SWSE.Grapple"
 };
 
+SWSE.vehicleCategories = {
+  walker: "SWSE.VCat.walker", speeder: "SWSE.VCat.speeder", airspeeder: "SWSE.VCat.airspeeder",
+  starfighter: "SWSE.VCat.starfighter", transport: "SWSE.VCat.transport", capital: "SWSE.VCat.capital", station: "SWSE.VCat.station"
+};
+SWSE.vehicleStations = { pilot: "SWSE.Role.pilot", copilot: "SWSE.Role.copilot", gunner: "SWSE.Role.gunner" };
+
 /** Familiaridade com armas por espécie (errata): chave da espécie -> chave da arma -> grupo. */
 SWSE.weaponFamiliarity = {
   gungan: { atlatl: "simple", cesta: "simple" },

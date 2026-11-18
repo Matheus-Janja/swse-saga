@@ -1,10 +1,12 @@
 import { attackWithWeapon } from "../rolls/attack.mjs";
 import { useForcePower } from "../rolls/force.mjs";
+import { vehicleAttack } from "../rolls/vehicle.mjs";
 
 const ICON = n => `systems/swse-saga/assets/icons/${n}.svg`;
 const DEFAULT_ICONS = {
   species: ICON("species"), class: ICON("class"), feat: ICON("feat"), talent: ICON("talent"),
-  forcePower: ICON("force"), weapon: ICON("blaster-pistol"), armor: ICON("armor"), equipment: ICON("equipment")
+  forcePower: ICON("force"), weapon: ICON("blaster-pistol"), armor: ICON("armor"), equipment: ICON("equipment"),
+  vehicleWeapon: ICON("vehicle-weapon")
 };
 
 export class SWSEItem extends Item {
@@ -16,6 +18,7 @@ export class SWSEItem extends Item {
   async use(options = {}) {
     const actor = this.actor;
     if (!actor) return this.toChat();
+    if (this.type === "vehicleWeapon") return actor.type === "vehicle" ? vehicleAttack(actor, this, options) : this.toChat();
     if (this.type === "weapon") return attackWithWeapon(actor, this, options);
     if (this.type === "forcePower") return useForcePower(actor, this);
     return this.toChat();

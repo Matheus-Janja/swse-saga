@@ -208,6 +208,30 @@ export class ArmorData extends PhysicalItemData {
   }
 }
 
+/** Arma montada em veículo (Cap. 10). */
+export class VehicleWeaponData extends BaseItemData {
+  static defineSchema() {
+    return {
+      ...super.defineSchema(),
+      weaponType: str("laser"),
+      station: str("pilot"),
+      gunner: num(1, { integer: true, min: 1 }),
+      damage: str("4d10"),
+      multiplier: num(2, { integer: true, min: 1 }),
+      ion: new fields.BooleanField({ initial: false }),
+      autofire: new fields.BooleanField({ initial: false }),
+      area: str(),
+      penetration: num(0),
+      grapple: num(0),
+      attackBonus: num(0),
+      damageBonus: num(0),
+      count: num(1, { integer: true, min: 1 }),
+      ammo: new fields.SchemaField({ value: num(0), max: num(0) }),
+      special: str()
+    };
+  }
+}
+
 export class EquipmentData extends PhysicalItemData {
   static defineSchema() {
     return {

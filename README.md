@@ -45,6 +45,16 @@ Compêndio **PdMs (Livro Básico)** com 46 fichas prontas, organizadas em pastas
 
 Cada PdM é montado com espécie, classes, feats, talentos, poderes e armas reais do compêndio, então ataques e testes funcionam com a mesma automação dos personagens. O build calcula cada ficha com o motor de regras e ajusta os campos "Outros" para que Defesas, PV, Limiar, BBA, perícias e bônus de ataque fiquem idênticos ao livro (um teste automatizado garante isso). Detalhes que não são automatizados (sentidos, imunidades, sistemas de droides, posses, ataques múltiplos) estão na aba Biografia.
 
+### Veículos e naves
+Novo tipo de ator **Veículo** (Cap. 10):
+- **Ficha**: Reflexos = 10 + Des + tamanho + armadura (ou o nível heroico do piloto, o maior) + manobra; Fortitude = 10 + For; Limiar = Fortitude + tamanho (Grande +5 até Colossal estação +500); PV, RD, escudos (SR atual/máximo), vulnerabilidade a íon e trilha de condição.
+- **Manobras**: luta defensiva (+2/+5, ou +5/+10 com piloto treinado), Attack Run (−2 Ref) e veículo parado.
+- **Tripulação**: arraste personagens para os postos (piloto, copiloto, artilheiros, comandante, operador de sistemas, engenheiro). O piloto soma Des e tamanho do veículo em Pilot e Initiative. Postos vazios usam a tripulação padrão do livro (qualidade untrained/normal/skilled/expert/ace e BBA).
+- **Armas de veículo** (novo tipo de item): ataque = BBA do operador + Int do veículo (+2 se um piloto treinado dispara), dano = (dados + ½ nível heroico) × multiplicador (errata); autofire, splash/explosão em área, íon, penetração, raio trator (teste de agarrar), munição de mísseis/torpedos, −20 de naves capitais contra alvos menores, dogfight e alcances da Tabela 10-2.
+- **Dano em veículos**: SR, RD, Limiar (−1 passo), destruído ou desativado ao chegar a 0 PV, e os ocupantes sofrem metade do excesso sobre o Limiar.
+- **Ações**: recarregar escudos e redirecionar energia (Mechanics CD 20).
+- **Compêndio "Veículos e Naves"** com os 18 veículos do livro: AT-AT, AT-ST, X-34, speeder bike 74-Z, AAT-1, T-47, LAAT/i, X-wing, Y-wing, TIE fighter, TIE interceptor, Eta-2, ARC-170, Vulture, Tri-Fighter, YT-1300, Corvette Corelliana e Star Destroyer classe Imperial I. Um teste garante que todos batem com o livro.
+
 ### Compêndios
 Espécies (21, incluindo Aqualish, Hutt, Neimoidian e Yuuzhan Vong do Cap. 16), classes heroicas, de prestígio e não heroica, 69 feats, todas as árvores de talento do livro básico (classes, Força e prestígio), 16 poderes da Força, técnicas e segredos, armas, armaduras, equipamentos e macros. Erratas oficiais de out/2008 aplicadas.
 
@@ -61,7 +71,7 @@ Para publicar uma versão: atualize `version` no `system.json`, faça commit e c
 Os dados do compêndio ficam em `tools/data/*.mjs` (um arquivo por tipo); as regras estão em `module/rules/calc.mjs`.
 
 ## Limitações atuais
-- Droides como personagens jogadores (construção por grau/sistemas) e veículos/naves ainda não têm ficha própria; droides PdM usam a ficha de PdM com a opção "É droide".
+- Droides como personagens jogadores (construção por grau/sistemas) ainda não têm assistente próprio; droides PdM usam a ficha de PdM com a opção "É droide".
 - Muitos talentos de uso situacional são descritos no item mas não automatizados (o cartão de chat indica o efeito).
 
 ## Aviso legal

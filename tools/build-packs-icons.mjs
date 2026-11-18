@@ -9,6 +9,7 @@ export function iconFor(type, sys) {
     case "forcePower": return ICON(sys.descriptors?.includes("darkSide") ? "force-dark" : "force");
     case "armor": return ICON("armor");
     case "equipment": return ICON("equipment");
+    case "vehicleWeapon": return ICON("vehicle-weapon");
     case "weapon": {
       const k = sys.key ?? "";
       if (k.startsWith("natural-")) return ICON(k.slice(8));

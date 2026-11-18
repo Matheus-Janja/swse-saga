@@ -2,7 +2,8 @@
   "TYPES": {
     "Actor": {
       "character": "Personagem",
-      "npc": "PdM"
+      "npc": "PdM",
+      "vehicle": "Veículo"
     },
     "Item": {
       "species": "Espécie",
@@ -12,7 +13,8 @@
       "forcePower": "Poder da Força",
       "weapon": "Arma",
       "armor": "Armadura",
-      "equipment": "Equipamento"
+      "equipment": "Equipamento",
+      "vehicleWeapon": "Arma de Veículo"
     }
   },
   "SWSE": {
@@ -450,7 +452,10 @@
       "Unconscious": "INCONSCIENTE",
       "Dead": "MORTO",
       "Helpless": "INDEFESO",
-      "ShieldDown": "Escudo reduzido para SR {sr}."
+      "ShieldDown": "Escudo reduzido para SR {sr}.",
+      "OccupantsDamage": "Ocupantes sofrem {amount} de dano (metade do excesso sobre o Limiar).",
+      "Destroyed": "DESTRUÍDO",
+      "Disabled": "DESATIVADO"
     },
     "Force": {
       "Use": "Usar poder",
@@ -611,6 +616,120 @@
     "Prereq": "Pré-requisito",
     "ShieldRating": "Escudo (SR)",
     "IsDroid": "É droide",
-    "BaseSpeed": "Desloc. base"
+    "BaseSpeed": "Desloc. base",
+    "SheetVehicle": "Ficha de Veículo SWSE",
+    "VSize": {
+      "colossalFrigate": "Colossal (fragata)",
+      "colossalCruiser": "Colossal (cruzador)",
+      "colossalStation": "Colossal (estação)"
+    },
+    "Crew": {
+      "untrained": "Sem treino",
+      "normal": "Normal",
+      "skilled": "Skilled (treinada)",
+      "expert": "Expert (experiente)",
+      "ace": "Ace (ás)"
+    },
+    "VWeapon": {
+      "blaster": "Canhão blaster",
+      "ion": "Canhão iônico",
+      "laser": "Canhão laser",
+      "missile": "Míssil/torpedo",
+      "pointDefense": "Defesa de ponto",
+      "tractor": "Raio trator/arpão",
+      "turbolaser": "Turbolaser"
+    },
+    "Maneuver": {
+      "none": "Nenhuma",
+      "defensive": "Luta defensiva",
+      "defensiveTotal": "Luta defensiva total (sem atacar)",
+      "attackRun": "Attack Run (−2 Ref)"
+    },
+    "VCat": {
+      "walker": "Walker",
+      "speeder": "Speeder",
+      "airspeeder": "Airspeeder",
+      "starfighter": "Caça estelar",
+      "transport": "Transporte espacial",
+      "capital": "Nave capital",
+      "station": "Estação espacial"
+    },
+    "Role": {
+      "pilot": "Piloto",
+      "copilot": "Copiloto",
+      "commander": "Comandante",
+      "systemOperator": "Operador de sistemas",
+      "engineer": "Engenheiro",
+      "gunner": "Artilheiro"
+    },
+    "VPart": {
+      "crew": "Tripulação",
+      "vehicle": "Veículo (Des + tamanho)",
+      "misc": "Outros",
+      "condition": "Condição",
+      "bab": "BBA",
+      "int": "Int do veículo",
+      "trainedPilot": "Piloto treinado",
+      "weapon": "Arma",
+      "base": "Base",
+      "ability": "Destreza",
+      "size": "Tamanho",
+      "armor": "Armadura/nível do piloto",
+      "dodge": "Esquiva (manobra)",
+      "attackRun": "Attack Run"
+    },
+    "Vehicle": {
+      "Details": "Detalhes",
+      "Type": "Tipo",
+      "Armor": "Armadura",
+      "Maneuver": "Manobra",
+      "Stationary": "Parado/desligado (Des −5)",
+      "RefHint": "Reflexos = 10 + Des + tamanho + armadura (ou nível heroico do piloto, o maior) + manobra.",
+      "Skills": "Perícias do veículo",
+      "ByCrew": "Usando o tripulante designado",
+      "CrewMiscHint": "Ajuste da tripulação padrão",
+      "Recharge": "Recarregar escudos",
+      "RechargeHint": "Operador de sistemas, 3 ações rápidas: Mechanics CD 20 → SR +5 (até o máximo)",
+      "Reroute": "Redirecionar energia",
+      "RerouteHint": "Engenheiro, 3 ações rápidas: Mechanics CD 20 → +1 passo na trilha de condição",
+      "Crew": "Tripulação",
+      "CrewQuality": "Qualidade",
+      "CrewBab": "BBA da tripulação",
+      "CrewHint": "Arraste personagens para os postos. Postos vazios usam a tripulação padrão do livro (qualidade e BBA acima). O piloto soma Des e tamanho do veículo em Pilot e Initiative; se for heroico, seu nível pode substituir a armadura na Reflexos.",
+      "DefaultCrew": "Tripulação padrão",
+      "Weapons": "Armas do veículo",
+      "WeaponsHint": "Clique na arma para atacar. Ataque = BBA do operador + Int do veículo (+2 se o piloto treinado opera a arma); dano = (dados + ½ nível heroico) × multiplicador.",
+      "Station": "Estação",
+      "Operator": "Operador",
+      "Ranges": "Alcances",
+      "CharScale": "escala de personagem",
+      "ShipScale": "escala de nave",
+      "IntoDogfight": "Atirando num dogfight",
+      "SmallTarget": "Alvo menor que Colossal (fragata)",
+      "Penetration": "Penetração",
+      "TractorGrapple": "Agarrar (trator)",
+      "TractorNote": "Se acertar a Reflexos, faça um teste de agarrar oposto; vencendo, o alvo é preso (ver regras de raio trator).",
+      "MissileLock": "Míssil/torpedo com mira travada: se errar, pode atacar de novo no próximo turno com o mesmo bônus.",
+      "AttackRunNote": "Attack Run: o veículo sofre −2 na Reflexos até o próximo turno (manobra aplicada na ficha).",
+      "DropOnSlot": "Solte o personagem sobre um posto da tripulação.",
+      "ShieldsRecharged": "Escudos recarregados: SR {sr}.",
+      "MaxVelocity": "Velocidade máxima",
+      "SpeedNotes": "Outros deslocamentos",
+      "FightingSpace": "Espaço de combate",
+      "Cover": "Cobertura",
+      "CrewText": "Tripulação (texto)",
+      "Passengers": "Passageiros",
+      "Cargo": "Carga",
+      "Consumables": "Consumíveis",
+      "CarriedCraft": "Veículos transportados",
+      "Payload": "Munição/carga útil",
+      "Hyperdrive": "Hiperpropulsor",
+      "IonVulnerable": "Vulnerável a íon (dano iônico dobrado)",
+      "CargoItems": "Itens a bordo",
+      "Notes": "Notas",
+      "WeaponType": "Tipo de arma",
+      "Multiplier": "Multiplicador",
+      "Count": "Quantidade"
+    }
   }
 }

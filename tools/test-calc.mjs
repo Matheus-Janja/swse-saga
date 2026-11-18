@@ -11,6 +11,8 @@ import talents from "./data/talents.mjs";
 import { armor, weapons } from "./data/gear.mjs";
 import forcePowers from "./data/force-powers.mjs";
 import { buildNpcs } from "./build-npcs.mjs";
+import { buildVehicles } from "./build-vehicles.mjs";
+import { computeVehicle, vehicleWeaponProfile } from "../module/rules/vehicle.mjs";
 
 const find = (list, key) => structuredClone(list.find(i => i.system.key === key));
 const clone = x => structuredClone(x);
@@ -134,6 +136,28 @@ t("PdMs do livro batem com os blocos de estatística", () => {
   const { actors, report } = buildNpcs({ species, classes, feats, talents, powers: forcePowers, weapons, armor }, () => `id${i++}`.padEnd(16, "x"), {});
   assert.deepEqual(report, []);
   assert.ok(actors.length >= 40);
+});
+
+t("Veículos do livro batem com os blocos de estatística", () => {
+  let i = 0;
+  const { actors, report } = buildVehicles(() => `v${i++}`.padEnd(16, "x"), {});
+  assert.deepEqual(report, []);
+  assert.equal(actors.length, 18);
+});
+
+t("Veículo: piloto heroico substitui armadura; artilheiro usa BBA próprio e ½ nível no dano", () => {
+  const sys = { size: "gargantuan", abilities: { str: 42, dex: 22, int: 16 }, armor: 7, defenses: { reflex: { misc: 0 }, fortitude: { misc: 0 } },
+    damageThreshold: { misc: 0 }, condition: { step: 0 }, crewQuality: "skilled", crewBab: 2, skills: {}, maneuver: "defensive" };
+  const pilot = { heroicLevel: 10, bab: 10, pilotTrained: true, skills: { pilot: 15, initiative: 12 } };
+  const d = computeVehicle(sys, { pilot });
+  // 10 + 6 (Des) − 5 (tamanho) + 10 (nível > armadura 7) + 5 (luta defensiva, piloto treinado)
+  assert.equal(d.defenses.reflex.total, 26);
+  assert.equal(d.defenses.fortitude.total, 26);
+  assert.equal(d.damageThreshold, 46);
+  assert.equal(d.skills.pilot.total, 15 + 6 - 5);
+  const p = vehicleWeaponProfile(d, { system: { station: "pilot", attackBonus: 0, damageBonus: 0, multiplier: 2 } }, pilot);
+  assert.equal(p.attackBonus, 10 + 3 + 2);
+  assert.equal(p.damageBonus, 5);
 });
 
 console.log(`\n${n} testes passaram.`);

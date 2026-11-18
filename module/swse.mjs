@@ -3,7 +3,10 @@
  */
 import { SWSE, SYSTEM_ID } from "./config.mjs";
 import { CharacterData, NpcData } from "./data/actor.mjs";
-import { SpeciesData, ClassData, FeatData, TalentData, ForcePowerData, WeaponData, ArmorData, EquipmentData } from "./data/items.mjs";
+import { SpeciesData, ClassData, FeatData, TalentData, ForcePowerData, WeaponData, ArmorData, EquipmentData, VehicleWeaponData } from "./data/items.mjs";
+import { VehicleData } from "./data/vehicle.mjs";
+import { SWSEVehicleSheet } from "./sheets/vehicle-sheet.mjs";
+import { VEHICLE_WEAPON_TYPES } from "./rules/vehicle.mjs";
 import { SWSEActor } from "./documents/actor.mjs";
 import { SWSEItem } from "./documents/item.mjs";
 import { SWSEActorSheet } from "./sheets/actor-sheet.mjs";
@@ -20,20 +23,24 @@ Hooks.once("init", () => {
 
   CONFIG.Actor.documentClass = SWSEActor;
   CONFIG.Item.documentClass = SWSEItem;
-  CONFIG.Actor.dataModels = { character: CharacterData, npc: NpcData };
+  CONFIG.Actor.dataModels = { character: CharacterData, npc: NpcData, vehicle: VehicleData };
+  SWSE.vehicleWeaponTypes = Object.fromEntries(Object.entries(VEHICLE_WEAPON_TYPES).map(([k, v]) => [k, v.label]));
   CONFIG.Item.dataModels = {
     species: SpeciesData, class: ClassData, feat: FeatData, talent: TalentData,
-    forcePower: ForcePowerData, weapon: WeaponData, armor: ArmorData, equipment: EquipmentData
+    forcePower: ForcePowerData, weapon: WeaponData, armor: ArmorData, equipment: EquipmentData,
+    vehicleWeapon: VehicleWeaponData
   };
   CONFIG.Actor.trackableAttributes = {
     character: { bar: ["hp", "forcePoints"], value: ["destinyPoints.value", "darkSide.value", "condition.step"] },
-    npc: { bar: ["hp", "forcePoints"], value: ["condition.step"] }
+    npc: { bar: ["hp", "forcePoints"], value: ["condition.step"] },
+    vehicle: { bar: ["hp"], value: ["shieldRating", "condition.step"] }
   };
   CONFIG.Combat.initiative = { formula: "1d20 + @skills.initiative.total", decimals: 0 };
 
   const DSC = foundry.applications.apps.DocumentSheetConfig;
   DSC.unregisterSheet(Actor, "core", foundry.appv1.sheets.ActorSheet);
   DSC.registerSheet(Actor, SYSTEM_ID, SWSEActorSheet, { types: ["character", "npc"], makeDefault: true, label: "SWSE.SheetActor" });
+  DSC.registerSheet(Actor, SYSTEM_ID, SWSEVehicleSheet, { types: ["vehicle"], makeDefault: true, label: "SWSE.SheetVehicle" });
   DSC.unregisterSheet(Item, "core", foundry.appv1.sheets.ItemSheet);
   DSC.registerSheet(Item, SYSTEM_ID, SWSEItemSheet, { makeDefault: true, label: "SWSE.SheetItem" });
 
@@ -59,12 +66,17 @@ Hooks.once("init", () => {
     `systems/${SYSTEM_ID}/templates/actor/parts/talents.hbs`,
     `systems/${SYSTEM_ID}/templates/actor/parts/force.hbs`,
     `systems/${SYSTEM_ID}/templates/actor/parts/gear.hbs`,
-    `systems/${SYSTEM_ID}/templates/actor/parts/bio.hbs`
+    `systems/${SYSTEM_ID}/templates/actor/parts/bio.hbs`,
+    `systems/${SYSTEM_ID}/templates/actor/vehicle-header.hbs`,
+    `systems/${SYSTEM_ID}/templates/actor/vehicle-main.hbs`,
+    `systems/${SYSTEM_ID}/templates/actor/vehicle-details.hbs`
   ]);
 });
 
 Hooks.once("ready", () => {
   registerSocket();
+  // Veículos podem ter sido preparados antes dos tripulantes: recalcula com a tripulação já pronta
+  for (const v of game.actors.filter(a => a.type === "vehicle")) v.reset();
 });
 
 /** Abre um assistente mostrando qualquer erro ao usuário (em vez de falhar em silêncio). */
@@ -120,6 +132,18 @@ function registerHandlebars() {
     return out;
   });
 }
+
+/* Quando um tripulante muda, recalcula os veículos que ele tripula */
+Hooks.on("updateActor", actor => {
+  if (actor.type === "vehicle") return;
+  for (const v of game.actors.filter(a => a.type === "vehicle")) {
+    const c = v.system.crew;
+    if ([c.pilot, c.copilot, c.commander, c.systemOperator, c.engineer, ...c.gunners].includes(actor.uuid)) {
+      v.reset();
+      v.sheet?.rendered && v.sheet.render();
+    }
+  }
+});
 
 /* Botões nos cartões de chat */
 Hooks.on("renderChatMessageHTML", onRenderChatMessage);

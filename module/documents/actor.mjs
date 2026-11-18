@@ -52,7 +52,7 @@ export class SWSEActor extends Actor {
 
   async _preCreate(data, options, user) {
     if ((await super._preCreate(data, options, user)) === false) return false;
-    const prototypeToken = { bar1: { attribute: "hp" }, bar2: { attribute: "forcePoints" } };
+    const prototypeToken = { bar1: { attribute: "hp" }, bar2: { attribute: this.type === "vehicle" ? "shieldRating" : "forcePoints" } };
     if (this.type === "character") Object.assign(prototypeToken, { actorLink: true, disposition: CONST.TOKEN_DISPOSITIONS.FRIENDLY });
     this.updateSource({ prototypeToken });
   }
@@ -182,6 +182,8 @@ export class SWSEActor extends Actor {
   async applyDamage(amount, opts = {}) {
     amount = Math.max(0, Math.floor(Number(amount) || 0));
     const type = opts.type ?? "normal";
+    const isVehicle = this.type === "vehicle";
+    if (isVehicle && type === "ion" && this.system.ionVulnerable) amount *= 2;
     const isDroid = !!this.system.derived?.isDroid;
     const dt = this.system.damageThreshold.total - (opts.thresholdReduction || 0);
     // Shield Rating: reduz o dano; dano >= SR reduz o SR em 5
@@ -228,7 +230,13 @@ export class SWSEActor extends Actor {
       notes.push(game.i18n.format("SWSE.Chat.ThresholdExceeded", { dt, steps }));
     }
     let status = "";
-    if (newHp <= 0) {
+    if (isVehicle) {
+      if (amount >= dt && type === "normal") notes.push(game.i18n.format("SWSE.Chat.OccupantsDamage", { amount: Math.floor((amount - dt) / 2) }));
+      if (newHp <= 0) {
+        if (amount >= dt && type === "normal") status = game.i18n.localize("SWSE.Chat.Destroyed");
+        else { status = game.i18n.localize("SWSE.Chat.Disabled"); updates["system.condition.step"] = 5; }
+      } else if (step >= 5) status = game.i18n.localize("SWSE.Chat.Disabled");
+    } else if (newHp <= 0) {
       if (type === "stun" || type === "ion") status = game.i18n.localize("SWSE.Chat.Unconscious");
       else if (this.type === "npc" && !this.system.heroicLevel) status = game.i18n.localize("SWSE.Chat.Dead");
       else if (amount >= dt) status = game.i18n.localize("SWSE.Chat.Dead");
@@ -248,6 +256,26 @@ export class SWSEActor extends Actor {
         ${status ? `<p class="status">${status}</p>` : ""}</div>`
     });
     return { toHp, steps, newHp };
+  }
+
+  /* -------------------------------------------- */
+  /*  Veículos                                    */
+  /* -------------------------------------------- */
+
+  /** Recarregar escudos (operador de sistemas, 3 ações rápidas): Mechanics CD 20 → SR +5 até o máximo. */
+  async rechargeShields() {
+    const roll = await this.rollSkill("mechanics", { dc: 20 });
+    if (!roll || roll.total < 20) return;
+    const sr = Math.min(this.system.shieldMax, this.system.shieldRating + 5);
+    await this.update({ "system.shieldRating": sr });
+    ui.notifications.info(game.i18n.format("SWSE.Vehicle.ShieldsRecharged", { sr }));
+  }
+
+  /** Redirecionar energia (engenheiro, 3 ações rápidas): Mechanics CD 20 → +1 passo na trilha de condição. */
+  async reroutePower() {
+    const roll = await this.rollSkill("mechanics", { dc: 20 });
+    if (!roll || roll.total < 20) return;
+    await this.shiftCondition(-1);
   }
 
   async applyHealing(amount) {

@@ -2,7 +2,8 @@
   "TYPES": {
     "Actor": {
       "character": "Character",
-      "npc": "NPC"
+      "npc": "NPC",
+      "vehicle": "Vehicle"
     },
     "Item": {
       "species": "Species",
@@ -12,7 +13,8 @@
       "forcePower": "Force Power",
       "weapon": "Weapon",
       "armor": "Armor",
-      "equipment": "Equipment"
+      "equipment": "Equipment",
+      "vehicleWeapon": "Vehicle Weapon"
     }
   },
   "SWSE": {
@@ -450,7 +452,10 @@
       "Unconscious": "UNCONSCIOUS",
       "Dead": "DEAD",
       "Helpless": "HELPLESS",
-      "ShieldDown": "Shield reduced to SR {sr}."
+      "ShieldDown": "Shield reduced to SR {sr}.",
+      "OccupantsDamage": "Occupants take {amount} damage (half the excess over the threshold).",
+      "Destroyed": "DESTROYED",
+      "Disabled": "DISABLED"
     },
     "Force": {
       "Use": "Use power",
@@ -611,6 +616,120 @@
     "Prereq": "Prerequisite",
     "ShieldRating": "Shield (SR)",
     "IsDroid": "Is droid",
-    "BaseSpeed": "Base speed"
+    "BaseSpeed": "Base speed",
+    "SheetVehicle": "SWSE Vehicle Sheet",
+    "VSize": {
+      "colossalFrigate": "Colossal (frigate)",
+      "colossalCruiser": "Colossal (cruiser)",
+      "colossalStation": "Colossal (station)"
+    },
+    "Crew": {
+      "untrained": "Untrained",
+      "normal": "Normal",
+      "skilled": "Skilled",
+      "expert": "Expert",
+      "ace": "Ace"
+    },
+    "VWeapon": {
+      "blaster": "Blaster cannon",
+      "ion": "Ion cannon",
+      "laser": "Laser cannon",
+      "missile": "Missile/torpedo",
+      "pointDefense": "Point-defense",
+      "tractor": "Tractor beam/harpoon",
+      "turbolaser": "Turbolaser"
+    },
+    "Maneuver": {
+      "none": "None",
+      "defensive": "Fight defensively",
+      "defensiveTotal": "Total defense (no attacks)",
+      "attackRun": "Attack Run (−2 Ref)"
+    },
+    "VCat": {
+      "walker": "Walker",
+      "speeder": "Speeder",
+      "airspeeder": "Airspeeder",
+      "starfighter": "Starfighter",
+      "transport": "Space transport",
+      "capital": "Capital ship",
+      "station": "Space station"
+    },
+    "Role": {
+      "pilot": "Pilot",
+      "copilot": "Copilot",
+      "commander": "Commander",
+      "systemOperator": "System operator",
+      "engineer": "Engineer",
+      "gunner": "Gunner"
+    },
+    "VPart": {
+      "crew": "Crew",
+      "vehicle": "Vehicle (Dex + size)",
+      "misc": "Misc",
+      "condition": "Condition",
+      "bab": "BAB",
+      "int": "Vehicle Int",
+      "trainedPilot": "Trained pilot",
+      "weapon": "Weapon",
+      "base": "Base",
+      "ability": "Dexterity",
+      "size": "Size",
+      "armor": "Armor/pilot level",
+      "dodge": "Dodge (maneuver)",
+      "attackRun": "Attack Run"
+    },
+    "Vehicle": {
+      "Details": "Details",
+      "Type": "Type",
+      "Armor": "Armor",
+      "Maneuver": "Maneuver",
+      "Stationary": "Stopped/powered down (Dex −5)",
+      "RefHint": "Reflex = 10 + Dex + size + armor (or the pilot's heroic level, whichever is higher) + maneuver.",
+      "Skills": "Vehicle skills",
+      "ByCrew": "Using the assigned crew member",
+      "CrewMiscHint": "Default crew adjustment",
+      "Recharge": "Recharge shields",
+      "RechargeHint": "System operator, 3 swift actions: Mechanics DC 20 → SR +5 (up to max)",
+      "Reroute": "Reroute power",
+      "RerouteHint": "Engineer, 3 swift actions: Mechanics DC 20 → +1 step on the condition track",
+      "Crew": "Crew",
+      "CrewQuality": "Quality",
+      "CrewBab": "Crew BAB",
+      "CrewHint": "Drag characters onto the stations. Empty stations use the book's default crew (quality and BAB above). The pilot adds the vehicle's Dex and size to Pilot and Initiative; a heroic pilot's level may replace armor on Reflex.",
+      "DefaultCrew": "Default crew",
+      "Weapons": "Vehicle weapons",
+      "WeaponsHint": "Click a weapon to attack. Attack = operator BAB + vehicle Int (+2 if a trained pilot fires it); damage = (dice + ½ heroic level) × multiplier.",
+      "Station": "Station",
+      "Operator": "Operator",
+      "Ranges": "Ranges",
+      "CharScale": "character scale",
+      "ShipScale": "starship scale",
+      "IntoDogfight": "Firing into a dogfight",
+      "SmallTarget": "Target smaller than Colossal (frigate)",
+      "Penetration": "Penetration",
+      "TractorGrapple": "Grapple (tractor)",
+      "TractorNote": "If it hits Reflex, make an opposed grapple check; if you win, the target is held (see tractor beam rules).",
+      "MissileLock": "Locked missile/torpedo: if it misses, it may attack again next turn with the same bonus.",
+      "AttackRunNote": "Attack Run: the vehicle takes −2 Reflex until your next turn (maneuver set on the sheet).",
+      "DropOnSlot": "Drop the character onto a crew station.",
+      "ShieldsRecharged": "Shields recharged: SR {sr}.",
+      "MaxVelocity": "Maximum velocity",
+      "SpeedNotes": "Other movement",
+      "FightingSpace": "Fighting space",
+      "Cover": "Cover",
+      "CrewText": "Crew (text)",
+      "Passengers": "Passengers",
+      "Cargo": "Cargo",
+      "Consumables": "Consumables",
+      "CarriedCraft": "Carried craft",
+      "Payload": "Payload",
+      "Hyperdrive": "Hyperdrive",
+      "IonVulnerable": "Ion vulnerable (double ion damage)",
+      "CargoItems": "Items aboard",
+      "Notes": "Notes",
+      "WeaponType": "Weapon type",
+      "Multiplier": "Multiplier",
+      "Count": "Count"
+    }
   }
 }

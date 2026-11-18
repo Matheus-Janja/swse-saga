@@ -1,0 +1,28 @@
+<section class="tab {{tab.cssClass}}" data-group="primary" data-tab="details">
+  <div class="grid-2 details vehicle-details">
+    <label>{{localize "SWSE.Vehicle.MaxVelocity"}} <input type="text" name="system.speed.maxVelocity" value="{{system.speed.maxVelocity}}"></label>
+    <label>{{localize "SWSE.Vehicle.SpeedNotes"}} <input type="text" name="system.speed.notes" value="{{system.speed.notes}}"></label>
+    <label>{{localize "SWSE.Vehicle.FightingSpace"}} <input type="text" name="system.fightingSpace" value="{{system.fightingSpace}}"></label>
+    <label>{{localize "SWSE.Vehicle.Cover"}} <input type="text" name="system.cover" value="{{system.cover}}"></label>
+    <label>{{localize "SWSE.Vehicle.CrewText"}} <input type="text" name="system.crewText" value="{{system.crewText}}"></label>
+    <label>{{localize "SWSE.Vehicle.Passengers"}} <input type="text" name="system.passengers" value="{{system.passengers}}"></label>
+    <label>{{localize "SWSE.Vehicle.Cargo"}} <input type="text" name="system.cargo" value="{{system.cargo}}"></label>
+    <label>{{localize "SWSE.Vehicle.Consumables"}} <input type="text" name="system.consumables" value="{{system.consumables}}"></label>
+    <label>{{localize "SWSE.Vehicle.CarriedCraft"}} <input type="text" name="system.carriedCraft" value="{{system.carriedCraft}}"></label>
+    <label>{{localize "SWSE.Vehicle.Payload"}} <input type="text" name="system.payload" value="{{system.payload}}"></label>
+    <label>{{localize "SWSE.Vehicle.Hyperdrive"}} <input type="text" name="system.hyperdrive" value="{{system.hyperdrive}}"></label>
+    <label>{{localize "SWSE.AvailabilityLabel"}} <input type="text" name="system.availability" value="{{system.availability}}"></label>
+    <label>{{localize "SWSE.Cost"}} <input type="text" name="system.cost" value="{{system.cost}}"></label>
+    <label><input type="checkbox" name="system.ionVulnerable" {{checked system.ionVulnerable}}> {{localize "SWSE.Vehicle.IonVulnerable"}}</label>
+  </div>
+  {{#if otherItems.length}}
+  <div class="panel">
+    <h3>{{localize "SWSE.Vehicle.CargoItems"}}</h3>
+    <ul class="item-list">{{#each otherItems as |i|}}<li class="item" data-item-id="{{i.id}}"><img src="{{i.img}}"><a data-action="editItem">{{i.name}}</a>{{#if @root.editable}}<a class="ctl" data-action="deleteItem"><i class="fa-solid fa-trash"></i></a>{{/if}}</li>{{/each}}</ul>
+  </div>
+  {{/if}}
+  <div class="panel biography">
+    <h3>{{localize "SWSE.Vehicle.Notes"}}</h3>
+    {{formInput notesField value=system.notes enriched=enrichedNotes name="system.notes" toggled=true}}
+  </div>
+</section>

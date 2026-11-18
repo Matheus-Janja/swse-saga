@@ -18,6 +18,7 @@ import forcePowers from "./data/force-powers.mjs";
 import { weapons, armor, equipment } from "./data/gear.mjs";
 import macros from "./data/macros.mjs";
 import { buildNpcs } from "./build-npcs.mjs";
+import { buildVehicles } from "./build-vehicles.mjs";
 import { iconFor, ICON } from "./build-packs-icons.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -103,6 +104,16 @@ packs.macros = macros.map(m => {
     process.exitCode = 1;
   }
   packs.npcs = [...folders, ...actors];
+}
+
+// Veículos (Cap. 10)
+{
+  const { folders, actors, report } = buildVehicles(makeId, stats);
+  if (report.length) {
+    console.error(`Divergências nos veículos:\n  ${report.join("\n  ")}`);
+    process.exitCode = 1;
+  }
+  packs.vehicles = [...folders, ...actors];
 }
 
 // Checagem de IDs duplicados

@@ -247,3 +247,20 @@
 .swse ::-webkit-scrollbar-thumb { background: var(--swse-border); border-radius: 5px; border: 1px solid var(--swse-accent); }
 .swse ::-webkit-scrollbar-thumb:hover { background: var(--swse-accent); }
 .swse * { scrollbar-color: var(--swse-accent) rgba(0, 0, 0, 0.3); }
+
+/* ---------- Veículos ---------- */
+.swse.vehicle .summary-row select, .swse.vehicle .summary-row input { width: auto; }
+.swse.vehicle .name-row .cl input { width: 3em; }
+.swse.vehicle .vehicle-abilities { display: flex; gap: 12px; margin-bottom: 6px; }
+.swse.vehicle .vehicle-abilities input { width: 3.2em; }
+.swse.vehicle .defense-row.small { gap: 12px; flex-wrap: wrap; }
+.swse.vehicle .ctl-group { margin-left: auto; display: flex; gap: 6px; align-items: center; font-size: 0.8em; }
+.swse.vehicle .ctl-group button { width: auto; line-height: 20px; padding: 0 6px; }
+.swse.vehicle .crew-slots { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.swse.vehicle .crew-slot { border: 1px dashed var(--swse-border); border-radius: 6px; padding: 4px 6px; min-height: 42px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.swse.vehicle .crew-slot.filled { border-style: solid; border-color: var(--swse-accent); }
+.swse.vehicle .crew-slot .role { width: 100%; font-size: 0.75em; color: var(--swse-dim); text-transform: uppercase; }
+.swse.vehicle .crew-slot img { width: 24px; height: 24px; border: none; }
+.swse.vehicle .crew-slot .ctl { margin-left: auto; color: var(--swse-dim); }
+.swse.vehicle .crew-slot.add { justify-content: center; }
+.swse.vehicle .vehicle-details label { display: flex; flex-direction: column; font-size: 0.85em; color: var(--swse-dim); }

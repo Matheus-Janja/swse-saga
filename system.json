@@ -2,7 +2,7 @@
   "id": "swse-saga",
   "title": "Star Wars RPG - Saga Edition",
   "description": "Sistema não oficial para Star Wars Roleplaying Game: Saga Edition. Ficha automatizada, criação de personagem guiada, subida de nível, ataques automatizados por armas, feats e talentos, e compêndios com o conteúdo do Livro Básico.",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "compatibility": {
     "minimum": "13",
     "verified": "14.370"
@@ -40,6 +40,11 @@
       "npc": {
         "htmlFields": [
           "details.biography"
+        ]
+      },
+      "vehicle": {
+        "htmlFields": [
+          "notes"
         ]
       }
     },
@@ -80,6 +85,11 @@
         ]
       },
       "equipment": {
+        "htmlFields": [
+          "description"
+        ]
+      },
+      "vehicleWeapon": {
         "htmlFields": [
           "description"
         ]
@@ -187,6 +197,17 @@
       }
     },
     {
+      "name": "vehicles",
+      "label": "Veículos e Naves",
+      "path": "packs/vehicles",
+      "type": "Actor",
+      "system": "swse-saga",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      }
+    },
+    {
       "name": "macros",
       "label": "Macros SWSE",
       "path": "packs/macros",
@@ -213,6 +234,7 @@
         "armor",
         "equipment",
         "npcs",
+        "vehicles",
         "macros"
       ]
     }
@@ -227,6 +249,6 @@
   "initiative": "1d20 + @skills.initiative.total",
   "url": "https://github.com/Matheus-Janja/swse-saga",
   "manifest": "https://github.com/Matheus-Janja/swse-saga/releases/latest/download/system.json",
-  "download": "https://github.com/Matheus-Janja/swse-saga/releases/download/v0.2.0/swse-saga.zip",
+  "download": "https://github.com/Matheus-Janja/swse-saga/releases/download/v0.3.0/swse-saga.zip",
   "license": "LICENSE"
 }
