@@ -12,8 +12,9 @@ import gawNpcs, { F as GAW_F } from "./data/gaw/npcs.mjs";
 import goiNpcs, { F as GOI_F } from "./data/goi/npcs.mjs";
 import jatmNpcs, { F as JATM_F } from "./data/jatm/npcs.mjs";
 import jatmDark, { F as JATM_D } from "./data/jatm/darksiders.mjs";
-const npcs = [...coreNpcs, ...gawNpcs, ...goiNpcs, ...jatmNpcs, ...jatmDark];
-const FOLDERS = [...CORE_FOLDERS, ...Object.values(GAW_F), ...Object.values(GOI_F), ...Object.values(JATM_F), ...Object.values(JATM_D)];
+import sgdNpcs, { F as SGD_F } from "./data/sgd/npcs.mjs";
+const npcs = [...coreNpcs, ...gawNpcs, ...goiNpcs, ...jatmNpcs, ...jatmDark, ...sgdNpcs];
+const FOLDERS = [...CORE_FOLDERS, ...Object.values(GAW_F), ...Object.values(GOI_F), ...Object.values(JATM_F), ...Object.values(JATM_D), ...Object.values(SGD_F)];
 import { iconFor } from "./build-packs-icons.mjs";
 
 const ABIL = ["str", "dex", "con", "int", "wis", "cha"];

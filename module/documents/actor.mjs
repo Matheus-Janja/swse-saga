@@ -231,7 +231,8 @@ export class SWSEActor extends Actor {
       }
     } else if (type === "ion") {
       if (ionAsDroid) {
-        if (amount >= dt) steps = 2;
+        // Ion Shielding (Scavenger's Guide): só −1 passo
+        if (amount >= dt) steps = this.hasFeature("ion-shielding") ? 1 : 2;
         toHp = Math.floor(toHp / 2);
       } else {
         toHp = Math.floor(toHp / 4);

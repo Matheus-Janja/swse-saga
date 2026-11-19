@@ -29,7 +29,8 @@ export function profileFromActor(actor) {
     species: actor.species?.system.key ?? "",
     size: actor.derived.size ?? "medium",
     darkSide: s.darkSide.value,
-    droid: !!actor.species?.system.droid
+    droid: !!actor.species?.system.droid || !!s.isDroid,
+    locomotion: new Set(actor.items.filter(i => i.type === "droidSystem" && i.system.category === "locomotion").map(i => i.system.locomotion?.type || i.system.key))
   };
 }
 
@@ -80,6 +81,8 @@ export function checkPrereqs(p, prereq, opts = {}) {
   if (prereq.species?.length && !prereq.species.includes(p.species)) missing.push(prereq.species.map(nameOf).join(" / "));
   if (prereq.sizes?.length && !prereq.sizes.includes(p.size)) missing.push(prereq.sizes.join(" / "));
   if (prereq.nonDroid && p.droid) missing.push(L("SWSE.NonDroid"));
+  if (prereq.droidOnly && !p.droid) missing.push(L("SWSE.DroidOnly"));
+  if (prereq.locomotion?.length && p.locomotion && !prereq.locomotion.some(l => p.locomotion.has(l))) missing.push(prereq.locomotion.join(" / "));
   if (prereq.darkSide === "equalsWis" && p.darkSide < (p.abilities.wis ?? 0)) missing.push(L("SWSE.DarkSideEqualsWis"));
   if (prereq.darkSide === "atLeast1" && p.darkSide < 1) missing.push(L("SWSE.DarkSideAtLeast1"));
   if (prereq.sameChoice) {

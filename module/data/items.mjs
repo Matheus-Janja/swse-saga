@@ -25,7 +25,10 @@ function prerequisitesField() {
     species: strArray(),
     sizes: strArray(),
     darkSide: str(),
-    nonDroid: new fields.BooleanField({ initial: false })
+    nonDroid: new fields.BooleanField({ initial: false }),
+    droidOnly: new fields.BooleanField({ initial: false }),
+    locomotion: strArray(),
+    appendage: new fields.BooleanField({ initial: false })
   });
 }
 
@@ -58,10 +61,12 @@ export class SpeciesData extends BaseItemData {
       speed: num(6),
       swimSpeed: num(0),
       droid: new fields.BooleanField({ initial: false }),
+      droidDegree: num(0),
       primitive: new fields.BooleanField({ initial: false }),
       bonusFeats: strArray(),
       bonusFeatChoices: num(0),
       bonusTrainedSkills: num(0),
+      autoTrained: strArray(),
       conditionalFeats: new fields.ArrayField(new fields.SchemaField({ skill: str(), feat: str("skill-focus") })),
       rerolls: new fields.ArrayField(new fields.SchemaField({ skill: str(), keep: str("second"), label: str() })),
       languages: str(),

@@ -118,6 +118,15 @@ Conteúdo mecânico dos capítulos 1, 3, 4 e das feras do capítulo 6 (pastas "J
 - **18 vilões do lado sombrio** (Azrakel, Blackguard, Brakiss, Carnor Jax, Freedon Nadd como espírito, Hethrir, Lord Nyax, Kueller, abominação Massassi, Nightsister, Profeta do Lado Sombrio, Sedriss, alunos da Academia das Sombras, Feiticeiro de Tund, Tamith Kai, Xanatos), com classes, talentos e poderes reais e valores conferidos com o livro; talentos de outros suplementos ainda não incluídos aparecem nas notas.
 - Fora dos compêndios: capítulos 2, 5 e 7 (filosofia, instrutores e ex-alunos famosos, intercâmbios).
 
+### Suplemento: Scavenger's Guide to Droids
+- **8 chassis de droide padrão** (astromecânico, batalha, trabalho, mecânico, médico, sonda, protocolo e serviço) na pasta de droides heróis das espécies, com perícias embutidas (Hardwired Design) marcadas como treinadas automaticamente e feats condicionais.
+- **Talentos de droide por grau** (1º a 5º): o assistente de criação e de subida de nível mostra automaticamente a árvore do grau do droide. Também as árvores das classes de prestígio Droid Commander e Independent Droid (as classes ainda não estão no sistema). Automáticos: *Science Analyzer*, *Heavy-Duty Actuators*; botões ⚡ para *Target Acquisition*, *Weapons Power Surge* e *Just a Scratch*.
+- **17 feats de droide**, com pré-requisito "ser droide" e de locomoção verificados. *Aiming Accuracy* (+5, com *Pinpoint Accuracy* −1 passo) e *Slammer* no diálogo de ataque; *Mechanical Martial Arts* aplica −5 ao ferir; *Ion Shielding* reduz o efeito dos íons; botões para *Distracting Droid*, *Erratic Target* e *Tool Frenzy*.
+- **Sistemas de droide**: 65 acessórios, sensores, processadores, apêndices, locomoções extras, estações e 4 armaduras novas no compêndio de sistemas.
+- **Codex de Droides: 45 droides** com fichas conferidas com o livro (incluindo Annihilator, Droideka Mk II, IG/HK, SD-9, YVH, Shadow Droid, X-1 Viper).
+- Fora dos compêndios: traços de fabricantes, tabela de peculiaridades (quirks) e o capítulo 2 (aconselhamento ao Mestre) — servem como referência de mesa.
+- Melhoria geral: o assistente agora oferece todas as árvores de talentos da Força dos suplementos (Guardian Spirit e as tradições) para personagens sensíveis à Força.
+
 ### Compêndios
 Espécies (21, incluindo Aqualish, Hutt, Neimoidian e Yuuzhan Vong do Cap. 16), classes heroicas, de prestígio e não heroica, 69 feats, todas as árvores de talento do livro básico (classes, Força e prestígio), 16 poderes da Força, técnicas e segredos, armas, armaduras, equipamentos e macros. Erratas oficiais de out/2008 aplicadas.
 

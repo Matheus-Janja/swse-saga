@@ -24,11 +24,17 @@ import jatmFeats from "./jatm/feats.mjs";
 import jatmTalents from "./jatm/talents.mjs";
 import jatmPowers from "./jatm/force-powers.mjs";
 import * as jatmGear from "./jatm/gear.mjs";
+// Scavenger's Guide to Droids
+import sgdSpecies from "./sgd/species.mjs";
+import sgdFeats from "./sgd/feats.mjs";
+import sgdTalents from "./sgd/talents.mjs";
+import * as sgdSystems from "./sgd/systems.mjs";
+export const extraDroidSystems = [...sgdSystems.systems, ...sgdSystems.armor];
 
-export const species = [...coreSpecies, ...gawSpecies, ...goiSpecies, ...jatmSpecies];
+export const species = [...coreSpecies, ...gawSpecies, ...goiSpecies, ...jatmSpecies, ...sgdSpecies];
 export const classes = [...patchClassesJATM(patchClassesGoI(patchCoreClasses(coreClasses))), ...gawClasses];
-export const feats = [...coreFeats, ...gawFeats, ...goiFeats, ...jatmFeats];
-export const talents = [...coreTalents, ...gawTalents, ...goiTalents, ...jatmTalents];
+export const feats = [...coreFeats, ...gawFeats, ...goiFeats, ...jatmFeats, ...sgdFeats];
+export const talents = [...coreTalents, ...gawTalents, ...goiTalents, ...jatmTalents, ...sgdTalents];
 export const forcePowers = [...corePowers, ...jatmPowers];
 export const weapons = [...coreGear.weapons, ...gawGear.weapons, ...goiGear.weapons, ...jatmGear.weapons];
 export const armor = [...coreGear.armor, ...gawGear.armor, ...jatmGear.armor];

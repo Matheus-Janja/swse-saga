@@ -29,6 +29,18 @@ export async function loadCompendia() {
 const byName = (a, b) => a.name.localeCompare(b.name);
 
 export const FORCE_TREES = ["Alter", "Control", "Dark Side", "Sense"];
+export const DROID_TREES = { 1: "1st-Degree Droid", 2: "2nd-Degree Droid", 3: "3rd-Degree Droid", 4: "4th-Degree Droid", 5: "5th-Degree Droid" };
+
+/**
+ * Árvores disponíveis além das da classe: todas as árvores de talentos da Força (Livro Básico e suplementos)
+ * para quem tem Force Sensitivity, e a árvore do grau do droide (Scavenger's Guide to Droids).
+ */
+export function extraTrees(talents, { force = false, droidDegree = 0 } = {}) {
+  const out = [];
+  if (force) for (const t of talents) if (t.system.category === "forceTalent" && !out.includes(t.system.tree)) out.push(t.system.tree);
+  if (droidDegree && DROID_TREES[droidDegree]) out.push(DROID_TREES[droidDegree]);
+  return out;
+}
 export const enforcePrereqs = () => game.settings.get(SYSTEM_ID, "enforcePrereqs");
 
 /** Lista de itens com status de pré-requisito para exibir num assistente. */

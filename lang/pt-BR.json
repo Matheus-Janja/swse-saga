@@ -1070,6 +1070,7 @@
     "Poison": {
       "Recurring": "Venenos atacam a cada rodada (ou dia, nas doenças) até o tratamento: use o item de novo.",
       "Spice": "Second wind instantâneo (+{heal} PV), +1 passo na trilha de condição e +5 no Limiar por 1 hora. Depois: −5 em Sabedoria por 4 horas."
-    }
+    },
+    "DroidOnly": "Droide"
   }
 }

@@ -291,7 +291,7 @@ export function computeActor(sys, items, opts = {}) {
   d.droidAppendage = bestAppendage(droidSystems.map(s => s.system.appendage).filter(Boolean));
   d.shieldRatingMax = Math.max(0, ...droidSystems.map(s => Number(s.system.shieldRating) || 0));
   const focus = new Set(choicesOf("skill-focus"));
-  const training = new Set(choicesOf("skill-training"));
+  const training = new Set([...choicesOf("skill-training"), ...(species?.system.autoTrained ?? [])]);
   for (const [key, cfg] of Object.entries(SWSE.skills)) {
     const s = sys.skills?.[key] ?? {};
     const trained = !!s.trained || training.has(key);
@@ -329,6 +329,12 @@ export function computeActor(sys, items, opts = {}) {
       s.parts = { useTheForce: utf.total };
       s.substitute = talent;
     }
+  }
+
+  // Science Analyzer (Scavenger's Guide): dobro do mod. de Int em Knowledge (life/physical sciences)
+  if (has("science-analyzer")) for (const k of ["knowledgeLifeSciences", "knowledgePhysicalSciences"]) {
+    d.skills[k].total += d.abilities.int.mod;
+    d.skills[k].parts.scienceAnalyzer = d.abilities.int.mod;
   }
 
   // Cut the Red Tape (Galaxy of Intrigue): Knowledge (bureaucracy) no lugar de Gather Information

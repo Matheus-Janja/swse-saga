@@ -10,7 +10,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { compilePack } from "@foundryvtt/foundryvtt-cli";
 
-import { species, classes, feats, talents, forcePowers, weapons, armor, equipment } from "./data/all.mjs";
+import { species, classes, feats, talents, forcePowers, weapons, armor, equipment, extraDroidSystems } from "./data/all.mjs";
 import macros from "./data/macros.mjs";
 import { droidSpecies, droidSystems, DROID_FOLDERS } from "./data/droids.mjs";
 import { buildNpcs } from "./build-npcs.mjs";
@@ -58,7 +58,9 @@ const PASSIVE_AUTO = new Set(["force-intuition", "force-perception", "force-pilo
   "guaranteed-boon", "leading-skill", "learn-from-mistakes", "try-your-luck", "skill-challenge-catastrophic-avoidance",
   // Jedi Academy Training Manual
   "body-control", "knowledge-and-defense", "white-current-adept", "fluidity", "psychic-citadel", "shoto-focus", "master-of-the-great-hunt",
-  "brutal-unarmed-strike", "long-haft-strike", "relentless-attack", "regimen-aptitude", "lightsaber-specialist"]);
+  "brutal-unarmed-strike", "long-haft-strike", "relentless-attack", "regimen-aptitude", "lightsaber-specialist",
+  // Scavenger's Guide to Droids
+  "aiming-accuracy", "pinpoint-accuracy", "slammer", "mechanical-martial-arts", "ion-shielding", "science-analyzer", "heavy-duty-actuators"]);
 function markAutomation(data) {
   const key = data.system.key;
   const d = data.system.description ?? "";
@@ -87,11 +89,15 @@ function folderDoc(pack, name, type = "Item", sort = 0) {
 const packs = {};
 {
   const fDroid = folderDoc("species", "Droides (heróis)", "Item", 1);
-  packs.species = [...bySource("species", species, [fDroid]), ...droidSpecies.map(d => itemDoc("species", d, fDroid._id))];
+  const nonChassis = species.filter(d => d.folder !== "Droides (heróis)");
+  const chassis = species.filter(d => d.folder === "Droides (heróis)");
+  packs.species = [...bySource("species", nonChassis, [fDroid]), ...[...droidSpecies, ...chassis].map(d => itemDoc("species", d, fDroid._id))];
 }
 {
-  const folders = Object.fromEntries(DROID_FOLDERS.map((n, i) => [n, folderDoc("droid-systems", n, "Item", i)]));
-  packs["droid-systems"] = [...Object.values(folders), ...droidSystems.map(d => itemDoc("droid-systems", d, folders[d.folder]._id))];
+  const all = [...droidSystems, ...extraDroidSystems];
+  const names = [...new Set([...DROID_FOLDERS, ...all.map(d => d.folder)])];
+  const folders = Object.fromEntries(names.map((n, i) => [n, folderDoc("droid-systems", n, "Item", i)]));
+  packs["droid-systems"] = [...Object.values(folders), ...all.map(d => itemDoc("droid-systems", d, folders[d.folder]._id))];
 }
 
 // Classes em pastas: Base / Prestígio / Não heroica

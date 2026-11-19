@@ -3,7 +3,7 @@ import { pointBuySpent } from "../rules/calc.mjs";
 import { systemCost, sizeAllowed, locomotionSpeed, BASE_LOCOMOTION, FREE_SYSTEMS, DROID_BUDGET, DROID_POINT_BUY, DROID_ARRAY, COST_FACTOR } from "../rules/droid.mjs";
 import { checkPrereqs } from "../helpers/prereqs.mjs";
 import { promptChoice } from "../helpers/choices.mjs";
-import { loadCompendia, annotate, itemData, abilityMod, babAt, FORCE_TREES, enforcePrereqs, skillLabel } from "./common.mjs";
+import { loadCompendia, annotate, itemData, abilityMod, babAt, FORCE_TREES, extraTrees, enforcePrereqs, skillLabel } from "./common.mjs";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 const ABIL = ["str", "dex", "con", "int", "wis", "cha"];
@@ -326,7 +326,7 @@ export class CharacterCreator extends HandlebarsApplicationMixin(ApplicationV2) 
     if (s.step === "talent") {
       const profile = this.profile();
       const trees = [...(this.cls?.system.talentTrees ?? [])];
-      if (this.hasFeatKey("force-sensitivity")) trees.push(...FORCE_TREES);
+      for (const t of extraTrees(this._data.talents, { force: this.hasFeatKey("force-sensitivity"), droidDegree: this.species?.system.droidDegree ?? 0 })) if (!trees.includes(t)) trees.push(t);
       const list = annotate(this._data.talents.filter(t => trees.includes(t.system.tree)), profile, { selected: s.talent ? [s.talent.id] : [] });
       const groups = {};
       for (const t of list) {
@@ -334,7 +334,7 @@ export class CharacterCreator extends HandlebarsApplicationMixin(ApplicationV2) 
         if (s.talentFilter && enforcePrereqs() && !t.ok) continue;
         (groups[t.tree] ??= []).push(t);
       }
-      ctx.talentGroups = trees.filter(t => groups[t]).map(t => ({ tree: t, force: FORCE_TREES.includes(t), list: groups[t] }));
+      ctx.talentGroups = trees.filter(t => groups[t]).map(t => ({ tree: t, force: FORCE_TREES.includes(t) || this._data.talents.some(x => x.system.tree === t && x.system.category === "forceTalent"), list: groups[t] }));
     }
     if (s.step === "force") {
       ctx.powersAllowed = this.powersAllowed();

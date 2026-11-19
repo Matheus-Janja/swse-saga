@@ -1,7 +1,7 @@
 import { SWSE, SYSTEM_ID } from "../config.mjs";
 import { checkPrereqs, profileFromActor } from "../helpers/prereqs.mjs";
 import { promptChoice } from "../helpers/choices.mjs";
-import { loadCompendia, annotate, itemData, abilityMod, babAt, FORCE_TREES, enforcePrereqs, rollHitPoints, skillLabel } from "./common.mjs";
+import { loadCompendia, annotate, itemData, abilityMod, babAt, FORCE_TREES, extraTrees, enforcePrereqs, rollHitPoints, skillLabel } from "./common.mjs";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 const ABIL = ["str", "dex", "con", "int", "wis", "cha"];
@@ -260,7 +260,8 @@ export class LevelUpApp extends HandlebarsApplicationMixin(ApplicationV2) {
     }
     if (s.step === "talent") {
       const trees = [...c.doc.system.talentTrees];
-      if (this.actor.derived.forceSensitive || profile.feats.some(f => f.key === "force-sensitivity")) for (const t of FORCE_TREES) if (!trees.includes(t)) trees.push(t);
+      const force = this.actor.derived.forceSensitive || profile.feats.some(f => f.key === "force-sensitivity");
+      for (const t of extraTrees(this._data.talents, { force, droidDegree: this.actor.species?.system.droidDegree ?? 0 })) if (!trees.includes(t)) trees.push(t);
       const list = annotate(this._data.talents.filter(t => trees.includes(t.system.tree)), profile, { selected: s.talent ? [s.talent.id] : [], owned });
       const groups = {};
       for (const t of list) {

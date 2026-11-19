@@ -434,4 +434,26 @@ t("Jedi Academy: Body Control, Knowledge and Defense, White Current Adept, Psych
   assert.equal(weaponProfileFrom(ctx, weapons.find(w => w.system.key === "lightsaber")).light, false);
 });
 
+/* ================= Scavenger's Guide to Droids ================= */
+t("Scavenger's Guide: chassis com perícia embutida, Science Analyzer, Heavy-Duty Actuators e árvores de droide", async () => {
+  const { weaponProfileFrom } = await import("../module/rules/weapon.mjs");
+  const { extraTrees } = await import("../module/apps/common.mjs");
+  const { checkPrereqs } = await import("../module/helpers/prereqs.mjs");
+  const sc = find(classes, "scout"); sc.system.hpRolls = [24]; sc.system.isStartingClass = true;
+  const s = sys({ str: 14, dex: 12, con: 10, int: 14, wis: 10, cha: 10 });
+  const med = computeActor(s, [find(species, "chassis-medical"), sc]);
+  assert.equal(med.skills.treatInjury.trained, true);
+  assert.equal(med.isDroid, true);
+  const sci = computeActor(s, [find(species, "chassis-medical"), sc, find(talents, "science-analyzer")]);
+  assert.equal(sci.skills.knowledgeLifeSciences.total - med.skills.knowledgeLifeSciences.total, med.abilities.int.mod);
+  const ctx = f => ({ abilities: { str: { mod: 3 }, dex: { mod: 0 } }, bab: 0, features: f.map(key => ({ key })), size: "medium" });
+  const club = weapons.find(w => w.system.key === "club");
+  assert.equal(weaponProfileFrom(ctx(["heavy-duty-actuators"]), club).damageParts.ability, 6);
+  const trees = extraTrees(talents, { force: true, droidDegree: 4 });
+  assert.ok(trees.includes("4th-Degree Droid") && trees.includes("Guardian Spirit") && trees.includes("Alter"));
+  const prof = { abilities: { dex: 14 }, bab: 1, level: 1, trained: new Set(), feats: [{ key: "dodge" }], talents: [], forcePowers: new Set(), species: "", size: "medium", darkSide: 0, droid: false, locomotion: new Set() };
+  assert.equal(checkPrereqs(prof, find(feats, "erratic-target").system.prerequisites).ok, false);
+  assert.equal(checkPrereqs({ ...prof, droid: true, locomotion: new Set(["hovering"]) }, find(feats, "erratic-target").system.prerequisites).ok, true);
+});
+
 console.log(`\n${n} testes passaram.`);

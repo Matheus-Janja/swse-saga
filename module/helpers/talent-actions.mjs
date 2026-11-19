@@ -326,6 +326,32 @@ export const TALENT_ACTIONS = {
     if (c === "guarded") return actor.addEffect({ name: "Guarded Assault", img: ICON("defensive"), rounds: 0, modifiers: [mod("defenses.reflex", 2, "dodge")] });
   },
   // Gunslinger
+  /* ================= Scavenger's Guide to Droids ================= */
+  "distracting-droid": async actor => {
+    const hits = await skillVsDefense(actor, "persuasion", "will", "Distracting Droid");
+    for (const t of hits ?? []) await requestEffect(t, { name: `Distracting Droid (${actor.name}): perde uma ação de movimento`, img: ICON("debuff"), rounds: 1 });
+  },
+  "erratic-target": async actor => {
+    const n = Number(await choose("Erratic Target", { 1: "−1 quadrado: +1 esquiva", 2: "−2 quadrados: +2 esquiva" }));
+    if (n) await actor.addEffect({ name: `Erratic Target (+${n})`, img: ICON("defensive"), rounds: 0, modifiers: [mod("defenses.reflex", n, "dodge"), mod("speed", -n)] });
+  },
+  "tool-frenzy": async actor => { await actor.addEffect({ name: "Tool Frenzy (−2 Reflexos)", img: ICON("debuff"), rounds: 1, modifiers: [mod("defenses.reflex", -2, "penalty")] }); chat(actor, "<h3>Tool Frenzy</h3><p>Faça o ataque desarmado com +2 (campo de bônus) usando o dado do maior apêndice.</p>"); },
+  "target-acquisition": async actor => {
+    const t = targetsActors()[0];
+    if (!t) return ui.notifications.warn(L("SWSE.Talent.NeedTarget"));
+    await actor.addEffect({ name: `Target Acquisition: ${t.name} (+1 ataque e dano contra ele)`, img: ICON("aiming"), rounds: ENCOUNTER() });
+  },
+  "weapons-power-surge": async actor => {
+    const n = Number(await choose("Weapons Power Surge", { 1: "+1 dado (−1 passo)", 2: "+2 dados (−2 passos)" }));
+    if (!n) return;
+    await actor.shiftCondition(n);
+    chat(actor, `<h3>Weapons Power Surge</h3><p>+${n} dado(s) no próximo dano com a arma montada (some no campo de dano extra, ex.: +${n}d8).</p>`);
+  },
+  "just-a-scratch": async actor => {
+    const n = actor.system.defenses.fortitude.total;
+    await actor.addEffect({ name: `Just a Scratch (RD ${n} contra um ataque)`, img: ICON("total-defense"), rounds: 0, modifiers: [mod("damageReduction", n)] });
+  },
+
   /* ================= Jedi Academy Training Manual ================= */
   "adversary-lore": async actor => {
     const hits = await skillVsDefense(actor, "useTheForce", "will", "Adversary Lore");

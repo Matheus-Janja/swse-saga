@@ -92,6 +92,7 @@ export function weaponProfileFrom(ctx, weapon) {
     dmgAbilityLabel = "For";
     if (lightsaber && melee && ctxHas(ctx, "ataru") && dex > str) { base = dex; dmgAbilityLabel = "Des"; }
     dmgAbilityMod = melee && twoHanded && base > 0 ? base * 2 : base;
+    if (melee && base > 0 && ctxHas(ctx, "heavy-duty-actuators")) dmgAbilityMod = base * 2;
   }
 
   const mods = ctx.modifiers ?? {};

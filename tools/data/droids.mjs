@@ -28,7 +28,7 @@ for (const d of DEGREES) {
       name: `Droide de ${d.n}º Grau (${small ? "Pequeno" : "Médio"})`, type: "species",
       folder: "Droides (heróis)",
       system: {
-        key: `droid-${d.n}-${size}`, size, speed: small ? 4 : 6, swimSpeed: 0, droid: true, primitive: false,
+        key: `droid-${d.n}-${size}`, size, speed: small ? 4 : 6, swimSpeed: 0, droid: true, droidDegree: d.n, primitive: false,
         bonusFeats: [], bonusFeatChoices: 0, bonusTrainedSkills: 0, conditionalFeats: [], rerolls: [], modifiers: [],
         languages: "Binary + 1 idioma", source: "Saga Edition Core Rulebook",
         abilityMods: A(add(d.mods, small ? { dex: 2, str: -2 } : {})),

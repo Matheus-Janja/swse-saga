@@ -86,6 +86,8 @@ function dialogContent(actor, weapon, p) {
     ${check("skirmisher", "Skirmisher (+1)", has("skirmisher"))}
     ${p.melee && has("staggering-attack") ? row(`<label>Staggering Attack</label><select name="staggering"><option value="0">—</option><option value="2">−2 ataque / −2 perícias</option><option value="5">−5 ataque / −5 perícias</option></select>`) : ""}
     ${check("primeTarget", "Prime Targets (+1 dado)", p.lightsaber && has("prime-targets"))}
+    ${check("aimingAccuracy", "Aiming Accuracy (mirou com rodada completa: +5)" + (has("pinpoint-accuracy") ? " + Pinpoint Accuracy" : ""), ranged && has("aiming-accuracy"))}
+    ${check("slammer", "Slammer (For ×2 no dano)", p.unarmed && has("slammer"))}
     ${check("greatHunt", "Master of the Great Hunt (fera do lado sombrio: +1, +1 dado)", p.lightsaber && has("master-of-the-great-hunt"))}
     ${check("aoo", "Ataque de oportunidade" + (String(weapon.system.special).includes("dueling") ? " (dueling lightsaber +1)" : ""), p.melee)}
     ${check("fleche", "Flèche (investida: 17+ natural é crítico)", p.melee && has("fleche"))}
@@ -182,6 +184,10 @@ export async function resolveAttack(actor, weapon, p, f) {
       if (f.range === "short") damageOverride = "2d8";
       else if (f.range !== "pointBlank") notes.push("Scatter gun: sem dano em alcance médio ou longo.");
     }
+    if (f.aimingAccuracy) {
+      atk.push(["Aiming Accuracy", 5]);
+      if (has("pinpoint-accuracy")) bonusSteps.push("Pinpoint Accuracy");
+    }
     if (f.drawABead && f.range !== "pointBlank") dmg.push(["Draw a Bead", Math.max(1, abil.dex.mod)]);
     if (f.bullseye && f.aim && f.range !== "pointBlank") { denyDex = true; notes.push("Bullseye"); }
     if (f.aim && has("steadying-position") && actor.derived.status?.list?.includes("prone")) { denyDex = true; notes.push("Steadying Position"); }
@@ -250,6 +256,8 @@ export async function resolveAttack(actor, weapon, p, f) {
     }
     if (f.charge && has("reckless")) dmg.push(["Reckless", Math.max(1, abil.wis.mod)]);
     if (f.primeTarget) extraDice += 1;
+    if (f.slammer) { dmg.push(["Slammer", Math.max(0, abil.str.mod * 2) - (p.damageParts.ability || 0)]); if (has("crush")) extraDice += 1; }
+    if (p.unarmed && has("mechanical-martial-arts")) effectsOnHit.push({ name: `Mechanical Martial Arts (−5 ataque e dano corpo a corpo)`, img: "systems/swse-saga/assets/icons/status/debuff.svg", rounds: 1, modifiers: [{ target: "attack.melee", value: "-5", type: "penalty", label: "", disabled: false }, { target: "damage.melee", value: "-5", type: "penalty", label: "", disabled: false }] });
     if (f.greatHunt) { atk.push(["Master of the Great Hunt", 1]); extraDice += 1; }
     if (f.aoo && String(weapon.system.special).includes("dueling")) atk.push(["Dueling Lightsaber", 1]);
     // Shoto Focus: +2 com o shoto empunhando também um sabre de uma mão
