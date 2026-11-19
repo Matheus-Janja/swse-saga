@@ -10,15 +10,16 @@ import { SWSE } from "../module/config.mjs";
 import coreNpcs, { FOLDERS as CORE_FOLDERS } from "./data/npcs.mjs";
 import gawNpcs, { F as GAW_F } from "./data/gaw/npcs.mjs";
 import goiNpcs, { F as GOI_F } from "./data/goi/npcs.mjs";
-const npcs = [...coreNpcs, ...gawNpcs, ...goiNpcs];
-const FOLDERS = [...CORE_FOLDERS, ...Object.values(GAW_F), ...Object.values(GOI_F)];
+import jatmNpcs, { F as JATM_F } from "./data/jatm/npcs.mjs";
+const npcs = [...coreNpcs, ...gawNpcs, ...goiNpcs, ...jatmNpcs];
+const FOLDERS = [...CORE_FOLDERS, ...Object.values(GAW_F), ...Object.values(GOI_F), ...Object.values(JATM_F)];
 import { iconFor } from "./build-packs-icons.mjs";
 
 const ABIL = ["str", "dex", "con", "int", "wis", "cha"];
 const clone = x => structuredClone(x);
 
 const TOKEN_SIZE = { fine: 0.5, diminutive: 0.5, tiny: 0.5, small: 1, medium: 1, large: 2, huge: 3, gargantuan: 4, colossal: 6 };
-const BEAST_FOLDERS = new Set(["Feras", GAW_F.beasts, GOI_F.beasts]);
+const BEAST_FOLDERS = new Set(["Feras", GAW_F.beasts, GOI_F.beasts, JATM_F.beasts]);
 const HOSTILE = new Set(["Império Galáctico", "Fringe", ...BEAST_FOLDERS]);
 const A = n => `systems/swse-saga/assets/icons/${n}.svg`;
 const IMG = { force: A("npc-force"), droid: A("npc-droid"), beast: A("npc-beast"), trooper: A("npc-trooper"), default: A("npc") };

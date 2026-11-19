@@ -55,7 +55,10 @@ const PASSIVE_AUTO = new Set(["force-intuition", "force-perception", "force-pilo
   // Galaxy of Intrigue
   "cut-the-red-tape", "resolute-stance", "forceful-recovery", "fleche", "grazing-shot", "bone-crusher", "damaging-disarm", "make-an-example",
   "assured-skill", "exceptional-skill", "reliable-boon", "skill-boon", "skill-confidence", "critical-skill-success", "skillful-recovery",
-  "guaranteed-boon", "leading-skill", "learn-from-mistakes", "try-your-luck", "skill-challenge-catastrophic-avoidance"]);
+  "guaranteed-boon", "leading-skill", "learn-from-mistakes", "try-your-luck", "skill-challenge-catastrophic-avoidance",
+  // Jedi Academy Training Manual
+  "body-control", "knowledge-and-defense", "white-current-adept", "fluidity", "psychic-citadel", "shoto-focus", "master-of-the-great-hunt",
+  "brutal-unarmed-strike", "long-haft-strike", "relentless-attack", "regimen-aptitude", "lightsaber-specialist"]);
 function markAutomation(data) {
   const key = data.system.key;
   const d = data.system.description ?? "";
@@ -115,8 +118,12 @@ packs.feats = bySource("feats", feats);
   const fPow = folderDoc("force-powers", "Poderes da Força", "Item", 1);
   const fTech = folderDoc("force-powers", "Técnicas da Força", "Item", 2);
   const fSec = folderDoc("force-powers", "Segredos da Força", "Item", 3);
-  packs["force-powers"] = [fPow, fTech, fSec,
-    ...forcePowers.map(d => itemDoc("force-powers", d, fPow._id)),
+  const fForm = folderDoc("force-powers", "Poderes de Forma de Sabre", "Item", 4);
+  const fReg = folderDoc("force-powers", "Regimes da Força", "Item", 5);
+  packs["force-powers"] = [fPow, fTech, fSec, fForm, fReg,
+    ...forcePowers.filter(d => !d.folder || d.folder === "Poderes da Força").map(d => itemDoc("force-powers", d, fPow._id)),
+    ...forcePowers.filter(d => d.folder === "Poderes de Forma de Sabre").map(d => itemDoc("force-powers", d, fForm._id)),
+    ...forcePowers.filter(d => d.folder === "Regimes da Força").map(d => itemDoc("force-powers", d, fReg._id)),
     ...talents.filter(t => t.system.category === "forceTechnique").map(d => itemDoc("force-powers", d, fTech._id)),
     ...talents.filter(t => t.system.category === "forceSecret").map(d => itemDoc("force-powers", d, fSec._id))];
 }
@@ -127,7 +134,7 @@ packs.feats = bySource("feats", feats);
 }
 packs.armor = bySource("armor", armor);
 {
-  const cats = { communication: "Comunicação", computer: "Computadores", detection: "Detecção", lifeSupport: "Suporte de Vida", medical: "Médico", survival: "Sobrevivência", tools: "Ferramentas", accessory: "Acessórios", cybernetic: "Cibernéticos", poison: "Venenos e Doenças" };
+  const cats = { communication: "Comunicação", computer: "Computadores", detection: "Detecção", lifeSupport: "Suporte de Vida", medical: "Médico", survival: "Sobrevivência", tools: "Ferramentas", accessory: "Acessórios", cybernetic: "Cibernéticos", poison: "Venenos e Doenças", crystal: "Cristais de Sabre" };
   const folders = Object.fromEntries(Object.entries(cats).map(([k, n], i) => [k, folderDoc("equipment", n, "Item", i)]));
   packs.equipment = [...Object.values(folders), ...equipment.map(d => itemDoc("equipment", d, folders[d.system.category]._id))];
 }

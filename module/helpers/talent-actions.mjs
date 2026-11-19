@@ -326,6 +326,62 @@ export const TALENT_ACTIONS = {
     if (c === "guarded") return actor.addEffect({ name: "Guarded Assault", img: ICON("defensive"), rounds: 0, modifiers: [mod("defenses.reflex", 2, "dodge")] });
   },
   // Gunslinger
+  /* ================= Jedi Academy Training Manual ================= */
+  "adversary-lore": async actor => {
+    const hits = await skillVsDefense(actor, "useTheForce", "will", "Adversary Lore");
+    const kw = actor.hasFeature("know-weakness");
+    for (const t of hits ?? []) await requestEffect(t, { name: `Adversary Lore (${actor.name})${kw ? " + Know Weakness (+1d6 de dano recebido)" : ""}`, img: ICON("debuff"), rounds: 1, modifiers: [mod("defenses.reflex", -2, "penalty")] });
+  },
+  "influence-savant": actor => recoverPower(actor, "mindAffecting", "Influence Savant"),
+  "dark-side-savant": actor => recoverPower(actor, "darkSide", "Dark Side Savant"),
+  "lightsaber-form-savant": actor => recoverPower(actor, "lightsaberForm", "Lightsaber Form Savant"),
+  "telekinetic-vigilance": async actor => {
+    const p = actor.items.find(i => i.type === "forcePower" && i.system.key === "intercept" && i.system.spent > 0);
+    if (!p) return ui.notifications.info(L("SWSE.Talent.NothingToRecover"));
+    await p.update({ "system.spent": p.system.spent - 1 });
+    chat(actor, `<p>Telekinetic Vigilance: ${p.name}</p>`);
+  },
+  "manifest-guardian-spirit": async actor => {
+    if (!(await needFP(actor))) return;
+    await actor.addEffect({ name: "Guardian Spirit", img: ICON("buff"), rounds: ENCOUNTER(), modifiers: [mod("attack.all", 1, "morale"), mod("skills.useTheForce", 2, "morale"), mod("defenses.will", 2, "morale")] });
+    chat(actor, `<h3>Manifest Guardian Spirit</h3><p>${L("SWSE.Talent.GuardianSpiritNote")}</p>`);
+  },
+  "vital-encouragement": async actor => {
+    const n = 10 + Math.floor((actor.system.heroicLevel || 0) / 2);
+    await actor.gainTempHP(n);
+    chat(actor, `<h3>Vital Encouragement</h3><p>+${n} PV temporários.</p>`);
+  },
+  "dark-side-talisman": async actor => {
+    const c = actor.hasFeature("greater-dark-side-talisman") ? "all" : await choose("Dark Side Talisman", DEFENSES());
+    if (!c || !(await needFP(actor))) return;
+    await actor.addEffect({ name: `Dark Side Talisman (+2 ${c === "all" ? "Defesas" : L(`SWSE.Defense.${c}`)} vs [light side])`, img: ICON("total-defense") });
+  },
+  "channel-vitality": async actor => {
+    await actor.shiftCondition(1);
+    chat(actor, `<h3>Channel Vitality</h3><p>${L("SWSE.Talent.ChannelVitalityNote")}</p>`);
+  },
+  "jedi-quarry": async actor => {
+    const t = targetsActors()[0];
+    if (!t) return ui.notifications.warn(L("SWSE.Talent.NeedTarget"));
+    await actor.addEffect({ name: `Jedi Quarry: ${t.name} (+2 de deslocamento ao se aproximar)`, img: ICON("aiming"), rounds: ENCOUNTER() });
+  },
+  "rapid-alchemy": async actor => { await actor.addEffect({ name: "Rapid Alchemy (+2 corpo a corpo)", img: ICON("buff"), rounds: ENCOUNTER(), modifiers: [mod("attack.melee", 2, "equipment")] }); },
+  "ride-the-current": async actor => {
+    if (!(await needFP(actor))) return;
+    await actor.addEffect({ name: "Ride the Current", img: ICON("total-concealment"), rounds: 1, statuses: ["totalConcealment"] });
+    if ((actor.system.secondWind.used || 0) === 0) await actor.secondWind();
+  },
+  "soft-to-solid": async actor => { if (await needFP(actor)) await actor.addEffect({ name: "Soft to Solid (RD 10)", img: ICON("total-defense"), rounds: 1, modifiers: [mod("damageReduction", 10)] }); },
+  "wan-shen-defense": async actor => {
+    const n = Math.min(3, actor.countFeature("wan-shen-defense"));
+    await actor.addEffect({ name: `Wan-Shen Defense (+${n} contra corpo a corpo)`, img: ICON("defensive"), rounds: 0, modifiers: [mod("defenses.reflex", n, "deflection")] });
+  },
+  "wind-vortex": async actor => {
+    if (!(await needFP(actor))) return;
+    await actor.addEffect({ name: "Wind Vortex (+2 Reflexos vs arremessos)", img: ICON("concealment"), rounds: ENCOUNTER(), statuses: ["concealment"] });
+  },
+  "unswerving-resolve": async actor => chat(actor, `<h3>Unswerving Resolve</h3><p>${L("SWSE.Talent.UnswervingResolveNote")}</p>`),
+
   /* ================= Galaxy of Intrigue ================= */
   "advanced-planning": async actor => {
     const ally = targetsActors()[0];
@@ -408,6 +464,17 @@ export const TALENT_ACTIONS = {
   }
 };
 
+/** Savants (Jedi Academy): devolve ao conjunto um poder gasto com o descritor. */
+async function recoverPower(actor, descriptor, name) {
+  const spent = actor.items.filter(i => i.type === "forcePower" && i.system.spent > 0 && i.system.descriptors.includes(descriptor));
+  if (!spent.length) return ui.notifications.info(L("SWSE.Talent.NothingToRecover"));
+  const id = spent.length === 1 ? spent[0].id : await choose(name, Object.fromEntries(spent.map(p => [p.id, p.name])));
+  const p = actor.items.get(id);
+  if (!p) return;
+  await p.update({ "system.spent": p.system.spent - 1 });
+  chat(actor, `<p>${name}: ${p.name}</p>`);
+}
+
 /** Opportunistic Trickery: abre mão do ataque de oportunidade para reduzir a Reflexos do alvo. */
 async function trickery(actor, n, rounds) {
   const names = await applyTo(targetsActors(), { name: `Opportunistic Trickery (−${n} Reflexos)`, img: ICON("debuff"), rounds, modifiers: [mod("defenses.reflex", -n, "penalty")] });
@@ -425,10 +492,18 @@ async function squad(actor, name, modifiers) {
  * (−2 com Shii-Cho). Soresu: rerrola uma falha.
  */
 async function negate(actor, name) {
-  if (!actor.items.some(i => i.type === "weapon" && i.system.equipped && i.system.group === "lightsabers")) return ui.notifications.warn(L("SWSE.Talent.NeedSaber"));
+  if (!actor.items.some(i => i.type === "weapon" && i.system.equipped && (i.system.group === "lightsabers" || (name === "Block" && String(i.system.special).includes("lightsaberBlock"))))) return ui.notifications.warn(L("SWSE.Talent.NeedSaber"));
   const counter = actor.effects.find(e => e.getFlag(SYSTEM_ID, "negateCount") !== undefined);
   const uses = counter?.getFlag(SYSTEM_ID, "negateCount") ?? 0;
-  const step = actor.hasFeature("shii-cho") ? 2 : 5;
+  const sabers = actor.items.filter(i => i.type === "weapon" && i.system.equipped && (i.system.group === "lightsabers" || String(i.system.special).includes("lightsaberBlock")));
+  const specials = sabers.map(i => String(i.system.special));
+  const isBlock = name === "Block";
+  const crossguard = isBlock && specials.some(s => s.includes("crossguard"));
+  const step = actor.hasFeature("shii-cho") || crossguard ? 2 : 5;
+  let gear = 0;
+  if (specials.some(s => s.includes(isBlock ? "block+2" : "deflect+2"))) gear += 2;
+  if (specials.some(s => s.includes(isBlock ? "block-2" : "deflect-2"))) gear -= 2;
+  if (actor.hasFeature("lightsaber-specialist")) gear += 2;
   const res = await foundry.applications.api.DialogV2.wait({
     window: { title: name },
     content: `<div class="swse-dialog"><div class="form-group"><label>${L("SWSE.Talent.AttackToNegate")}</label><input type="number" name="atk" value="" autofocus></div>
@@ -437,7 +512,7 @@ async function negate(actor, name) {
     rejectClose: false
   });
   if (res === null || res === undefined) return;
-  const bonus = actor.system.skills.useTheForce.total - uses * step;
+  const bonus = actor.system.skills.useTheForce.total - uses * step + gear;
   let roll = await new Roll(`1d20 + ${bonus}`).evaluate();
   const rolls = [roll];
   let rerolled = false;

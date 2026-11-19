@@ -106,6 +106,17 @@ Conteúdo mecânico dos capítulos 1 a 3 e da fauna de Nyriaan (pastas "Galaxy o
 - **PdMs**: 7 droides (5-BT, NR-1100, 3D-4, M4, FIII Footman, BL-Series, B4J4) e a fauna de Nyriaan (lluma, pherin, chlovi cat); **veículos**: PTV-2100, A-24 Sleuth, Ferret, Prowler, Sabaoth, Corona Limited e JG-8.
 - Os capítulos 4, 5, 7 e 8 (campanhas, facções, encontros e aventura) são material do Mestre e não entram nos compêndios.
 
+### Suplemento: Jedi Academy Training Manual
+Conteúdo mecânico dos capítulos 1, 3, 4 e das feras do capítulo 6 (pastas "Jedi Academy" nos compêndios):
+- **Poderes da Força**: 17 poderes novos (blind, convection, crucitorn, fold space, Force light, Force storm, hatred, inspire, intercept, mind shard, thought bomb…), **23 poderes de forma de sabre** (pasta própria, com os bônus de cada forma) e **12 regimes da Força** (aprendidos com Force Regimen Mastery; as cadências de Vo'ren aplicam a penalidade do Dark Side Score e Regimen Aptitude soma +5 automaticamente).
+- **Técnicas e segredos**: 14 técnicas e 2 segredos novos.
+- **Talentos**: novos em Jedi Consular/Guardian/Sentinel, Lightsaber Combat, Alter, Control, Dark Side, Sense e Duelist; árvores novas Guardian Spirit (Força), Beastwarden, Mystic e Telepath (Force Adept), Jedi Artisan, Jedi Instructor, Jedi Investigator e Jedi Weapon Master (Jedi Knight), Sith Alchemy (Sith Apprentice) e as **10 tradições da Força** (Aing-Tii, Baran Do, White Current, Iron Knights, Matukai, Seyugi Dervish, Shapers of Kro Var, Tyia, Warden of the Sky, Zeison Sha). Automáticos: *Body Control*, *Knowledge and Defense*, *White Current Adept*, *Fluidity*, *Psychic Citadel*, *Shoto Focus*, *Brutal Unarmed Strike*; botões ⚡ para os *Savants*, *Adversary Lore*/*Know Weakness*, *Manifest Guardian Spirit*, *Vital Encouragement*, *Dark Side Talisman*, *Channel Vitality*, *Jedi Quarry*, *Rapid Alchemy*, *Ride the Current*, *Soft to Solid*, *Wan-Shen Defense*, *Wind Vortex* e outros.
+- **5 feats** (*Long Haft Strike* transforma pike/long-handle em arma dupla; *Relentless Attack* cria o bônus ao errar).
+- **Espécie Shard** (Iron Knights).
+- **Equipamento**: 11 variantes de sabre e outras armas (lightfoils contam como armas leves; guard shoto dá +2 em Block/Deflect; crossguard reduz a penalidade cumulativa de Block; pike e crossguard −2 em Deflect — tudo aplicado no botão de Block/Deflect), discblade, wan-shen, san-ni staff, armaduras Jedi e Sith, **28 cristais de sabre**, acessórios de sabre, holocrons, artefatos Sith, veneno Sith e a peste do droch.
+- **19 feras** ligadas à Força (battle hydra, beck-tori, chrysalis rancor, derriphan, droch, Dxun tomb beast, hssiss, marsh haunt, nighthunter, shyrack, silooth, Sith warbird, Sith wyrm, storm beast, taozin, terentatek, tuk'ata…), conferidas com os blocos do livro.
+- Fora dos compêndios: capítulos 2, 5 e 7 (filosofia, instrutores e ex-alunos famosos, intercâmbios) e os vilões do lado sombrio do capítulo 6.
+
 ### Compêndios
 Espécies (21, incluindo Aqualish, Hutt, Neimoidian e Yuuzhan Vong do Cap. 16), classes heroicas, de prestígio e não heroica, 69 feats, todas as árvores de talento do livro básico (classes, Força e prestígio), 16 poderes da Força, técnicas e segredos, armas, armaduras, equipamentos e macros. Erratas oficiais de out/2008 aplicadas.
 

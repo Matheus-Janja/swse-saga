@@ -181,7 +181,9 @@ SWSE.forcePowerDescriptors = {
   lightSide: "SWSE.Descriptor.lightSide",
   darkSide: "SWSE.Descriptor.darkSide",
   mindAffecting: "SWSE.Descriptor.mindAffecting",
-  telekinetic: "SWSE.Descriptor.telekinetic"
+  telekinetic: "SWSE.Descriptor.telekinetic",
+  lightsaberForm: "SWSE.Descriptor.lightsaberForm",
+  regimen: "SWSE.Descriptor.regimen"
 };
 
 SWSE.talentCategories = {

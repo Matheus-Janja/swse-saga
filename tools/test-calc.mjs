@@ -409,4 +409,29 @@ t("Galaxy of Intrigue: desafios de perícia (CDs, efeitos e resultado)", async (
   assert.equal(SC.presetState("kessel").successesNeeded, 8);
 });
 
+/* ================= Jedi Academy Training Manual ================= */
+t("Jedi Academy: Body Control, Knowledge and Defense, White Current Adept, Psychic Citadel, Shard e lightfoil", async () => {
+  const { weaponProfileFrom } = await import("../module/rules/weapon.mjs");
+  const je = () => { const c = find(classes, "jedi"); c.system.hpRolls = [30]; c.system.isStartingClass = true; return c; };
+  const s = sys({ str: 10, dex: 14, con: 10, int: 10, wis: 16, cha: 16 });
+  s.skills = { useTheForce: { trained: true } };
+  const base = [find(species, "human"), je(), find(feats, "force-sensitivity")];
+  const b = computeActor(s, base);
+  const bc = computeActor(s, [...base, find(talents, "body-control")]);
+  assert.equal(bc.defenses.fortitude.total - b.defenses.fortitude.total, 3);
+  const ff = computeActor(s, base, { statuses: ["flatFooted"] });
+  const kd = computeActor(s, [...base, find(talents, "knowledge-and-defense")], { statuses: ["flatFooted"] });
+  assert.equal(kd.defenses.reflex.total - ff.defenses.reflex.total, 3);
+  const wc = computeActor(s, [...base, find(talents, "white-current-adept")]);
+  assert.equal(wc.skills.stealth.total, wc.skills.useTheForce.total);
+  const fa = find(classes, "force-adept"); fa.system.levels = 3;
+  const pc = computeActor(s, [...base, fa, find(talents, "psychic-citadel")]);
+  const pc0 = computeActor(s, [...base, fa]);
+  assert.equal(pc.defenses.will.total - pc0.defenses.will.total, 3);
+  assert.equal(computeActor(s, [find(species, "shard"), je()]).cybernetic, true);
+  const ctx = { abilities: { str: { mod: 0 }, dex: { mod: 0 } }, bab: 0, features: [], size: "medium" };
+  assert.equal(weaponProfileFrom(ctx, weapons.find(w => w.system.key === "lightfoil-modern")).light, true);
+  assert.equal(weaponProfileFrom(ctx, weapons.find(w => w.system.key === "lightsaber")).light, false);
+});
+
 console.log(`\n${n} testes passaram.`);

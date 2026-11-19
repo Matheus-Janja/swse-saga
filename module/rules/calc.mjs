@@ -232,6 +232,8 @@ export function computeActor(sys, items, opts = {}) {
   let dexToReflex = d.armor ? Math.min(refMod, d.armor.maxDex) : refMod;
   // Surpreso, indefeso, imobilizado: perde o bônus de Destreza (e de esquiva) na Reflexos
   if (st.noDex) dexToReflex = Math.min(dexToReflex, 0);
+  // Knowledge and Defense (Jedi Academy): sem Destreza, soma o bônus de Sabedoria
+  if (st.noDex && has("knowledge-and-defense")) dexToReflex += Math.max(0, d.abilities.wis.mod);
   let levelOrArmor = heroicLevel;
   if (d.armor) {
     const ab = d.armor.reflexBonus;
@@ -246,6 +248,8 @@ export function computeActor(sys, items, opts = {}) {
   // Resilient Strength (Galaxy at War): For ou Con na Fortitude
   let fortAbility = isDroid ? d.abilities.str.mod : d.abilities.con.mod;
   if (has("resilient-strength")) fortAbility = Math.max(fortAbility, d.abilities.str.mod);
+  // Body Control (Matukai): Carisma no lugar de Constituição
+  if (has("body-control") && !isDroid) fortAbility = Math.max(fortAbility, d.abilities.cha.mod);
   // Strength of Conviction (Zygerrian): Car no lugar de Sab; Force of Personality: o maior entre Sab e Car
   let willAbility = species?.system.key === "zygerrian" ? d.abilities.cha.mod : d.abilities.wis.mod;
   if (has("force-of-personality")) willAbility = Math.max(d.abilities.wis.mod, d.abilities.cha.mod);
@@ -311,7 +315,9 @@ export function computeActor(sys, items, opts = {}) {
   }
 
   // Talentos que usam Use the Force no lugar de outra perícia (e contam como treinados nela)
-  const FORCE_SUB = { "force-intuition": "initiative", "force-perception": "perception", "force-pilot": "pilot", "force-persuasion": "persuasion", "force-deception": "deception", "force-treatment": "treatInjury" };
+  const FORCE_SUB = { "force-intuition": "initiative", "force-perception": "perception", "force-pilot": "pilot", "force-persuasion": "persuasion", "force-deception": "deception", "force-treatment": "treatInjury",
+    // Jedi Academy: White Current Adept (Stealth) e Fluidity (Acrobatics)
+    "white-current-adept": "stealth", "fluidity": "acrobatics" };
   const utf = d.skills.useTheForce;
   for (const [talent, skill] of Object.entries(FORCE_SUB)) {
     if (!has(talent) || !utf.usable) continue;
@@ -396,7 +402,7 @@ export function computeActor(sys, items, opts = {}) {
   const cyber = items.filter(i => i.type === "equipment" && i.system.equipped && i.system.category === "cybernetic");
   const cyberParts = cyber.filter(i => i.system.special !== "ionShielding").length;
   const shielding = cyber.filter(i => i.system.special === "ionShielding").length;
-  d.cybernetic = cyberParts > 0 && shielding < cyberParts;
+  d.cybernetic = (cyberParts > 0 && shielding < cyberParts) || species?.system.key === "shard";
   d.naturalWeapon = species?.system.naturalWeapon || "";
 
   // --- Patente e Privilégio (Galaxy at War) ---

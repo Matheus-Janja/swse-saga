@@ -86,6 +86,8 @@ function dialogContent(actor, weapon, p) {
     ${check("skirmisher", "Skirmisher (+1)", has("skirmisher"))}
     ${p.melee && has("staggering-attack") ? row(`<label>Staggering Attack</label><select name="staggering"><option value="0">—</option><option value="2">−2 ataque / −2 perícias</option><option value="5">−5 ataque / −5 perícias</option></select>`) : ""}
     ${check("primeTarget", "Prime Targets (+1 dado)", p.lightsaber && has("prime-targets"))}
+    ${check("greatHunt", "Master of the Great Hunt (fera do lado sombrio: +1, +1 dado)", p.lightsaber && has("master-of-the-great-hunt"))}
+    ${check("aoo", "Ataque de oportunidade" + (String(weapon.system.special).includes("dueling") ? " (dueling lightsaber +1)" : ""), p.melee)}
     ${check("fleche", "Flèche (investida: 17+ natural é crítico)", p.melee && has("fleche"))}
     ${check("endGame", "End Game (Pistol Duelist: Limiar do alvo ÷2)", p.group === "pistols" && !p.melee && has("pistol-duelist"))}
     ${check("grazing", "Grazing Shot (marque 2 alvos: dano dividido)", !p.melee && has("grazing-shot"))}
@@ -248,6 +250,11 @@ export async function resolveAttack(actor, weapon, p, f) {
     }
     if (f.charge && has("reckless")) dmg.push(["Reckless", Math.max(1, abil.wis.mod)]);
     if (f.primeTarget) extraDice += 1;
+    if (f.greatHunt) { atk.push(["Master of the Great Hunt", 1]); extraDice += 1; }
+    if (f.aoo && String(weapon.system.special).includes("dueling")) atk.push(["Dueling Lightsaber", 1]);
+    // Shoto Focus: +2 com o shoto empunhando também um sabre de uma mão
+    if (String(weapon.system.special).includes("shoto") && has("shoto-focus")
+      && actor.items.filter(i => i.type === "weapon" && i.system.equipped && i.system.group === "lightsabers").length >= 2) atk.push(["Shoto Focus", 2]);
     if (f.echani) dmg.push(["Echani Training", Math.max(1, 2 * abil.str.mod) - (p.damageParts.ability || 0)]);
     if (f.terasKasi) thresholdExtra += 5;
     if (p.unarmed && has("hijkata-expertise") && abil.str.mod > 0) {
@@ -316,8 +323,12 @@ export async function resolveAttack(actor, weapon, p, f) {
 
   const attacks = [];
   for (let i = 0; i < nAttacks; i++) {
-    const useSecondHead = f.twoWeapon && i === nAttacks - 1 && weapon.system.double && weapon.system.damage2;
+    // Long Haft Strike (Jedi Academy): pike e long-handle viram armas duplas
+    const isDouble = weapon.system.double || (String(weapon.system.special).includes("longHaft") && has("long-haft-strike"));
+    const useSecondHead = f.twoWeapon && i === nAttacks - 1 && isDouble && weapon.system.damage2;
     let baseDice = addDice(useSecondHead ? weapon.system.damage2 : (damageOverride ?? unarmedDamage(actor, weapon)), extraDice);
+    // Brutal Unarmed Strike (Warden of the Sky): rerrola 1s no dano desarmado
+    if (p.unarmed && has("brutal-unarmed-strike")) baseDice = baseDice.replace(/^(\d+d\d+)/, "$1r1");
     // Sport Hunter: sporting blaster pistol rerrola 1s no dano
     if (weapon.system.key === "sporting-blaster-pistol" && has("sport-hunter")) baseDice = baseDice.replace(/^(\d+d\d+)/, "$1r1");
     const atkRoll = await new Roll(`1d20 ${signed(atkTotalBonus)}${miscAtk}${i === 0 ? fpTerm : ""}`).evaluate();
@@ -387,6 +398,15 @@ export async function resolveAttack(actor, weapon, p, f) {
     const temp = Math.max(mam >= 2 ? mam : 0, has("wrruushi-training") ? Math.max(0, abil.con.mod) : 0);
     if (temp) { await actor.gainTempHP(temp); notes.push(`${mam >= 2 ? "Tough as Durasteel" : "Wrruushi Training"}: +${temp} PV temporários`); }
   }
+  // Relentless Attack (Jedi Academy): ao errar com o grupo escolhido, +2 no próximo ataque contra o alvo
+  if (actor.isOwner && actor.featureChoices("relentless-attack").some(c => c === p.group || c === weapon.system.key)) {
+    const missed = attacks.flatMap(a => a.results).filter(r => !r.hit).map(r => r.name);
+    if (missed.length) {
+      await actor.addEffect({ name: `Relentless Attack (+2 vs ${[...new Set(missed)].join(", ")})`, img: "systems/swse-saga/assets/icons/status/buff.svg", rounds: 1, modifiers: [] });
+      notes.push(`Relentless Attack: +2 de competência no próximo ataque contra ${[...new Set(missed)].join(", ")} (some no campo de ataque).`);
+    }
+  }
+
   // --- Cartão de chat ---
   const partsLine = Object.entries(p.attackParts).filter(([, v]) => v).map(([k, v]) => `${L(`SWSE.Part.${k}`)} ${signed(v)}`)
     .concat(atk.map(([l, v]) => `${l} ${signed(v)}`)).join(", ");

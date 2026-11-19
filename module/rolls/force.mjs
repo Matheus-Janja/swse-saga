@@ -46,6 +46,11 @@ export async function useForcePower(actor, power) {
   if (res.take10 && canTake10) d20 = "10";
   else if (res.twice && canTwice && (await actor.spendForcePoint())) d20 = "2d20kh";
   let formula = `${d20} ${signed(actor.system.skills.useTheForce.total)}`;
+  // Regimes da Força (Jedi Academy): Regimen Aptitude +5; cadências de Vo'ren: −Dark Side Score
+  if (sys.descriptors.includes("regimen")) {
+    if (actor.hasFeature("regimen-aptitude")) formula += " + 5";
+    if (/cadence/.test(sys.key) && actor.system.darkSide.value) formula += ` - ${actor.system.darkSide.value}`;
+  }
   if (res.bonus) formula += ` ${/^[+-]/.test(res.bonus) ? res.bonus : "+" + res.bonus}`;
   if (res.forcePoint && canFP && (await actor.spendForcePoint())) formula += ` + ${actor.forcePointFormula}`;
   const roll = await new Roll(formula).evaluate();

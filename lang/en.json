@@ -305,7 +305,9 @@
       "lightSide": "Light Side",
       "darkSide": "Dark Side",
       "mindAffecting": "Mind-Affecting",
-      "telekinetic": "Telekinetic"
+      "telekinetic": "Telekinetic",
+      "lightsaberForm": "Lightsaber Form",
+      "regimen": "Regimen"
     },
     "TalentCategory": {
       "talent": "Talent",
@@ -941,7 +943,10 @@
       "WordOfWarningNote": "Choose an ally within 5 squares: once this encounter, as a reaction, their targeted defense uses your score.",
       "TakeThePainNote": "Reaction: when your protected ally would move down the condition track, you move down instead (adjust the tracks).",
       "TeamEffortNote": "Until the end of your next turn, enemies adjacent to you and your protected ally count as flanked (check Flanking on the attack).",
-      "EndGameNote": "Check \"End Game\" in the attack dialog: the target's Damage Threshold is halved for this attack."
+      "EndGameNote": "Check \"End Game\" in the attack dialog: the target's Damage Threshold is halved for this attack.",
+      "GuardianSpiritNote": "The spirit appears within 6 squares: while within 12 squares, +1 morale on attacks and +2 on Use the Force and Will until the end of the encounter.",
+      "ChannelVitalityNote": "−1 condition step: 1 temporary Force Point until the end of the turn.",
+      "UnswervingResolveNote": "The fear/mind-affecting effect failed: 1 temporary Force Point until the end of your next turn."
     },
     "Military": {
       "title": "Rank and Privilege (Galaxy at War)",

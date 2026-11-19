@@ -305,7 +305,9 @@
       "lightSide": "Lado Luminoso",
       "darkSide": "Lado Sombrio",
       "mindAffecting": "Afeta a mente",
-      "telekinetic": "Telecinético"
+      "telekinetic": "Telecinético",
+      "lightsaberForm": "Forma de Sabre",
+      "regimen": "Regime"
     },
     "TalentCategory": {
       "talent": "Talento",
@@ -941,7 +943,10 @@
       "WordOfWarningNote": "Escolha um aliado a até 5 quadrados: uma vez neste encontro, como reação, a defesa visada dele usa o valor da sua.",
       "TakeThePainNote": "Reação: quando o aliado protegido desceria na trilha de condição, você desce os passos no lugar dele (ajuste as trilhas).",
       "TeamEffortNote": "Até o fim do seu próximo turno, inimigos adjacentes a você e ao aliado protegido contam como flanqueados (marque Flanqueando no ataque).",
-      "EndGameNote": "Marque \"End Game\" no diálogo de ataque: o Limiar do alvo cai à metade para este ataque."
+      "EndGameNote": "Marque \"End Game\" no diálogo de ataque: o Limiar do alvo cai à metade para este ataque.",
+      "GuardianSpiritNote": "O espírito aparece a até 6 quadrados: com ele a até 12 quadrados, +1 de moral nos ataques e +2 em Use the Force e na Vontade até o fim do encontro.",
+      "ChannelVitalityNote": "−1 passo na trilha: 1 Ponto da Força temporário até o fim do turno (some ao gasto no campo de bônus).",
+      "UnswervingResolveNote": "O efeito de medo/afetar a mente falhou: 1 Ponto da Força temporário até o fim do seu próximo turno."
     },
     "Military": {
       "title": "Patente e Privilégio (Galaxy at War)",

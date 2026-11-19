@@ -73,7 +73,8 @@ export function weaponProfileFrom(ctx, weapon) {
   const wielder = sizeOrder(ctx.size ?? "medium");
   const wsize = sizeOrder(traits.size);
   const natural = isNatural(weapon);
-  const light = wsize < wielder || w.key === "unarmed";
+  // Lightfoils (Jedi Academy) podem ser tratados como armas Pequenas (leves)
+  const light = wsize < wielder || w.key === "unarmed" || String(w.special || "").includes("lightOption");
   const twoHanded = !natural && (wsize === wielder + 1 || !!w.twoHanded);
   const proficient = isProficientCtx(ctx, weapon);
   const str = ctx.abilities.str.mod;
