@@ -135,6 +135,7 @@ export class CharacterCreator extends HandlebarsApplicationMixin(ApplicationV2) 
         if (!doc) continue;
         const ok = checkPrereqs(profile, doc.system.prerequisites).ok;
         out.push({ doc, source: cls.name, ok });
+        if (ok) profile.feats.push({ key: doc.system.key });
       }
     }
     if (sp) {
@@ -219,7 +220,8 @@ export class CharacterCreator extends HandlebarsApplicationMixin(ApplicationV2) 
       case "skills": return s.trained.length > this.trainedAllowed() ? L("SWSE.CG.ErrTooManySkills") : (s.trained.length < this.trainedAllowed() ? "warn" : null);
       case "feats": {
         if (s.feats.length !== 1) return L("SWSE.CG.ErrFeat");
-        if (s.speciesFeats.length !== (this.species?.system.bonusFeatChoices ?? 0)) return L("SWSE.CG.ErrSpeciesFeat");
+        const n = this.species?.system.bonusFeatChoices ?? 0;
+        if (s.speciesFeats.length !== n) return game.i18n.format("SWSE.CG.ErrSpeciesFeatN", { n, have: s.speciesFeats.length });
         return null;
       }
       case "talent": return s.talent ? null : L("SWSE.CG.ErrTalent");
@@ -312,8 +314,12 @@ export class CharacterCreator extends HandlebarsApplicationMixin(ApplicationV2) 
       if (s.featFilter && enforcePrereqs()) list = list.filter(f => f.ok || f.selected);
       ctx.featList = list;
       ctx.speciesFeatSlots = this.species?.system.bonusFeatChoices ?? 0;
+      ctx.speciesFeatCount = s.speciesFeats.length;
+      ctx.levelFeatCount = s.feats.length;
       if (ctx.speciesFeatSlots) {
-        let list2 = annotate(this._data.feats, profile, { selected: s.speciesFeats.map(f => f.id), owned });
+        const allowed = this.species?.system.bonusFeatList ?? [];
+        const pool = allowed.length ? this._data.feats.filter(f => allowed.includes(f.system.key)) : this._data.feats;
+        let list2 = annotate(pool, profile, { selected: s.speciesFeats.map(f => f.id), owned });
         for (const f of list2) {
           const st = s.speciesFeats.find(x => x.id === f.id);
           if (st?.choice) f.choiceValue = st.choice;

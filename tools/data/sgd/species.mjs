@@ -30,8 +30,9 @@ export default [
   }),
   ch("Battle Droid", "chassis-battle", 4, {
     abilityMods: { dex: 2, int: -2 }, bonusFeatChoices: 2,
+    bonusFeatList: ["armor-proficiency-light", "armor-proficiency-medium", "armor-proficiency-heavy", "weapon-proficiency-simple", "weapon-proficiency-pistols", "weapon-proficiency-rifles", "weapon-proficiency-heavy", "weapon-proficiency-advanced-melee", "weapon-proficiency-lightsabers", "exotic-weapon-proficiency"],
     equipment: "locomoção andando, carapaça de plasteel (+2), processador básico, comlink interno, acesso travado, 2 mãos, vocabulador",
-    traits: [{ name: "Bonus Feats", text: "No 1º nível, escolhe um feat de Armor Proficiency e um de Weapon Proficiency cujos pré-requisitos cumpra (use as 2 escolhas de feat bônus da espécie para isso)." }]
+    traits: [{ name: "Bonus Feats", text: "No 1º nível, escolhe um feat de Armor Proficiency e um de Weapon Proficiency cujos pré-requisitos cumpra (as 2 escolhas de feat bônus da espécie mostram só esses feats)." }]
   }),
   ch("Labor Droid", "chassis-labor", 5, {
     abilityMods: { str: 2, int: -2 },
@@ -66,7 +67,7 @@ export default [
     ]
   }),
   ch("Protocol Droid", "chassis-protocol", 3, {
-    abilityMods: { wis: 2, cha: 2, dex: -2 }, autoTrained: ["persuasion"], bonusFeatChoices: 1,
+    abilityMods: { wis: 2, cha: 2, dex: -2 }, autoTrained: ["persuasion"], bonusFeatChoices: 1, bonusFeatList: ["skill-training"],
     equipment: "locomoção andando, processador básico, 2 mãos, vocabulador, tradutor (CD 10)",
     traits: [
       { name: "Hardwired Design (Persuasion)", text: "Treinado em Persuasion (automático)." },
@@ -74,7 +75,7 @@ export default [
     ]
   }),
   ch("Service Droid", "chassis-service", 3, {
-    abilityMods: { cha: 2, str: -2 }, bonusFeatChoices: 1,
+    abilityMods: { cha: 2, str: -2 }, bonusFeatChoices: 1, bonusFeatList: ["skill-training"],
     equipment: "locomoção andando, processador básico, 2 mãos, 1 suporte de ferramenta, vocabulador",
     traits: [{ name: "Bonus Feat", text: "Skill Training em Perception, Knowledge (bureaucracy) ou Knowledge (galactic lore) — use a escolha de feat bônus da espécie." }]
   })

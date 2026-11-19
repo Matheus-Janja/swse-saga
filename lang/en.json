@@ -578,10 +578,11 @@
       "ErrSpecies": "Choose a species.",
       "ErrClass": "Choose a class.",
       "ErrTooManySkills": "Too many trained skills.",
-      "ErrFeat": "Choose a feat.",
+      "ErrFeat": "Choose your 1st-level feat (\"1st-level feat\" list).",
       "ErrSpeciesFeat": "Choose the species bonus feat.",
       "ErrTalent": "Choose a talent.",
-      "ErrTooManyPowers": "Too many powers."
+      "ErrTooManyPowers": "Too many powers.",
+      "ErrSpeciesFeatN": "Choose {n} species bonus feat(s) (chosen: {have})."
     },
     "LU": {
       "Step": {

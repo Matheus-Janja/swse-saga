@@ -127,8 +127,18 @@
       <ul>{{#each autoFeats as |f|}}<li class="{{#unless f.ok}}struck{{/unless}}">{{f.name}} <small>({{f.source}}){{#unless f.ok}} — {{localize "SWSE.CG.PrereqNotMet"}}: {{f.missing}}{{/unless}}</small></li>{{/each}}</ul>
     </div>
     <label class="filter"><input type="checkbox" name="featFilter" {{checked state.featFilter}}> {{localize "SWSE.CG.OnlyAvailable"}}</label>
+    <h4>{{localize "SWSE.CG.LevelFeat"}} ({{levelFeatCount}}/1)</h4>
+    <ul class="pick-list">
+      {{#each featList as |f|}}
+      <li class="{{#if f.selected}}selected{{/if}} {{#unless f.ok}}unavailable{{/unless}}">
+        <a data-action="toggleFeat" data-id="{{f.id}}"><i class="fa-regular {{#if f.selected}}fa-square-check{{else}}fa-square{{/if}}"></i> {{f.name}}{{#if f.choiceValue}} ({{f.choiceValue}}){{/if}}</a>
+        <small>{{f.prereqText}}{{#if f.missing.length}} — <span class="warn">{{#each f.missing}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}</span>{{/if}}</small>
+        <a class="info" data-action="showItem" data-uuid="{{f.uuid}}"><i class="fa-solid fa-circle-info"></i></a>
+      </li>
+      {{/each}}
+    </ul>
     {{#if speciesFeatSlots}}
-    <h4>{{localize "SWSE.CG.SpeciesFeat"}} ({{speciesFeatSlots}})</h4>
+    <h4>{{localize "SWSE.CG.SpeciesFeat"}} ({{speciesFeatCount}}/{{speciesFeatSlots}})</h4>
     <ul class="pick-list">
       {{#each speciesFeatList as |f|}}
       <li class="{{#if f.selected}}selected{{/if}} {{#unless f.ok}}unavailable{{/unless}}">
@@ -139,16 +149,6 @@
       {{/each}}
     </ul>
     {{/if}}
-    <h4>{{localize "SWSE.CG.LevelFeat"}} (1)</h4>
-    <ul class="pick-list">
-      {{#each featList as |f|}}
-      <li class="{{#if f.selected}}selected{{/if}} {{#unless f.ok}}unavailable{{/unless}}">
-        <a data-action="toggleFeat" data-id="{{f.id}}"><i class="fa-regular {{#if f.selected}}fa-square-check{{else}}fa-square{{/if}}"></i> {{f.name}}{{#if f.choiceValue}} ({{f.choiceValue}}){{/if}}</a>
-        <small>{{f.prereqText}}{{#if f.missing.length}} — <span class="warn">{{#each f.missing}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}</span>{{/if}}</small>
-        <a class="info" data-action="showItem" data-uuid="{{f.uuid}}"><i class="fa-solid fa-circle-info"></i></a>
-      </li>
-      {{/each}}
-    </ul>
     {{/if}}
 
     {{!-- 6. TALENTO --}}

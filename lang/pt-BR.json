@@ -578,10 +578,11 @@
       "ErrSpecies": "Escolha uma espécie.",
       "ErrClass": "Escolha uma classe.",
       "ErrTooManySkills": "Perícias treinadas demais.",
-      "ErrFeat": "Escolha um feat.",
+      "ErrFeat": "Escolha o feat do 1º nível (lista \"Feat do 1º nível\").",
       "ErrSpeciesFeat": "Escolha o feat bônus da espécie.",
       "ErrTalent": "Escolha um talento.",
-      "ErrTooManyPowers": "Poderes demais."
+      "ErrTooManyPowers": "Poderes demais.",
+      "ErrSpeciesFeatN": "Escolha {n} feat(s) bônus da espécie (escolhidos: {have})."
     },
     "LU": {
       "Step": {

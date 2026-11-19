@@ -65,6 +65,7 @@ export class SpeciesData extends BaseItemData {
       primitive: new fields.BooleanField({ initial: false }),
       bonusFeats: strArray(),
       bonusFeatChoices: num(0),
+      bonusFeatList: strArray(),
       bonusTrainedSkills: num(0),
       autoTrained: strArray(),
       conditionalFeats: new fields.ArrayField(new fields.SchemaField({ skill: str(), feat: str("skill-focus") })),
