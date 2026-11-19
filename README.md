@@ -115,7 +115,8 @@ Conteúdo mecânico dos capítulos 1, 3, 4 e das feras do capítulo 6 (pastas "J
 - **Espécie Shard** (Iron Knights).
 - **Equipamento**: 11 variantes de sabre e outras armas (lightfoils contam como armas leves; guard shoto dá +2 em Block/Deflect; crossguard reduz a penalidade cumulativa de Block; pike e crossguard −2 em Deflect — tudo aplicado no botão de Block/Deflect), discblade, wan-shen, san-ni staff, armaduras Jedi e Sith, **28 cristais de sabre**, acessórios de sabre, holocrons, artefatos Sith, veneno Sith e a peste do droch.
 - **19 feras** ligadas à Força (battle hydra, beck-tori, chrysalis rancor, derriphan, droch, Dxun tomb beast, hssiss, marsh haunt, nighthunter, shyrack, silooth, Sith warbird, Sith wyrm, storm beast, taozin, terentatek, tuk'ata…), conferidas com os blocos do livro.
-- Fora dos compêndios: capítulos 2, 5 e 7 (filosofia, instrutores e ex-alunos famosos, intercâmbios) e os vilões do lado sombrio do capítulo 6.
+- **18 vilões do lado sombrio** (Azrakel, Blackguard, Brakiss, Carnor Jax, Freedon Nadd como espírito, Hethrir, Lord Nyax, Kueller, abominação Massassi, Nightsister, Profeta do Lado Sombrio, Sedriss, alunos da Academia das Sombras, Feiticeiro de Tund, Tamith Kai, Xanatos), com classes, talentos e poderes reais e valores conferidos com o livro; talentos de outros suplementos ainda não incluídos aparecem nas notas.
+- Fora dos compêndios: capítulos 2, 5 e 7 (filosofia, instrutores e ex-alunos famosos, intercâmbios).
 
 ### Compêndios
 Espécies (21, incluindo Aqualish, Hutt, Neimoidian e Yuuzhan Vong do Cap. 16), classes heroicas, de prestígio e não heroica, 69 feats, todas as árvores de talento do livro básico (classes, Força e prestígio), 16 poderes da Força, técnicas e segredos, armas, armaduras, equipamentos e macros. Erratas oficiais de out/2008 aplicadas.

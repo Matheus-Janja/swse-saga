@@ -11,8 +11,9 @@ import coreNpcs, { FOLDERS as CORE_FOLDERS } from "./data/npcs.mjs";
 import gawNpcs, { F as GAW_F } from "./data/gaw/npcs.mjs";
 import goiNpcs, { F as GOI_F } from "./data/goi/npcs.mjs";
 import jatmNpcs, { F as JATM_F } from "./data/jatm/npcs.mjs";
-const npcs = [...coreNpcs, ...gawNpcs, ...goiNpcs, ...jatmNpcs];
-const FOLDERS = [...CORE_FOLDERS, ...Object.values(GAW_F), ...Object.values(GOI_F), ...Object.values(JATM_F)];
+import jatmDark, { F as JATM_D } from "./data/jatm/darksiders.mjs";
+const npcs = [...coreNpcs, ...gawNpcs, ...goiNpcs, ...jatmNpcs, ...jatmDark];
+const FOLDERS = [...CORE_FOLDERS, ...Object.values(GAW_F), ...Object.values(GOI_F), ...Object.values(JATM_F), ...Object.values(JATM_D)];
 import { iconFor } from "./build-packs-icons.mjs";
 
 const ABIL = ["str", "dex", "con", "int", "wis", "cha"];
@@ -20,7 +21,7 @@ const clone = x => structuredClone(x);
 
 const TOKEN_SIZE = { fine: 0.5, diminutive: 0.5, tiny: 0.5, small: 1, medium: 1, large: 2, huge: 3, gargantuan: 4, colossal: 6 };
 const BEAST_FOLDERS = new Set(["Feras", GAW_F.beasts, GOI_F.beasts, JATM_F.beasts]);
-const HOSTILE = new Set(["Império Galáctico", "Fringe", ...BEAST_FOLDERS]);
+const HOSTILE = new Set(["Império Galáctico", "Fringe", JATM_D.darksiders, ...BEAST_FOLDERS]);
 const A = n => `systems/swse-saga/assets/icons/${n}.svg`;
 const IMG = { force: A("npc-force"), droid: A("npc-droid"), beast: A("npc-beast"), trooper: A("npc-trooper"), default: A("npc") };
 const TROOPERS = /trooper|stormtrooper/i;
@@ -72,6 +73,7 @@ export function buildNpcs(data, makeId, stats) {
 
     // Feats e talentos ("chave" ou "chave:escolha")
     const features = [];
+    const external = [];
     for (const spec of [...(npc.feats ?? []), ...(npc.tal ?? [])]) {
       const [key, choice] = spec.split(":");
       let doc = data.feats.find(f => f.system.key === key);
@@ -79,7 +81,11 @@ export function buildNpcs(data, makeId, stats) {
         const cands = data.talents.filter(t => t.system.key === key);
         doc = cands.find(t => choice && t.system.choice?.value === choice) ?? cands[0];
       }
-      if (!doc) { problems.push(`feat/talento ${spec}`); continue; }
+      if (!doc) {
+        // PdMs "lenient": talentos/feats de suplementos ainda não incluídos vão para as notas
+        if (npc.lenient) { external.push(spec.replace(/-/g, " ")); continue; }
+        problems.push(`feat/talento ${spec}`); continue;
+      }
       const it = clone(doc);
       if (choice) it.system.choice.value = choice;
       items.push(it);
@@ -165,7 +171,7 @@ export function buildNpcs(data, makeId, stats) {
       credits: 0,
       xp: 0,
       customModifiers: [],
-      details: { player: "", age: "", gender: "", height: "", weight: "", homeworld: "", languages: "", destiny: "", biography: npc.notes ?? "" },
+      details: { player: "", age: "", gender: "", height: "", weight: "", homeworld: "", languages: "", destiny: "", biography: (npc.notes ?? "") + (external.length ? `<p><strong>De outros suplementos (ainda não no compêndio):</strong> ${external.join(", ")}</p>` : "") },
       creationComplete: true,
       npcLevel: level,
       challengeLevel: npc.cl ?? 0
