@@ -260,6 +260,34 @@ SWSE.droidSystemCategories = {
   hardened: "SWSE.DroidCat.hardened", accessory: "SWSE.DroidCat.accessory"
 };
 SWSE.droidCostModes = { flat: "SWSE.Droid.Cost.flat", factor: "SWSE.Droid.Cost.factor", locomotion: "SWSE.Droid.Cost.locomotion", locoExtra: "SWSE.Droid.Cost.locoExtra", selfDestruct: "SWSE.Droid.Cost.selfDestruct" };
+/** Melhorias de equipamento (Scum and Villainy): chave -> {pts, cost, label}. */
+SWSE.weaponUpgrades = {
+  bayonetRing: { pts: 0, cost: "100% da arma", label: "Bayonet Ring" }, bipod: { pts: 0, cost: 100, label: "Bipod" },
+  doubleTrigger: { pts: 0, cost: 800, label: "Double Trigger (Careful Shot +2)" }, ionCharger: { pts: 1, cost: 3000, label: "Ion Charger (+2d6 íon)" },
+  missileLoad: { pts: 1, cost: 250, label: "Missile Load" }, neutronium: { pts: 1, cost: 3000, label: "Neutronium Reinforcement (crítico 19-20)" },
+  overload: { pts: 1, cost: 500, label: "Overload Switch" }, pulseCharger: { pts: 1, cost: 2000, label: "Pulse Charger (−1 ataque, +1/dado)" },
+  rangefinder: { pts: 1, cost: 200, label: "Rangefinder" }, rapidRecycler: { pts: 1, cost: 500, label: "Rapid Recycler (ganha automático)" },
+  retractableStock: { pts: 1, cost: 100, label: "Retractable Stock" }, slinker: { pts: 1, cost: 1000, label: "Slinker" },
+  sniperSwitch: { pts: 0, cost: 500, label: "Sniper Switch (tiro único)" }, scope: { pts: 0, cost: 100, label: "Targeting Scope" },
+  scopeLowLight: { pts: 0, cost: 1000, label: "Targeting Scope (low-light)" },
+  miniaturized: { pts: 1, cost: 500, label: "Miniaturized (−1 passo no dano corpo a corpo)" }, silverplate: { pts: 1, cost: 2500, label: "Silverplate" },
+  springLoaded: { pts: 0, cost: 300, label: "Spring Loaded" }, recognition: { pts: 1, cost: 200, label: "Recognition System" },
+  cloaked: { pts: 1, cost: 750, label: "Cloaked" }, extraPower: { pts: 1, cost: 200, label: "Extra Power Source" }
+};
+SWSE.armorUpgrades = {
+  aquatic: { pts: 1, cost: 500, label: "Aquatic Adaptation" }, armorplast: { pts: 0, cost: 900, label: "Armorplast" },
+  climbingClaws: { pts: 1, cost: 200, label: "Climbing Claws" }, diagnostics: { pts: 1, cost: 500, label: "Diagnostics System" },
+  environmental: { pts: 1, cost: 600, label: "Environmental Systems" }, gyro: { pts: 1, cost: 250, label: "Gyro (+5 contra ser derrubado)" },
+  helmet: { pts: 0, cost: 4000, label: "Helmet Package (+2 Perception)" }, holoshroud: { pts: 1, cost: 5000, label: "Holoshroud" },
+  integrated: { pts: 1, cost: 200, label: "Integrated Equipment" }, generator: { pts: 1, cost: 1000, label: "Internal Generator" },
+  jumpServos: { pts: 1, cost: 100, label: "Jump Servos" }, exoskeleton: { pts: 2, cost: 4000, label: "Powered Exoskeleton" },
+  radiation: { pts: 1, cost: 400, label: "Radiation Shielding" }, rangefinder: { pts: 1, cost: 500, label: "Rangefinder" },
+  readyHarness: { pts: 1, cost: 500, label: "Ready Harness" }, repulsorlift: { pts: 1, cost: 1000, label: "Repulsorlift" },
+  shadowskin: { pts: 1, cost: 5000, label: "Shadowskin (+5 Stealth)" }, reflec: { pts: 1, cost: 20000, label: "Shadowskin, reflec (+10 Stealth)" },
+  shield5: { pts: 2, cost: 5000, label: "Shield Generator SR 5" }, shield10: { pts: 3, cost: 10000, label: "Shield Generator SR 10" },
+  shockweb: { pts: 1, cost: 6000, label: "Shockweb" }, vacuum: { pts: 0, cost: 2000, label: "Vacuum Seals" },
+  vacuumImproved: { pts: 1, cost: 5000, label: "Vacuum Seals (improved)" }, weaponMount: { pts: 1, cost: 1000, label: "Weapon Mount" }
+};
 SWSE.vehicleStations = { pilot: "SWSE.Role.pilot", copilot: "SWSE.Role.copilot", gunner: "SWSE.Role.gunner" };
 
 /** Familiaridade com armas por espécie (errata): chave da espécie -> chave da arma -> grupo. */

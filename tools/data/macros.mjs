@@ -45,6 +45,12 @@ game.swse.artilleryStrike(actor);`),
   M("Desafio de Perícia", "icons/sundries/gaming/dice-runed-brown.webp",
 `// Galaxy of Intrigue: abre o rastreador de desafios de perícia (o Mestre monta e registra; jogadores acompanham).
 game.swse.skillChallenge();`),
+  M("Feromônios Falleen", "icons/magic/air/fog-gas-smoke-green.webp",
+`// Scum and Villainy: marque o alvo adjacente e use com o token Falleen selecionado.
+const actor = canvas.tokens.controlled[0]?.actor ?? game.user.character;
+const sp = actor?.items.find(i => i.type === "species");
+if (!sp) return ui.notifications.warn("Selecione um token.");
+sp.use();`),
   M("Subir de Nível", "icons/magic/symbols/chevron-elipse-circle-blue.webp",
 `const actor = canvas.tokens.controlled[0]?.actor ?? game.user.character;
 if (!actor) return ui.notifications.warn("Selecione um token ou defina seu personagem.");

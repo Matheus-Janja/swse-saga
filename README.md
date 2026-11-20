@@ -127,6 +127,16 @@ Conteúdo mecânico dos capítulos 1, 3, 4 e das feras do capítulo 6 (pastas "J
 - Fora dos compêndios: traços de fabricantes, tabela de peculiaridades (quirks) e o capítulo 2 (aconselhamento ao Mestre) — servem como referência de mesa.
 - Melhoria geral: o assistente agora oferece todas as árvores de talentos da Força dos suplementos (Guardian Spirit e as tradições) para personagens sensíveis à Força.
 
+### Suplemento: Scum and Villainy
+- **8 espécies** (Blood Carver, Clawdite, Falleen, Gand, Jawa, Ryn, Toydarian, Ubese): *Hardy* do Gand no second wind, *Deathstrike* do Blood Carver no ataque, *Scavenger* do Jawa, e os **feromônios Falleen** (usar o item de espécie ou a macro rola o ataque contra a Fortitude e aplica o passo na trilha).
+- **4 classes de prestígio**: Assassin, Charlatan, Master Privateer e Outlaw, com as árvores Assassin, GenoHaradan, Trickery, Piracy e Outlaw.
+- **Talentos**: árvore Disgrace (Noble), talentos novos em Inspiration, Fortune, Misfortune, Slicer, Spacer, Camouflage, Fringer, Brawler e Weapon Specialist, e árvores de prestígio Blockade Runner, Gand Findsman, Pistoleer e novos em Bounty Hunter, Infamy, Mastermind e Gunslinger. Automáticos: *Cantina Brawler*, *Sniping Assassin*, *Twin Shot*, *Advantageous Positioning*; botões ⚡ para *Castigate*, *Dirty Tactics*, *Better Lucky than Dead*, *Hesitate*, *Hunker Down*, *Innocuous*, *Preternatural Senses*, *Inspire Wrath*, *Burst of Speed* e *Stay Up*.
+- **28 feats** (incluindo os de metamorfo dos Clawdite).
+- **Melhorias de equipamento**: armas e armaduras ganharam espaços de melhoria e uma lista de upgrades na ficha do item; *Pulse Charger*, *Neutronium Reinforcement*, *Double Trigger*, *Rapid Recycler*, *Sniper Switch*, *Miniaturized*, *Shadowskin*, *Helmet Package* e *Shield Generator* são aplicados automaticamente.
+- **Equipamento**: armaduras (beskar'gam, GTU, Krail 210, shadowsuit...), armas (pulse rifle, deck sweeper, snare rifle, sniper blaster rifle...) e equipamentos de contrabando.
+- **PdMs**: os personagens notórios do Cap. 4 (BoShek, Booster Terrik, Boushh, Jodo Kast, Jorj Car'das, Mirax Terrik, Moxin Tark, Príncipe Xizor, Snoova, Tyber Zann, Zam Wesell, Zardra, Zuckuss) e 10 arquétipos, conferidos com o livro.
+- Fora dos compêndios: Cap. 3 (campanhas de crime, regras de prisão), naves não confiáveis/emplacement points (dependem do Starships of the Galaxy) e o capítulo de aventuras.
+
 ### Compêndios
 Espécies (21, incluindo Aqualish, Hutt, Neimoidian e Yuuzhan Vong do Cap. 16), classes heroicas, de prestígio e não heroica, 69 feats, todas as árvores de talento do livro básico (classes, Força e prestígio), 16 poderes da Força, técnicas e segredos, armas, armaduras, equipamentos e macros. Erratas oficiais de out/2008 aplicadas.
 

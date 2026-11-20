@@ -1072,6 +1072,12 @@
       "Recurring": "Poisons attack every round (or day, for diseases) until treated: use the item again.",
       "Spice": "Instant second wind (+{heal} HP), +1 condition step and +5 Damage Threshold for 1 hour. Afterward: −5 Wisdom for 4 hours."
     },
-    "DroidOnly": "Droid"
+    "DroidOnly": "Droid",
+    "Upgrades": {
+      "title": "Upgrades",
+      "slots": "slots",
+      "over": "slots exceeded!",
+      "hint": "Scum and Villainy: each weapon or armor has 1 slot (powered armor, 2). Gain slots by stripping or increasing size. Pulse Charger, Neutronium, Double Trigger, Rapid Recycler, Sniper Switch, Miniaturized, Shadowskin, Helmet Package and Shield Generator are automatic."
+    }
   }
 }

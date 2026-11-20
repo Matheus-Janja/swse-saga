@@ -60,7 +60,9 @@ const PASSIVE_AUTO = new Set(["force-intuition", "force-perception", "force-pilo
   "body-control", "knowledge-and-defense", "white-current-adept", "fluidity", "psychic-citadel", "shoto-focus", "master-of-the-great-hunt",
   "brutal-unarmed-strike", "long-haft-strike", "relentless-attack", "regimen-aptitude", "lightsaber-specialist",
   // Scavenger's Guide to Droids
-  "aiming-accuracy", "pinpoint-accuracy", "slammer", "mechanical-martial-arts", "ion-shielding", "science-analyzer", "heavy-duty-actuators"]);
+  "aiming-accuracy", "pinpoint-accuracy", "slammer", "mechanical-martial-arts", "ion-shielding", "science-analyzer", "heavy-duty-actuators",
+  // Scum and Villainy
+  "cantina-brawler", "sniping-assassin", "twin-shot", "advantageous-positioning"]);
 function markAutomation(data) {
   const key = data.system.key;
   const d = data.system.description ?? "";

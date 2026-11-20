@@ -198,7 +198,9 @@ export class WeaponData extends PhysicalItemData {
       critMultiplier: num(2),
       ammo: new fields.SchemaField({ value: num(0), max: num(0) }),
       special: str(),
-      settings: str()
+      settings: str(),
+      upgradeSlots: num(1),
+      upgrades: strArray()
     };
   }
 }
@@ -213,7 +215,9 @@ export class ArmorData extends PhysicalItemData {
       maxDex: num(5),
       droid: new fields.BooleanField({ initial: false }),
       costBase: num(0),
-      special: str()
+      special: str(),
+      upgradeSlots: num(1),
+      upgrades: strArray()
     };
   }
 }

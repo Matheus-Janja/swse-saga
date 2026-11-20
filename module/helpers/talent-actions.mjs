@@ -347,6 +347,46 @@ export const TALENT_ACTIONS = {
     await actor.shiftCondition(n);
     chat(actor, `<h3>Weapons Power Surge</h3><p>+${n} dado(s) no próximo dano com a arma montada (some no campo de dano extra, ex.: +${n}d8).</p>`);
   },
+  /* ================= Scum and Villainy ================= */
+  castigate: async actor => {
+    const hits = await skillVsDefense(actor, "persuasion", "will", "Castigate");
+    for (const t of hits ?? []) await requestEffect(t, { name: `Castigate (${actor.name})`, img: ICON("debuff"), rounds: 1, modifiers: [mod("defenses.all", -2, "penalty")] });
+  },
+  "dirty-tactics": async actor => {
+    const names = await applyTo([actor, ...targetsActors()], { name: "Dirty Tactics (flanquear dá +4)", img: ICON("buff"), rounds: ENCOUNTER() });
+    chat(actor, `<h3>Dirty Tactics</h3><p>${F("SWSE.Talent.AppliedTo", { names })} Flanqueando, use +4 (some +2 no campo de bônus).</p>`);
+  },
+  "better-lucky-than-dead": async actor => {
+    const c = await choose("Better Lucky than Dead", DEFENSES());
+    if (c) await actor.addEffect({ name: "Better Lucky than Dead", img: ICON("defensive"), rounds: 0, modifiers: [mod(`defenses.${c}`, 5, "luck")] });
+  },
+  hesitate: async actor => {
+    const hits = await skillVsDefense(actor, "persuasion", "will", "Hesitate");
+    for (const t of hits ?? []) await requestEffect(t, { name: `Hesitate (${actor.name}): ação padrão custa também a rápida`, img: ICON("debuff"), rounds: 1, modifiers: [mod("speed", -2, "penalty")] });
+  },
+  "hunker-down": async actor => {
+    const imp = actor.statuses?.has("improvedCover");
+    if (!imp && !actor.statuses?.has("cover")) return ui.notifications.warn(L("SWSE.Talent.NeedCover"));
+    await actor.addEffect({ name: "Hunker Down", img: ICON(imp ? "total-defense" : "improved-cover"), rounds: 0, statuses: [imp ? "totalConcealment" : "improvedCover"] });
+  },
+  innocuous: async actor => {
+    const res = await skillVsDefense(actor, "deception", "will", "Innocuous");
+    for (const t of res ?? []) await requestEffect(t, { name: `Innocuous: −5 nos ataques contra ${actor.name}`, img: ICON("debuff"), rounds: 1 });
+  },
+  "preternatural-senses": async actor => {
+    const c = await choose("Preternatural Senses", DEFENSES());
+    const n = Math.floor(actor.classLevel("outlaw") / 2);
+    if (c) await actor.addEffect({ name: `Preternatural Senses (+${n})`, img: ICON("defensive"), rounds: 0, modifiers: [mod(`defenses.${c}`, n)] });
+  },
+  "inspire-wrath": async actor => {
+    const t = targetsActors()[0];
+    if (!t) return ui.notifications.warn(L("SWSE.Talent.NeedTarget"));
+    chat(actor, `<h3>Inspire Wrath</h3><p>Aliados que virem ${t.name} recebem +2 de moral em ataques e perícias contra ele.</p>`);
+  },
+  "burst-of-speed": async actor => { await actor.shiftCondition(1); chat(actor, "<h3>Burst of Speed</h3><p>Move até o dobro do deslocamento; −1 passo na trilha.</p>"); },
+  "stay-up": async actor => { await actor.shiftCondition(1); chat(actor, "<h3>Stay Up</h3><p>Sofre só metade do dano deste ataque (aplique o dano pela metade) e desce −1 passo.</p>"); },
+  pheromones: actor => falleenPheromones(actor),
+
   "just-a-scratch": async actor => {
     const n = actor.system.defenses.fortitude.total;
     await actor.addEffect({ name: `Just a Scratch (RD ${n} contra um ataque)`, img: ICON("total-defense"), rounds: 0, modifiers: [mod("damageReduction", n)] });
@@ -489,6 +529,20 @@ export const TALENT_ACTIONS = {
     chat(actor, `<h3>Keep Them Honest</h3><p>${F("SWSE.Talent.AppliedTo", { names: names || "—" })}</p>`);
   }
 };
+
+/** Feromônios Falleen: ataque (nível + Car) contra a Fortitude de um alvo adjacente; −1 passo se acertar. */
+async function falleenPheromones(actor) {
+  const targets = targetsActors();
+  if (!targets.length) return ui.notifications.warn(L("SWSE.Talent.NeedTarget"));
+  const roll = await new Roll(`1d20 + ${(actor.system.level || 0) + actor.system.abilities.cha.mod}`).evaluate();
+  const rows = [];
+  for (const t of targets) {
+    const ok = roll.total >= (t.system.defenses?.fortitude?.total ?? 10);
+    if (ok) await shiftTarget(t, 1);
+    rows.push(`<li class="${ok ? "hit" : "miss"}">${t.name}: ${ok ? "−1 passo (em −5 passos, fica amistoso em vez de inconsciente)" : "imune por 24 h"}</li>`);
+  }
+  ChatMessage.create({ speaker: ChatMessage.getSpeaker({ actor }), rolls: [roll], content: `<div class="swse-card talent-card"><h3>Feromônios Falleen</h3>${await roll.render()}<ul>${rows.join("")}</ul></div>` });
+}
 
 /** Savants (Jedi Academy): devolve ao conjunto um poder gasto com o descritor. */
 async function recoverPower(actor, descriptor, name) {

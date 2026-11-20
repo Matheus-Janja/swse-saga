@@ -150,7 +150,15 @@ export function computeActor(sys, items, opts = {}) {
   for (const f of feats) pushItemMods(f);
   for (const t of talents) pushItemMods(t);
   for (const it of items.filter(i => ["equipment", "weapon"].includes(i.type))) pushItemMods(it, !!it.system.equipped);
-  for (const a of armors) pushItemMods(a);
+  for (const a of armors) {
+    pushItemMods(a);
+    // Melhorias de armadura (Scum and Villainy)
+    const up = new Set(a.system.upgrades ?? []);
+    const src = `${a.name} (melhoria)`;
+    if (up.has("reflec")) rawMods.push({ target: "skills.stealth", value: 10, type: "equipment", source: src });
+    else if (up.has("shadowskin")) rawMods.push({ target: "skills.stealth", value: 5, type: "equipment", source: src });
+    if (up.has("helmet")) rawMods.push({ target: "skills.perception", value: 2, type: "equipment", source: src });
+  }
   const droidSystems = byType("droidSystem");
   for (const s of droidSystems) pushItemMods(s);
   // Status (condições de combate) e efeitos ativos (buffs temporários)
@@ -289,7 +297,8 @@ export function computeActor(sys, items, opts = {}) {
   const sysKeys = new Set(droidSystems.map(s => s.system.key));
   const basicProcessor = isDroid && sysKeys.has("basic-processor") && !sysKeys.has("heuristic-processor");
   d.droidAppendage = bestAppendage(droidSystems.map(s => s.system.appendage).filter(Boolean));
-  d.shieldRatingMax = Math.max(0, ...droidSystems.map(s => Number(s.system.shieldRating) || 0));
+  d.shieldRatingMax = Math.max(0, ...droidSystems.map(s => Number(s.system.shieldRating) || 0),
+    ...armors.map(a => (a.system.upgrades ?? []).includes("shield10") ? 10 : (a.system.upgrades ?? []).includes("shield5") ? 5 : 0));
   const focus = new Set(choicesOf("skill-focus"));
   const training = new Set([...choicesOf("skill-training"), ...(species?.system.autoTrained ?? [])]);
   for (const [key, cfg] of Object.entries(SWSE.skills)) {
@@ -393,6 +402,8 @@ export function computeActor(sys, items, opts = {}) {
     heal: Math.max(Math.floor(d.hpMax / 4), d.abilities.con.total)
       // Sturdy (Herglic, Galaxy of Intrigue): +5 + ½ nível
       + (species?.system.key === "herglic" ? 5 + d.halfLevel : 0)
+      // Hardy (Gand, Scum and Villainy): +5 + nível de personagem
+      + (species?.system.key === "gand" ? 5 + d.level : 0)
   };
 
   // --- Perícias treinadas permitidas (para validação no assistente) ---

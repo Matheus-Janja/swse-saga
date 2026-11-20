@@ -136,6 +136,15 @@
       <label><input type="checkbox" name="system.ignoresDR" {{checked system.ignoresDR}}> {{localize "SWSE.Weapon.ignoresDR"}}</label>
       <label><input type="checkbox" name="system.equipped" {{checked system.equipped}}> {{localize "SWSE.Equipped"}}</label>
     </div>
+  {{#if upgradeList}}
+  <details class="upgrades" {{#if system.upgrades.length}}open{{/if}}>
+    <summary>{{localize "SWSE.Upgrades.title"}} ({{upgradeUsed}}/<input type="number" name="system.upgradeSlots" value="{{system.upgradeSlots}}" class="short"> {{localize "SWSE.Upgrades.slots"}}){{#if upgradeOver}} <span class="warn">{{localize "SWSE.Upgrades.over"}}</span>{{/if}}</summary>
+    <p class="hint">{{localize "SWSE.Upgrades.hint"}}</p>
+    <div class="checks upgrade-checks">
+      {{#each upgradeList as |u|}}<label data-tooltip="{{u.pts}} pt · {{u.cost}} cr"><input type="checkbox" name="_up.{{u.key}}" {{checked u.on}}> {{u.label}}</label>{{/each}}
+    </div>
+  </details>
+  {{/if}}
   {{/if}}
 
   {{#if isType.vehicleWeapon}}
@@ -188,6 +197,15 @@
       <label><input type="checkbox" name="system.equipped" {{checked system.equipped}}> {{localize "SWSE.Equipped"}}</label>
       <label><input type="checkbox" name="system.droid" {{checked system.droid}}> {{localize "SWSE.Droid.BuiltIn"}}</label>
     </div>
+  {{#if upgradeList}}
+  <details class="upgrades" {{#if system.upgrades.length}}open{{/if}}>
+    <summary>{{localize "SWSE.Upgrades.title"}} ({{upgradeUsed}}/<input type="number" name="system.upgradeSlots" value="{{system.upgradeSlots}}" class="short"> {{localize "SWSE.Upgrades.slots"}}){{#if upgradeOver}} <span class="warn">{{localize "SWSE.Upgrades.over"}}</span>{{/if}}</summary>
+    <p class="hint">{{localize "SWSE.Upgrades.hint"}}</p>
+    <div class="checks upgrade-checks">
+      {{#each upgradeList as |u|}}<label data-tooltip="{{u.pts}} pt · {{u.cost}} cr"><input type="checkbox" name="_up.{{u.key}}" {{checked u.on}}> {{u.label}}</label>{{/each}}
+    </div>
+  </details>
+  {{/if}}
   {{/if}}
 
   {{#if (or isType.weapon isType.armor isType.equipment isType.droidSystem)}}

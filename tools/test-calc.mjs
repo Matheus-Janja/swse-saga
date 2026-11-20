@@ -456,4 +456,27 @@ t("Scavenger's Guide: chassis com perícia embutida, Science Analyzer, Heavy-Dut
   assert.equal(checkPrereqs({ ...prof, droid: true, locomotion: new Set(["hovering"]) }, find(feats, "erratic-target").system.prerequisites).ok, true);
 });
 
+/* ================= Scum and Villainy ================= */
+t("Scum and Villainy: melhorias de armas/armaduras, Gand Hardy e classes de prestígio", async () => {
+  const { weaponProfileFrom, unarmedDamageCtx } = await import("../module/rules/weapon.mjs");
+  const ctx = { abilities: { str: { mod: 0 }, dex: { mod: 0 } }, bab: 0, features: [], size: "medium" };
+  const rifle = structuredClone(weapons.find(w => w.system.key === "blaster-rifle"));
+  rifle.system.upgrades = ["pulseCharger"];
+  const p = weaponProfileFrom(ctx, rifle);
+  assert.equal(p.attackParts.weapon, -1);
+  assert.equal(p.damageParts.weapon, 3);
+  const vb = structuredClone(weapons.find(w => w.system.key === "vibroblade"));
+  vb.system.upgrades = ["neutronium", "miniaturized"];
+  assert.equal(weaponProfileFrom(ctx, vb).critRange, 19);
+  assert.equal(unarmedDamageCtx(ctx, vb), "2d4");
+  const sc = find(classes, "scout"); sc.system.hpRolls = [24]; sc.system.isStartingClass = true;
+  const s = sys({ str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10 });
+  const ar = structuredClone(armor_("half-vest")); ar.system.equipped = true; ar.system.upgrades = ["shadowskin", "shield5"];
+  const g = computeActor(s, [find(species, "gand"), sc, ar]);
+  assert.equal(g.secondWind.heal, 10 + 5 + 1);
+  assert.equal(g.skills.stealth.parts.mods, 5);
+  assert.equal(g.shieldRatingMax, 5);
+  for (const k of ["assassin", "charlatan", "master-privateer", "outlaw"]) assert.ok(find(classes, k)?.system.talentTrees.length >= 3, k);
+});
+
 console.log(`\n${n} testes passaram.`);

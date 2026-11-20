@@ -51,6 +51,8 @@ export function weaponTraits(ctx, weapon) {
   const w = weapon.system;
   const k = w.key;
   const out = { accurate: !!w.accurate, inaccurate: !!w.inaccurate, size: w.size, canBrace: false, notes: [] };
+  const up = new Set(w.upgrades ?? []);
+  if (up.size) out.notes.push(`Melhorias: ${[...up].join(", ")}`);
   if (ctxHas(ctx, "pistoleer")) {
     if (k === "blaster-pistol") { out.accurate = true; out.notes.push("Pistoleer"); }
     if (k === "heavy-blaster-pistol") { out.inaccurate = false; out.notes.push("Pistoleer"); }
@@ -107,7 +109,7 @@ export function weaponProfileFrom(ctx, weapon) {
     armor: ctx.armorPenalty ?? 0,
     condition: ctx.conditionPenalty ?? 0,
     mods: m("attack.all") + m(melee ? "attack.melee" : "attack.ranged"),
-    weapon: w.attackBonus || 0,
+    weapon: (w.attackBonus || 0) + ((w.upgrades ?? []).includes("pulseCharger") ? -1 : 0),
     grabbed: ctx.grabbed && !natural && !light ? -2 : 0
   };
   const damageParts = {
@@ -118,20 +120,22 @@ export function weaponProfileFrom(ctx, weapon) {
     meleeSmash: melee && ctxHas(ctx, "melee-smash") ? 1 : 0,
     trustySidearm: group === "pistols" ? Math.floor((ctx.classLevels?.gunslinger ?? 0) / 2) : 0,
     mods: m("damage.all") + m(melee ? "damage.melee" : "damage.ranged"),
-    weapon: w.damageBonus || 0
+    weapon: (w.damageBonus || 0) + ((w.upgrades ?? []).includes("pulseCharger") ? (Number(/^(\d+)d/.exec(w.damage || "")?.[1]) || 0) : 0)
   };
   const sum = o => Object.values(o).reduce((a, b) => a + b, 0);
   const unarmedish = natural || ["combat-gloves", "shockboxing-gloves"].includes(w.key);
   let critRange = lightsaber && ctxHas(ctx, "vaapad") ? Math.min(19, w.critRange || 20) : (w.critRange || 20);
   if (unarmedish && ctxHas(ctx, "echani-expertise")) critRange = Math.min(critRange, 19);
+  if (melee && (w.upgrades ?? []).includes("neutronium") && ["slashing", "piercing"].includes(w.damageType)) critRange = Math.min(critRange, 19);
   return {
     melee, group, light, twoHanded, proficient, lightsaber, atkAbility, dmgAbilityLabel, unarmed: unarmedish,
     accurate: traits.accurate, inaccurate: traits.inaccurate, canBrace: traits.canBrace, traitNotes: traits.notes,
     attackParts, damageParts,
     attackBonus: sum(attackParts),
     damageBonus: sum(damageParts),
-    autofire: /A/.test(w.rateOfFire || ""),
-    autofireOnly: (w.rateOfFire || "").trim() === "A",
+    autofire: /A/.test(w.rateOfFire || "") || (w.upgrades ?? []).includes("rapidRecycler"),
+    autofireOnly: (w.rateOfFire || "").trim() === "A" && !(w.upgrades ?? []).includes("sniperSwitch"),
+    upgrades: w.upgrades ?? [],
     critRange,
     critMultiplier: matches(ctx, "triple-crit", weapon) ? 3 : (w.critMultiplier || 2),
     thresholdReduction: matches(ctx, "greater-devastating-attack", weapon) ? 10 : matches(ctx, "devastating-attack", weapon) ? 5 : 0,
@@ -154,6 +158,10 @@ export function unarmedDamageCtx(ctx, weapon) {
   const k = weapon.system.key;
   if (!["unarmed", "combat-gloves", "shockboxing-gloves"].includes(k)) {
     let dmg = weapon.system.damage;
+    if ((weapon.system.upgrades ?? []).includes("miniaturized") && weapon.system.rangeType === "melee") {
+      const STEP = { 12: 10, 10: 8, 8: 6, 6: 4, 4: 3, 3: 2 };
+      dmg = dmg.replace(/d(\d+)/, (m, d) => `d${STEP[d] ?? d}`);
+    }
     const die = (from, to) => { dmg = dmg.replace(new RegExp(`d${from}(?!\\d)`), `d${to}`); };
     if (k === "heavy-blaster-rifle" && ctxHas(ctx, "riflemaster")) die(10, 12);
     if (k === "slugthrower-rifle" && ctxHas(ctx, "sport-hunter")) die(8, 12);

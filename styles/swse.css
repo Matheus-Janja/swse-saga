@@ -320,3 +320,6 @@
 .skill-challenge .sc-log li.failure { color: var(--swse-red); }
 .swse-card.challenge-card .success { color: #2e8b57; }
 .swse-card.challenge-card .failure { color: #c0392b; }
+
+.swse .upgrades summary { cursor: pointer; font-weight: bold; margin: 6px 0; }
+.swse .upgrades .upgrade-checks { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 2px 8px; }

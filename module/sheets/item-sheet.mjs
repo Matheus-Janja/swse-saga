@@ -66,6 +66,14 @@ export class SWSEItemSheet extends HandlebarsApplicationMixin(foundry.applicatio
     const TextEditor = foundry.applications.ux.TextEditor.implementation;
     context.enrichedDescription = await TextEditor.enrichHTML(sys.description ?? "", { relativeTo: item, secrets: item.isOwner });
     context.descriptionField = sys.schema.getField("description");
+    // Melhorias (Scum and Villainy)
+    const ups = item.type === "weapon" ? SWSE.weaponUpgrades : item.type === "armor" ? SWSE.armorUpgrades : null;
+    if (ups) {
+      const have = new Set(sys.upgrades ?? []);
+      context.upgradeList = Object.entries(ups).map(([k, u]) => ({ key: k, label: u.label, pts: u.pts, cost: u.cost, on: have.has(k) }));
+      context.upgradeUsed = [...have].reduce((a, k) => a + (ups[k]?.pts ?? 0), 0);
+      context.upgradeOver = context.upgradeUsed > (sys.upgradeSlots ?? 1);
+    }
     return context;
   }
 
@@ -79,6 +87,8 @@ export class SWSEItemSheet extends HandlebarsApplicationMixin(foundry.applicatio
       if (raw !== undefined) foundry.utils.setProperty(data, `system.${f}`, String(raw).split(",").map(s => s.trim()).filter(Boolean));
     }
     delete data._list;
+    // Melhorias marcadas (Scum and Villainy)
+    if (data._up) { foundry.utils.setProperty(data, "system.upgrades", Object.entries(data._up).filter(([, v]) => v).map(([k]) => k)); delete data._up; }
     return fixArrayFields(data, this.item, ["system.modifiers", "system.dcs", "system.traits", "system.rerolls", "system.conditionalFeats", "system.features"]);
   }
 

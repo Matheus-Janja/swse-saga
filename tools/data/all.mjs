@@ -29,14 +29,24 @@ import sgdSpecies from "./sgd/species.mjs";
 import sgdFeats from "./sgd/feats.mjs";
 import sgdTalents from "./sgd/talents.mjs";
 import * as sgdSystems from "./sgd/systems.mjs";
+// Scum and Villainy
+import snvSpecies from "./snv/species.mjs";
+import snvClasses from "./snv/classes.mjs";
+import snvFeats from "./snv/feats.mjs";
+import snvTalents, { CLASS_TREES as SNV_TREES } from "./snv/talents.mjs";
+import * as snvGear from "./snv/gear.mjs";
 export const extraDroidSystems = [...sgdSystems.systems, ...sgdSystems.armor];
 
-export const species = [...coreSpecies, ...gawSpecies, ...goiSpecies, ...jatmSpecies, ...sgdSpecies];
-export const classes = [...patchClassesJATM(patchClassesGoI(patchCoreClasses(coreClasses))), ...gawClasses];
-export const feats = [...coreFeats, ...gawFeats, ...goiFeats, ...jatmFeats, ...sgdFeats];
-export const talents = [...coreTalents, ...gawTalents, ...goiTalents, ...jatmTalents, ...sgdTalents];
+export const species = [...coreSpecies, ...gawSpecies, ...goiSpecies, ...jatmSpecies, ...sgdSpecies, ...snvSpecies];
+export const classes = [...patchClassesJATM(patchClassesGoI(patchCoreClasses(coreClasses))), ...gawClasses, ...snvClasses].map(c => {
+  const t = SNV_TREES[c.system.key];
+  if (t && c.system.source !== "Scum and Villainy") c.system.talentTrees = [...new Set([...c.system.talentTrees, ...t])];
+  return c;
+});
+export const feats = [...coreFeats, ...gawFeats, ...goiFeats, ...jatmFeats, ...sgdFeats, ...snvFeats];
+export const talents = [...coreTalents, ...gawTalents, ...goiTalents, ...jatmTalents, ...sgdTalents, ...snvTalents];
 export const forcePowers = [...corePowers, ...jatmPowers];
-export const weapons = [...coreGear.weapons, ...gawGear.weapons, ...goiGear.weapons, ...jatmGear.weapons];
-export const armor = [...coreGear.armor, ...gawGear.armor, ...jatmGear.armor];
+export const weapons = [...coreGear.weapons, ...gawGear.weapons, ...goiGear.weapons, ...jatmGear.weapons, ...snvGear.weapons];
+export const armor = [...coreGear.armor, ...gawGear.armor, ...jatmGear.armor, ...snvGear.armor];
 export const equipment = [...coreGear.equipment, ...gawGear.equipment, ...gawGear.cybernetics, ...goiGear.equipment, ...goiGear.poisons, ...goiGear.misc,
-  ...jatmGear.equipment, ...jatmGear.poisons, ...jatmGear.crystals, ...jatmGear.accessories];
+  ...jatmGear.equipment, ...jatmGear.poisons, ...jatmGear.crystals, ...jatmGear.accessories, ...snvGear.equipment];
