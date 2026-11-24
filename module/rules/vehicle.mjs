@@ -5,6 +5,7 @@ import { abilityMod, aggregateModifiers, evalModifierValue } from "./calc.mjs";
 
 /** Tabela 10-1 e modificadores de Limiar de Dano por tamanho. */
 export const VEHICLE_SIZES = {
+  medium: { label: "SWSE.Size.medium", mod: 0, dt: 0, collision: "1d6" },
   large: { label: "SWSE.Size.large", mod: -1, dt: 5, collision: "2d6" },
   huge: { label: "SWSE.Size.huge", mod: -2, dt: 10, collision: "4d6" },
   gargantuan: { label: "SWSE.Size.gargantuan", mod: -5, dt: 20, collision: "6d6" },
@@ -48,6 +49,7 @@ export const MANEUVERS = {
 
 /** Tabela 10-3 (dano de colisão) e bônus de ataque de perigos móveis, por tamanho. */
 export const COLLISION = {
+  medium: { dice: "1d6", hazard: 1 },
   large: { dice: "2d6", hazard: 1 },
   huge: { dice: "4d6", hazard: 2 },
   gargantuan: { dice: "6d6", hazard: 5 },

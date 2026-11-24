@@ -1074,7 +1074,8 @@
     },
     "Poison": {
       "Recurring": "Poisons attack every round (or day, for diseases) until treated: use the item again.",
-      "Spice": "Instant second wind (+{heal} HP), +1 condition step and +5 Damage Threshold for 1 hour. Afterward: −5 Wisdom for 4 hours."
+      "Spice": "Instant second wind (+{heal} HP), +1 condition step and +5 Damage Threshold for 1 hour. Afterward: −5 Wisdom for 4 hours.",
+      "HazardHint": "Hazards attack according to the recurrence in the item: use the item again when the trigger repeats."
     },
     "DroidOnly": "Droid",
     "Upgrades": {

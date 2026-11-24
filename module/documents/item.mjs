@@ -25,6 +25,8 @@ export class SWSEItem extends Item {
     if (["feat", "talent"].includes(this.type) && (await useTalent(actor, this))) return;
     // Feromônios Falleen (Scum and Villainy)
     if (this.type === "species" && this.system.key === "falleen") return (await import("../helpers/talent-actions.mjs")).TALENT_ACTIONS.pheromones(actor);
+    // Mesmerize (Anzati, The Unknown Regions)
+    if (this.type === "species" && this.system.key === "anzati") return (await import("../helpers/talent-actions.mjs")).TALENT_ACTIONS.mesmerize(actor);
     if (this.type === "equipment" && String(this.system.special).startsWith("poison|")) return (await import("../rolls/poison.mjs")).poisonAttack(actor, this);
     if (this.type === "equipment" && this.system.special === "nyriaanSpice") return (await import("../rolls/poison.mjs")).nyriaanSpice(actor, this);
     return this.toChat();

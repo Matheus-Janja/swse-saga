@@ -152,6 +152,23 @@ Conteúdo mecânico dos capítulos 1, 3, 4 e das feras do capítulo 6 (pastas "J
   - Os modelos de nave (avançado, arcaico, junker, protótipo) e o tiro tático de cada nave capital estão nas notas.
 - Fora dos compêndios: regras gerais de combate espacial do Cap. 2 que o sistema já cobria, as plantas das naves e a parte descritiva do Cap. 3.
 
+### Suplemento: The Unknown Regions
+- **18 espécies**: Anzati (Mesmerize ao usar o item de espécie), Chadra-Fan, Ishi Tib, Krevaaki, Nikto, Shistavanen, Sluissi, Squib, Verpine, Near-Human (traços na descrição) e as espécies das ameaças: Chiss, Ebruchi, Killik, Lugubraa, Sorcerer of Rhand, Ssi-ruuk, Tof e Vagaari.
+- **Talentos**:
+  - Árvores novas: Exile (Noble), Outsider (Scoundrel), Master Scout, Mobile Scout e Hyperspace Explorer (Scout), Warrior (Soldier) e a tradição da Força Blazing Chain.
+  - Talentos novos em Jedi Sentinel, Leadership, Spacer, Camouflage, Commando e nas árvores de prestígio.
+  - Botões ⚡: *Warrior's Awareness*, *Rising Anger*, *Rising Panic* e o feat *Instinctive Defense*.
+- **21 feats**, que também entram nas listas de feats bônus das classes heroicas.
+- **Equipamento**: armas (blastsword, electropole, vibro-saw, magna caster, Squib tensor rifle, Verpine shatter gun, concussion rifle…) e equipamentos de exploração.
+- **Novo compêndio "Perigos (Hazards)"**: 81 perigos, separados por ambiente, incluindo os do Livro Básico reformatados e os dos planetas do Cap. 6. Usar o perigo rola o ataque contra os tokens marcados e oferece o botão de aplicar dano e passos na trilha.
+- **PdMs**:
+  - 6 droides de exploração.
+  - 16 montarias e companheiros animais, mais as feras Brintak e Reyko.
+  - Ameaças: Captain Ness, Lorgrombo, Mnggal-Mnggal e seu zumbi, Elder Ruthic, Blessed Toxmalb e Vagaari Infiltrator.
+  - Todos conferidos com o livro.
+- **25 veículos e naves**: speeders, rodas e esteiras, entre eles veículos de tamanho Médio, que agora são suportados; naves de exploração (JumpMaster 5000, Vaya, SkyBlind, Star Seeder…); e naves das ameaças (Killik Dartship, Royal Fortune, Surfeik Cruiser).
+- Fora dos compêndios: Cap. 3 (campanhas, geradores de planetas e criaturas), os textos dos planetas e o Cap. 7 (aventuras).
+
 ### Compêndios
 Espécies (21, incluindo Aqualish, Hutt, Neimoidian e Yuuzhan Vong do Cap. 16), classes heroicas, de prestígio e não heroica, 69 feats, todas as árvores de talento do livro básico (classes, Força e prestígio), 16 poderes da Força, técnicas e segredos, armas, armaduras, equipamentos e macros. Erratas oficiais de out/2008 aplicadas.
 

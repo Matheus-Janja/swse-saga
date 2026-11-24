@@ -10,7 +10,7 @@ const L = k => game.i18n.localize(k);
 /** Efeito codificado: "skills-5", "step1", "dmg8d6-step1-half", "dmg10d6-step2-half1", "dmg1d8-step1p". */
 export function parsePoisonEffect(code = "") {
   const out = { damage: null, steps: 0, persistent: false, half: false, missSteps: 0, skills: 0 };
-  const dm = /dmg(\d+d\d+)/.exec(code); if (dm) out.damage = dm[1];
+  const dm = /dmg(\d+d\d+(?:[+-]\d+)?)/.exec(code); if (dm) out.damage = dm[1];
   const sm = /step(\d)(p?)/.exec(code); if (sm) { out.steps = Number(sm[1]); out.persistent = sm[2] === "p"; }
   if (/half/.test(code)) out.half = true;
   const hm = /half(\d)/.exec(code); if (hm) out.missSteps = Number(hm[1]);
@@ -40,7 +40,7 @@ export async function poisonAttack(actor, item) {
       <span class="tdef">${L(`SWSE.Defense.${defense}`)} ${game.user.isGM ? r.t.system.defenses?.[defense]?.total : "—"}</span>
       <span class="tstatus">${r.hit ? L("SWSE.Attack.Hit") : L("SWSE.Attack.Miss")}</span>
       ${(r.amount || r.steps || (r.hit && fx.skills)) ? `<button type="button" data-swse-action="poison" data-target="${r.t.uuid}" data-amount="${r.amount}" data-steps="${r.steps}" data-persistent="${fx.persistent && r.hit ? 1 : 0}" data-skills="${r.hit ? fx.skills : 0}">${L("SWSE.Attack.Apply")}${r.amount ? ` ${r.amount}` : ""}${r.steps ? ` −${r.steps} ${L("SWSE.Talent.Steps")}` : ""}</button>` : ""}</li>`).join("")}</ul>
-    <p class="hint">${L("SWSE.Poison.Recurring")}</p></div>`;
+    <p class="hint">${L(item.system.category === "hazard" ? "SWSE.Poison.HazardHint" : "SWSE.Poison.Recurring")}</p></div>`;
   return ChatMessage.create({ speaker: ChatMessage.getSpeaker({ actor }), content: html, rolls: [atk, dmg].filter(Boolean), flags: { [SYSTEM_ID]: { type: "poison", id } } });
 }
 

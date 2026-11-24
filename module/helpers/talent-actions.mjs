@@ -387,6 +387,37 @@ export const TALENT_ACTIONS = {
   "stay-up": async actor => { await actor.shiftCondition(1); chat(actor, "<h3>Stay Up</h3><p>Sofre só metade do dano deste ataque (aplique o dano pela metade) e desce −1 passo.</p>"); },
   pheromones: actor => falleenPheromones(actor),
 
+  /* ================= The Unknown Regions ================= */
+  mesmerize: actor => anzatiMesmerize(actor),
+  // Instinctive Defense (feat): Ponto da Força, +2 em todas as Defesas até o início do próximo turno
+  "instinctive-defense": async actor => {
+    if (!(await needFP(actor))) return;
+    await actor.addEffect({ name: "Instinctive Defense (+2)", img: ICON("defensive"), rounds: 1, modifiers: [mod("defenses.all", 2)] });
+    chat(actor, `<h3>Instinctive Defense</h3><p>+2 em todas as Defesas até o início do seu próximo turno.</p>`);
+  },
+  // Rising Anger (Blazing Chain): +1 de moral no próximo ataque, acumulando até +5 enquanto não atacar
+  "rising-anger": async actor => {
+    const old = actor.effects.find(e => e.name.startsWith("Rising Anger"));
+    const n = Math.min(5, (Number(/\+(\d)/.exec(old?.name ?? "")?.[1]) || 0) + 1);
+    if (old) await old.delete();
+    await actor.addEffect({ name: `Rising Anger (+${n})`, img: ICON("rage"), rounds: 0, modifiers: [mod("attack.all", n, "morale")] });
+    chat(actor, `<h3>Rising Anger</h3><p>+${n} de moral no próximo ataque (apague o efeito depois de atacar).</p>`);
+  },
+  // Rising Panic (Blazing Chain): Use the Force contra a Vontade; −1 passo
+  "rising-panic": async actor => {
+    const hits = await skillVsDefense(actor, "useTheForce", "will", "Rising Panic");
+    for (const t of hits ?? []) await shiftTarget(t, 1);
+  },
+  // Warrior's Awareness (Warrior): +1 na Reflexos e Fortitude contra um inimigo até o fim do encontro
+  "warriors-awareness": async actor => {
+    const t = targetsActors()[0];
+    const roll = await new Roll(`1d20 + ${actor.system.skills.perception.total}`).evaluate();
+    await ChatMessage.create({ speaker: ChatMessage.getSpeaker({ actor }), rolls: [roll],
+      content: `<div class="swse-card talent-card"><h3>Warrior's Awareness${t ? ` → ${t.name}` : ""}</h3>${await roll.render()}<p>Compare com a CD definida pelo Mestre; se passar, aplique o efeito.</p></div>` });
+    const ok = await foundry.applications.api.DialogV2.confirm({ window: { title: "Warrior's Awareness" }, content: "<p>O teste de Perception teve sucesso?</p>" });
+    if (ok) await actor.addEffect({ name: `Warrior's Awareness${t ? ` (contra ${t.name})` : ""}`, img: ICON("defensive"), rounds: ENCOUNTER(), modifiers: [mod("defenses.reflex", 1), mod("defenses.fortitude", 1)] });
+  },
+
   "just-a-scratch": async actor => {
     const n = actor.system.defenses.fortitude.total;
     await actor.addEffect({ name: `Just a Scratch (RD ${n} contra um ataque)`, img: ICON("total-defense"), rounds: 0, modifiers: [mod("damageReduction", n)] });
@@ -563,6 +594,18 @@ async function falleenPheromones(actor) {
     rows.push(`<li class="${ok ? "hit" : "miss"}">${t.name}: ${ok ? "−1 passo (em −5 passos, fica amistoso em vez de inconsciente)" : "imune por 24 h"}</li>`);
   }
   ChatMessage.create({ speaker: ChatMessage.getSpeaker({ actor }), rolls: [roll], content: `<div class="swse-card talent-card"><h3>Feromônios Falleen</h3>${await roll.render()}<ul>${rows.join("")}</ul></div>` });
+}
+
+/** Mesmerize (Anzati): nível + Car contra a Vontade; o alvo perde a ação padrão no próximo turno. */
+async function anzatiMesmerize(actor) {
+  const targets = targetsActors();
+  if (!targets.length) return ui.notifications.warn(L("SWSE.Talent.NeedTarget"));
+  const roll = await new Roll(`1d20 + ${(actor.system.level || 0) + actor.system.abilities.cha.mod}`).evaluate();
+  const rows = targets.map(t => {
+    const ok = roll.total >= (t.system.defenses?.will?.total ?? 10);
+    return `<li class="${ok ? "hit" : "miss"}">${t.name}: ${ok ? "perde a ação padrão no próximo turno" : "imune por 24 h"}</li>`;
+  });
+  ChatMessage.create({ speaker: ChatMessage.getSpeaker({ actor }), rolls: [roll], content: `<div class="swse-card talent-card"><h3>Mesmerize (Anzati)</h3>${await roll.render()}<ul>${rows.join("")}</ul><p class="hint">Afeta a mente.</p></div>` });
 }
 
 /** Savants (Jedi Academy): devolve ao conjunto um poder gasto com o descritor. */

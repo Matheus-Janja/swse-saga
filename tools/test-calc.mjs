@@ -138,7 +138,24 @@ t("Veículos do livro batem com os blocos de estatística", () => {
   let i = 0;
   const { actors, report } = buildVehicles(() => `v${i++}`.padEnd(16, "x"), {});
   assert.deepEqual(report, []);
-  assert.equal(actors.length, 131); // 18 do Livro Básico + 9 GaW + 7 GoI + 97 Starships of the Galaxy
+  assert.equal(actors.length, 156); // 18 do Livro Básico + 9 GaW + 7 GoI + 97 Starships of the Galaxy + 25 Unknown Regions
+});
+
+t("The Unknown Regions: espécies, feats bônus de classe, árvores, perigos e veículo Médio", async () => {
+  const { default: hazards } = await import("./data/tur/hazards.mjs");
+  const { parsePoisonEffect } = await import("../module/rolls/poison.mjs");
+  for (const k of ["anzati", "chadra-fan", "chiss", "killik", "ssi-ruuk", "tof", "vagaari", "near-human"]) assert.ok(species.some(s => s.system.key === k), k);
+  const cls = key => classes.find(c => c.system.key === key).system;
+  assert.ok(cls("scout").bonusFeats.includes("hyperblazer"));
+  assert.ok(cls("soldier").talentTrees.includes("Warrior"));
+  assert.ok(cls("noble").talentTrees.includes("Exile"));
+  assert.ok(talents.some(t => t.system.tree === "Blazing Chain" && t.system.category === "forceTalent"));
+  assert.equal(hazards.length, 81);
+  assert.ok(hazards.every(h => /^poison|(1d20+d+|99)|(reflex|fortitude|will)|/.test(h.system.special)));
+  assert.deepEqual(parsePoisonEffect("dmg2d12+1-step1p-half"), { damage: "2d12+1", steps: 1, persistent: true, half: true, missSteps: 0, skills: 0 });
+  assert.ok(weapons.some(w => w.system.key === "verpine-shatter-gun"));
+  const { VEHICLE_SIZES } = await import("../module/rules/vehicle.mjs");
+  assert.equal(VEHICLE_SIZES.medium.mod, 0);
 });
 
 t("Starships of the Galaxy: manobras, talentos, feats e árvores de classe", async () => {

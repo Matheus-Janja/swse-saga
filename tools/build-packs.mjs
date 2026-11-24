@@ -11,6 +11,7 @@ import { fileURLToPath } from "node:url";
 import { compilePack } from "@foundryvtt/foundryvtt-cli";
 
 import { species, classes, feats, talents, forcePowers, weapons, armor, equipment, extraDroidSystems, shipWeapons } from "./data/all.mjs";
+import hazards, { HAZARD_FOLDERS } from "./data/tur/hazards.mjs";
 import macros from "./data/macros.mjs";
 import { droidSpecies, droidSystems, DROID_FOLDERS } from "./data/droids.mjs";
 import { buildNpcs } from "./build-npcs.mjs";
@@ -149,6 +150,10 @@ packs.armor = bySource("armor", armor);
   const fShip = folderDoc("equipment", "Armas de Nave", "Item", Object.keys(cats).length);
   packs.equipment = [...Object.values(folders), fShip, ...equipment.map(d => itemDoc("equipment", d, folders[d.system.category]._id)),
     ...shipWeapons.map(d => itemDoc("equipment", d, fShip._id))];
+}
+{
+  const folders = Object.fromEntries(HAZARD_FOLDERS.map((n, i) => [n, folderDoc("hazards", n, "Item", i)]));
+  packs.hazards = [...Object.values(folders), ...hazards.map(d => { const f = folders[d.folder]; return itemDoc("hazards", d, f._id); })];
 }
 packs.macros = macros.map(m => {
   const _id = makeId(`macros:${m.name}`);

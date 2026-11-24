@@ -39,22 +39,30 @@ import * as snvGear from "./snv/gear.mjs";
 import sotgTalents, { CLASS_TREES as SOTG_TREES, feats as sotgFeats } from "./sotg/talents.mjs";
 import sotgManeuvers from "./sotg/maneuvers.mjs";
 import * as sotgSystems from "./sotg/systems.mjs";
+// The Unknown Regions
+import turSpecies from "./tur/species.mjs";
+import turTalents, { CLASS_TREES as TUR_TREES, feats as turFeats, CLASS_BONUS_FEATS as TUR_BONUS } from "./tur/talents.mjs";
+import * as turGear from "./tur/gear.mjs";
 export const extraDroidSystems = [...sgdSystems.systems, ...sgdSystems.armor];
 
-export const species = [...coreSpecies, ...gawSpecies, ...goiSpecies, ...jatmSpecies, ...sgdSpecies, ...snvSpecies];
+export const species = [...coreSpecies, ...gawSpecies, ...goiSpecies, ...jatmSpecies, ...sgdSpecies, ...snvSpecies, ...turSpecies];
 export const classes = [...patchClassesJATM(patchClassesGoI(patchCoreClasses(coreClasses))), ...gawClasses, ...snvClasses].map(c => {
   const t = SNV_TREES[c.system.key];
   if (t && c.system.source !== "Scum and Villainy") c.system.talentTrees = [...new Set([...c.system.talentTrees, ...t])];
   const s = SOTG_TREES[c.system.key];
   if (s) c.system.talentTrees = [...new Set([...c.system.talentTrees, ...s])];
+  const u = TUR_TREES[c.system.key];
+  if (u) c.system.talentTrees = [...new Set([...c.system.talentTrees, ...u])];
+  const bf = TUR_BONUS[c.system.key];
+  if (bf) c.system.bonusFeats = [...new Set([...c.system.bonusFeats, ...bf])];
   return c;
 });
-export const feats = [...coreFeats, ...gawFeats, ...goiFeats, ...jatmFeats, ...sgdFeats, ...snvFeats, ...sotgFeats];
-export const talents = [...coreTalents, ...gawTalents, ...goiTalents, ...jatmTalents, ...sgdTalents, ...snvTalents, ...sotgTalents];
+export const feats = [...coreFeats, ...gawFeats, ...goiFeats, ...jatmFeats, ...sgdFeats, ...snvFeats, ...sotgFeats, ...turFeats];
+export const talents = [...coreTalents, ...gawTalents, ...goiTalents, ...jatmTalents, ...sgdTalents, ...snvTalents, ...sotgTalents, ...turTalents];
 export const forcePowers = [...corePowers, ...jatmPowers, ...sotgManeuvers];
-export const weapons = [...coreGear.weapons, ...gawGear.weapons, ...goiGear.weapons, ...jatmGear.weapons, ...snvGear.weapons];
+export const weapons = [...coreGear.weapons, ...gawGear.weapons, ...goiGear.weapons, ...jatmGear.weapons, ...snvGear.weapons, ...turGear.weapons];
 export const armor = [...coreGear.armor, ...gawGear.armor, ...jatmGear.armor, ...snvGear.armor];
 export const equipment = [...coreGear.equipment, ...gawGear.equipment, ...gawGear.cybernetics, ...goiGear.equipment, ...goiGear.poisons, ...goiGear.misc,
-  ...jatmGear.equipment, ...jatmGear.poisons, ...jatmGear.crystals, ...jatmGear.accessories, ...snvGear.equipment, ...sotgSystems.systems];
+  ...jatmGear.equipment, ...jatmGear.poisons, ...jatmGear.crystals, ...jatmGear.accessories, ...snvGear.equipment, ...sotgSystems.systems, ...turGear.equipment];
 // Armas de nave (Starships of the Galaxy, Tabela 3-5): itens vehicleWeapon para arrastar à ficha de veículos
 export const shipWeapons = sotgSystems.shipWeapons;
