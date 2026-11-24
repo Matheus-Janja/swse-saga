@@ -138,7 +138,27 @@ t("Veículos do livro batem com os blocos de estatística", () => {
   let i = 0;
   const { actors, report } = buildVehicles(() => `v${i++}`.padEnd(16, "x"), {});
   assert.deepEqual(report, []);
-  assert.equal(actors.length, 34); // 18 do Livro Básico + 9 do Galaxy at War + 7 do Galaxy of Intrigue
+  assert.equal(actors.length, 131); // 18 do Livro Básico + 9 GaW + 7 GoI + 97 Starships of the Galaxy
+});
+
+t("Starships of the Galaxy: manobras, talentos, feats e árvores de classe", async () => {
+  const { shipWeapons } = await import("./data/all.mjs");
+  const man = forcePowers.filter(p => p.system.descriptors.includes("maneuver"));
+  assert.equal(man.length, 27);
+  assert.ok(man.every(p => ["pilot", "attack", "useTheForce"].includes(p.system.checkSkill) && p.system.dcs.length));
+  for (const k of ["starship-tactics", "tactical-genius", "tech-specialist", "starship-designer"]) assert.ok(feats.some(f => f.system.key === k), k);
+  for (const k of ["fast-repairs", "vehicle-focus", "great-shot", "begin-attack-run", "fleet-tactics", "force-reflexes", "engineer"]) assert.ok(talents.some(x => x.system.key === k), k);
+  const tree = key => classes.find(c => c.system.key === key).system.talentTrees;
+  assert.ok(tree("scoundrel").includes("Outlaw Tech"));
+  assert.ok(tree("ace-pilot").includes("Squadron Leader"));
+  assert.ok(tree("officer").includes("Naval Officer"));
+  assert.ok(equipment.filter(e => e.system.category === "starship").length > 30);
+  assert.ok(shipWeapons.length > 10 && shipWeapons.every(w => w.type === "vehicleWeapon"));
+  // chaves novas não colidem com as de outros livros
+  for (const list of [talents, feats, forcePowers]) {
+    const mine = list.filter(x => x.system.source === "Starships of the Galaxy").map(x => x.system.key);
+    assert.deepEqual(mine.filter(k => list.filter(x => x.system.key === k).length > 1), []);
+  }
 });
 
 t("Veículo: piloto heroico substitui armadura; artilheiro usa BBA próprio e ½ nível no dano", () => {

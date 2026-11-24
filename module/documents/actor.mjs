@@ -179,8 +179,10 @@ export class SWSEActor extends Actor {
     ChatMessage.create({ speaker: ChatMessage.getSpeaker({ actor: this }), content: `<div class="swse-card"><p>${game.i18n.localize("SWSE.Rested")}</p></div>` });
   }
 
-  async recoverForcePowers() {
-    const updates = this.items.filter(i => i.type === "forcePower" && i.system.spent > 0).map(i => ({ _id: i.id, "system.spent": 0 }));
+  /** Recupera poderes gastos. kind: "force" (só poderes da Força), "maneuver" (só manobras de nave) ou omitido (todos). */
+  async recoverForcePowers(kind) {
+    const isMan = i => i.system.descriptors.includes("maneuver");
+    const updates = this.items.filter(i => i.type === "forcePower" && i.system.spent > 0 && (!kind || (kind === "maneuver") === isMan(i))).map(i => ({ _id: i.id, "system.spent": 0 }));
     if (updates.length) await this.updateEmbeddedDocuments("Item", updates);
   }
 

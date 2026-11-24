@@ -307,7 +307,12 @@
       "mindAffecting": "Afeta a mente",
       "telekinetic": "Telecinético",
       "lightsaberForm": "Forma de Sabre",
-      "regimen": "Regime"
+      "regimen": "Regime",
+      "maneuver": "Manobra",
+      "attackPattern": "Padrão de Ataque",
+      "dogfight": "Dogfight",
+      "gunner": "Artilheiro",
+      "force": "Força"
     },
     "TalentCategory": {
       "talent": "Talento",
@@ -661,11 +666,8 @@
       "turbolaser": "Turbolaser"
     },
     "Maneuver": {
-      "none": "Nenhuma",
-      "defensive": "Luta defensiva",
-      "defensiveTotal": "Luta defensiva total (sem atacar)",
-      "attackRun": "Attack Run (−2 Ref)",
-      "allOut": "Movimento total (sem Des na Ref)"
+      "AttackCheck": "Ataque (BBA)",
+      "AttackHint": "some os modificadores da arma do veículo no bônus situacional"
     },
     "VCat": {
       "walker": "Walker",
@@ -947,7 +949,9 @@
       "EndGameNote": "Marque \"End Game\" no diálogo de ataque: o Limiar do alvo cai à metade para este ataque.",
       "GuardianSpiritNote": "O espírito aparece a até 6 quadrados: com ele a até 12 quadrados, +1 de moral nos ataques e +2 em Use the Force e na Vontade até o fim do encontro.",
       "ChannelVitalityNote": "−1 passo na trilha: 1 Ponto da Força temporário até o fim do turno (some ao gasto no campo de bônus).",
-      "UnswervingResolveNote": "O efeito de medo/afetar a mente falhou: 1 Ponto da Força temporário até o fim do seu próximo turno."
+      "UnswervingResolveNote": "O efeito de medo/afetar a mente falhou: 1 Ponto da Força temporário até o fim do seu próximo turno.",
+      "FleetTacticsNote": "Até o início do seu próximo turno, artilheiros aliados em linha de visão causam +1 dado de dano contra este alvo (afeta a mente).",
+      "NeedWeapon": "Equipe uma arma energizada."
     },
     "Military": {
       "title": "Patente e Privilégio (Galaxy at War)",
@@ -1078,6 +1082,8 @@
       "slots": "espaços",
       "over": "espaços excedidos!",
       "hint": "Scum and Villainy: cada arma ou armadura tem 1 espaço (armaduras motorizadas, 2). Ganhe espaços desmontando (stripping) ou aumentando o tamanho. Pulse Charger, Neutronium, Double Trigger, Rapid Recycler, Sniper Switch, Miniaturized, Shadowskin, Helmet Package e Shield Generator são automáticos."
-    }
+    },
+    "Maneuvers": "Manobras de Nave",
+    "ManeuverHint": "Starship Tactics: teste de Pilot (ou ataque) no lugar de Use the Force; um Ponto da Força recupera uma manobra gasta"
   }
 }

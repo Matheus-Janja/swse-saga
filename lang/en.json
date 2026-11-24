@@ -307,7 +307,12 @@
       "mindAffecting": "Mind-Affecting",
       "telekinetic": "Telekinetic",
       "lightsaberForm": "Lightsaber Form",
-      "regimen": "Regimen"
+      "regimen": "Regimen",
+      "maneuver": "Maneuver",
+      "attackPattern": "Attack Pattern",
+      "dogfight": "Dogfight",
+      "gunner": "Gunner",
+      "force": "Force"
     },
     "TalentCategory": {
       "talent": "Talent",
@@ -661,11 +666,8 @@
       "turbolaser": "Turbolaser"
     },
     "Maneuver": {
-      "none": "None",
-      "defensive": "Fight defensively",
-      "defensiveTotal": "Total defense (no attacks)",
-      "attackRun": "Attack Run (−2 Ref)",
-      "allOut": "All-out movement (no Dex to Ref)"
+      "AttackCheck": "Attack (BAB)",
+      "AttackHint": "add the vehicle weapon's modifiers as a situational bonus"
     },
     "VCat": {
       "walker": "Walker",
@@ -947,7 +949,9 @@
       "EndGameNote": "Check \"End Game\" in the attack dialog: the target's Damage Threshold is halved for this attack.",
       "GuardianSpiritNote": "The spirit appears within 6 squares: while within 12 squares, +1 morale on attacks and +2 on Use the Force and Will until the end of the encounter.",
       "ChannelVitalityNote": "−1 condition step: 1 temporary Force Point until the end of the turn.",
-      "UnswervingResolveNote": "The fear/mind-affecting effect failed: 1 temporary Force Point until the end of your next turn."
+      "UnswervingResolveNote": "The fear/mind-affecting effect failed: 1 temporary Force Point until the end of your next turn.",
+      "FleetTacticsNote": "Until the start of your next turn, allied gunners in line of sight deal +1 die of damage against this target (mind-affecting).",
+      "NeedWeapon": "Equip a powered weapon."
     },
     "Military": {
       "title": "Rank and Privilege (Galaxy at War)",
@@ -1078,6 +1082,8 @@
       "slots": "slots",
       "over": "slots exceeded!",
       "hint": "Scum and Villainy: each weapon or armor has 1 slot (powered armor, 2). Gain slots by stripping or increasing size. Pulse Charger, Neutronium, Double Trigger, Rapid Recycler, Sniper Switch, Miniaturized, Shadowskin, Helmet Package and Shield Generator are automatic."
-    }
+    },
+    "Maneuvers": "Starship Maneuvers",
+    "ManeuverHint": "Starship Tactics: Pilot check (or attack) instead of Use the Force; a Force Point regains one spent maneuver"
   }
 }

@@ -414,6 +414,8 @@ export function computeActor(sys, items, opts = {}) {
 
   // --- Poderes da Força conhecidos ---
   d.forcePowersAllowed = count("force-training") * Math.max(1, 1 + d.abilities.wis.mod);
+  // Manobras de nave (Starships of the Galaxy): Starship Tactics, repetível
+  d.maneuversAllowed = count("starship-tactics") * Math.max(1, 1 + d.abilities.wis.mod);
 
   // --- Cibernéticos (Galaxy at War): sofrem íons como droides, salvo se todas as peças tiverem blindagem iônica ---
   const cyber = items.filter(i => i.type === "equipment" && i.system.equipped && i.system.category === "cybernetic");

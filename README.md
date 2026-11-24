@@ -137,6 +137,21 @@ Conteúdo mecânico dos capítulos 1, 3, 4 e das feras do capítulo 6 (pastas "J
 - **PdMs**: os personagens notórios do Cap. 4 (BoShek, Booster Terrik, Boushh, Jodo Kast, Jorj Car'das, Mirax Terrik, Moxin Tark, Príncipe Xizor, Snoova, Tyber Zann, Zam Wesell, Zardra, Zuckuss) e 10 arquétipos, conferidos com o livro.
 - Fora dos compêndios: Cap. 3 (campanhas de crime, regras de prisão), naves não confiáveis/emplacement points (dependem do Starships of the Galaxy) e o capítulo de aventuras.
 
+### Suplemento: Starships of the Galaxy
+- **27 manobras de nave** (pasta "Manobras de Nave" no compêndio de poderes): ficam num painel próprio na aba da Força, mesmo para personagens que não são sensíveis à Força. O teste usa Pilot (ou ataque / Use the Force, conforme a manobra) contra as CDs, e um 20 natural recupera só as manobras. *Starship Tactics* define quantas manobras o personagem conhece, e *Force Reflexes* permite rerrolar o Pilot com um Ponto da Força.
+- **Talentos**:
+  - Árvores novas: Outlaw Tech (Scoundrel), Squadron Leader (Ace Pilot) e Naval Officer (Officer).
+  - Talentos novos em Expert Pilot, Gunner, Sense e Lineage.
+  - Automação: *Great Shot* reduz a categoria de distância automaticamente no ataque veicular; *Personalized Modifications* e *Fleet Tactics* ganharam botão ⚡.
+- **4 feats**: Starship Designer, Starship Tactics, Tactical Genius e Tech Specialist.
+- **Sistemas de nave**: 91 sistemas de movimento, defesa e acessórios (pasta "Sistemas de Nave" do compêndio de equipamentos), cada um com pontos de instalação, custo e regras de instalação. Também 24 armas de nave (pasta "Armas de Nave"), que podem ser arrastadas para a ficha de um veículo.
+- **Codex de naves: 97 naves**, conferidas com os blocos de estatística do livro:
+  - Caças: A-, B-, E-, K-, V-, Y-wing e variantes, TIE Advanced/Bomber/Defender, Predator, StarViper, coralskipper…
+  - Transportes: YT-2000/2400, Millennium Falcon, Slave I, Sith Infiltrator, Lambda, Skipray…
+  - Naves capitais: Acclamator, Venator, Victory II, Imperial II, Nebulon-B, MC80, Hapan Battle Dragon, Interdictor, Lucrehulk, Nebula, os Super Star Destroyers Executor, Lusankya e Eclipse…
+  - Os modelos de nave (avançado, arcaico, junker, protótipo) e o tiro tático de cada nave capital estão nas notas.
+- Fora dos compêndios: regras gerais de combate espacial do Cap. 2 que o sistema já cobria, as plantas das naves e a parte descritiva do Cap. 3.
+
 ### Compêndios
 Espécies (21, incluindo Aqualish, Hutt, Neimoidian e Yuuzhan Vong do Cap. 16), classes heroicas, de prestígio e não heroica, 69 feats, todas as árvores de talento do livro básico (classes, Força e prestígio), 16 poderes da Força, técnicas e segredos, armas, armaduras, equipamentos e macros. Erratas oficiais de out/2008 aplicadas.
 

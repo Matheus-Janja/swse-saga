@@ -527,6 +527,27 @@ export const TALENT_ACTIONS = {
   "keep-them-honest": async actor => {
     const names = await applyTo(targetsActors(), { name: `Keep Them Honest (${actor.name})`, img: ICON("debuff"), rounds: 1, modifiers: [mod("attack.all", -5, "penalty")] });
     chat(actor, `<h3>Keep Them Honest</h3><p>${F("SWSE.Talent.AppliedTo", { names: names || "—" })}</p>`);
+  },
+
+  /* ---------------- Starships of the Galaxy ---------------- */
+  // Personalized Modifications (Outlaw Tech): +1 de equipamento no ataque e +2 no dano com a arma energizada empunhada, até o fim do encontro
+  "personalized-modifications": async actor => {
+    const w = actor.items.find(i => i.type === "weapon" && i.system.equipped && !["simple", "advancedMelee", "lightsabers"].includes(i.system.group));
+    if (!w) return ui.notifications.warn(L("SWSE.Talent.NeedWeapon"));
+    await actor.addEffect({ name: `Personalized Modifications (${w.name})`, img: ICON("buff"), rounds: ENCOUNTER(), modifiers: [mod("attack.ranged", 1, "equipment"), mod("damage.ranged", 2)] });
+    chat(actor, `<h3>Personalized Modifications</h3><p>${w.name}: +1 ${L("SWSE.Attack.Label")}, +2 ${L("SWSE.Damage")}</p>`);
+  },
+  // Fleet Tactics (Naval Officer): Knowledge (tactics) CD 15; artilheiros aliados causam +1 dado contra o alvo até o seu próximo turno
+  "fleet-tactics": async actor => {
+    const t = targetsActors()[0];
+    const roll = await new Roll(`1d20 + ${actor.system.skills.knowledgeTactics.total}`).evaluate();
+    const ok = roll.total >= 15;
+    ChatMessage.create({
+      speaker: ChatMessage.getSpeaker({ actor }), rolls: [roll],
+      content: `<div class="swse-card talent-card"><h3>Fleet Tactics${t ? ` → ${t.name}` : ""}</h3>${await roll.render()}
+        <p class="${ok ? "success" : "failure"}">CD 15: ${ok ? L("SWSE.Success") : L("SWSE.Failure")}</p>
+        ${ok ? `<p>${L("SWSE.Talent.FleetTacticsNote")}</p>` : ""}</div>`
+    });
   }
 };
 

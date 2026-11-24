@@ -150,7 +150,9 @@ export class ForcePowerData extends BaseItemData {
       special: str(),
       uses: num(1, { integer: true, min: 0 }),
       spent: num(0, { integer: true, min: 0 }),
-      damage: str()
+      damage: str(),
+      // Manobras de nave (Starships of the Galaxy): perícia do teste (pilot | attack | useTheForce)
+      checkSkill: str()
     };
   }
 }

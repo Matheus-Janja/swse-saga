@@ -6,7 +6,8 @@ import { computeVehicle, vehicleWeaponProfile, VEHICLE_SKILLS } from "../module/
 import coreVehicles, { FOLDERS } from "./data/vehicles.mjs";
 import gawVehicles from "./data/gaw/vehicles.mjs";
 import goiVehicles from "./data/goi/vehicles.mjs";
-const vehicles = [...coreVehicles, ...gawVehicles, ...goiVehicles];
+import sotgVehicles from "./data/sotg/vehicles.mjs";
+const vehicles = [...coreVehicles, ...gawVehicles, ...goiVehicles, ...sotgVehicles];
 import { ICON } from "./build-packs-icons.mjs";
 
 const TOKEN = { large: 2, huge: 3, gargantuan: 4, colossal: 6, colossalFrigate: 8, colossalCruiser: 10, colossalStation: 12 };

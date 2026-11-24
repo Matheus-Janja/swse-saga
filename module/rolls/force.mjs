@@ -9,7 +9,12 @@ const signed = n => (n >= 0 ? `+${n}` : `${n}`);
 export async function useForcePower(actor, power) {
   const L = k => game.i18n.localize(k);
   const sys = power.system;
-  if (!actor.system.skills.useTheForce.usable) return ui.notifications.warn(L("SWSE.Warn.NeedForceSensitivity"));
+  // Manobras de nave (Starships of the Galaxy): teste de Pilot (ou ataque / Use the Force), sem exigir Force Sensitivity
+  const maneuver = sys.descriptors.includes("maneuver");
+  const skillKey = maneuver ? (sys.checkSkill || "pilot") : "useTheForce";
+  if (skillKey === "useTheForce" && !actor.system.skills.useTheForce.usable) return ui.notifications.warn(L("SWSE.Warn.NeedForceSensitivity"));
+  const checkTotal = skillKey === "attack" ? (actor.system.bab ?? actor.system.derived?.bab ?? 0) : (actor.system.skills[skillKey]?.total ?? 0);
+  const checkLabel = skillKey === "attack" ? L("SWSE.Maneuver.AttackCheck") : skillKey === "pilot" ? "Pilot" : "Use the Force";
   if (sys.spent >= sys.uses) {
     const ok = await foundry.applications.api.DialogV2.confirm({
       window: { title: power.name }, content: `<p>${L("SWSE.Force.AllSpent")}</p>`
@@ -22,9 +27,10 @@ export async function useForcePower(actor, power) {
   const hasFP = actor.system.forcePoints.value > 0;
   const choice = k => actor.featureChoices(k).includes(sys.key);
   // Force Power Mastery: escolher 10 com este poder. Force Power Adept / Dark Side Master: rolar duas vezes (Ponto da Força).
-  const canTake10 = choice("force-power-mastery");
-  const canTwice = hasFP && (choice("force-power-adept") || (dark && actor.hasFeature("dark-side-master")));
-  const canDevastate = hasFP && actor.hasFeature("devastating-power") && !!sys.damage;
+  const canTake10 = !maneuver && choice("force-power-mastery");
+  // Force Reflexes (Sense): Ponto da Força para rerrolar o Pilot de uma manobra, ficando com o melhor
+  const canTwice = hasFP && (maneuver ? skillKey === "pilot" && actor.hasFeature("force-reflexes") : (choice("force-power-adept") || (dark && actor.hasFeature("dark-side-master"))));
+  const canDevastate = !maneuver && hasFP && actor.hasFeature("devastating-power") && !!sys.damage;
   const rerollNote = dark && (actor.hasFeature("dark-side-adept") || actor.hasFeature("embrace-the-dark-side"));
   const res = await foundry.applications.api.DialogV2.wait({
     window: { title: power.name },
@@ -34,7 +40,8 @@ export async function useForcePower(actor, power) {
       <div class="form-group"><label>${L("SWSE.SpendForcePoint")}${canFP ? "" : ` (${L("SWSE.Force.FPNotAllowed")})`}</label>
         <input type="checkbox" name="forcePoint" ${canFP ? "" : "disabled"}></div>
       ${canTake10 ? `<div class="form-group"><label>Force Power Mastery: ${L("SWSE.Take10")}</label><input type="checkbox" name="take10"></div>` : ""}
-      ${canTwice ? `<div class="form-group"><label>${L("SWSE.Talent.RollTwice")}</label><input type="checkbox" name="twice"></div>` : ""}
+      ${maneuver ? `<p class="hint">${checkLabel} ${signed(checkTotal)}${skillKey === "attack" ? ` · ${L("SWSE.Maneuver.AttackHint")}` : ""}</p>` : ""}
+      ${canTwice ? `<div class="form-group"><label>${maneuver ? "Force Reflexes" : L("SWSE.Talent.RollTwice")}</label><input type="checkbox" name="twice"></div>` : ""}
       ${canDevastate ? `<div class="form-group"><label>Devastating Power (${L("SWSE.Talent.FPCost")}, +50% ${L("SWSE.Attack.Dice")})</label><input type="checkbox" name="devastating"></div>` : ""}
     </div>`,
     buttons: [{ action: "use", label: L("SWSE.Force.Use"), default: true, callback: (e, b) => new foundry.applications.ux.FormDataExtended(b.form).object }],
@@ -45,7 +52,7 @@ export async function useForcePower(actor, power) {
   let d20 = "1d20";
   if (res.take10 && canTake10) d20 = "10";
   else if (res.twice && canTwice && (await actor.spendForcePoint())) d20 = "2d20kh";
-  let formula = `${d20} ${signed(actor.system.skills.useTheForce.total)}`;
+  let formula = `${d20} ${signed(checkTotal)}`;
   // Regimes da Força (Jedi Academy): Regimen Aptitude +5; cadências de Vo'ren: −Dark Side Score
   if (sys.descriptors.includes("regimen")) {
     if (actor.hasFeature("regimen-aptitude")) formula += " + 5";
@@ -94,7 +101,7 @@ export async function useForcePower(actor, power) {
   await power.update(updates);
   if (dark) await actor.update({ "system.darkSide.value": actor.system.darkSide.value + 1 });
   // 20 natural: recupera todos os poderes no fim do turno (aplicado já)
-  if (nat === 20) await actor.recoverForcePowers();
+  if (nat === 20) await actor.recoverForcePowers(maneuver ? "maneuver" : "force");
 
   let payload = null;
   let buttons = "";

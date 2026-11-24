@@ -137,10 +137,13 @@ export class SWSEActorSheet extends HandlebarsApplicationMixin(foundry.applicati
     context.talentTrees = Object.entries(byTree).map(([tree, list]) => ({ tree, list }));
     context.techniques = talents.filter(t => t.system.category === "forceTechnique");
     context.secrets = talents.filter(t => t.system.category === "forceSecret");
-    context.forcePowers = items.filter(i => i.type === "forcePower").map(p => ({
+    const powerRow = p => ({
       item: p, remaining: Math.max(0, p.system.uses - p.system.spent),
-      descriptors: p.system.descriptors.map(x => L(`SWSE.Descriptor.${x}`)).join(", ")
-    }));
+      descriptors: p.system.descriptors.filter(x => x !== "maneuver").map(x => L(`SWSE.Descriptor.${x}`)).join(", ")
+    });
+    const allPowers = items.filter(i => i.type === "forcePower");
+    context.forcePowers = allPowers.filter(p => !p.system.descriptors.includes("maneuver")).map(powerRow);
+    context.maneuvers = allPowers.filter(p => p.system.descriptors.includes("maneuver")).map(powerRow);
     context.weapons = items.filter(i => i.type === "weapon").map(w => {
       const p = weaponProfile(actor, w);
       return {
@@ -304,7 +307,7 @@ export class SWSEActorSheet extends HandlebarsApplicationMixin(foundry.applicati
   static #onOpenCreator() { game.swse.openCharacterCreator(this.actor); }
   static #onOpenLevelUp() { game.swse.openLevelUp(this.actor); }
   static #onRollInitiative(event) { this.actor.rollInitiative({ dialog: event.shiftKey }); }
-  static #onRecoverPowers() { this.actor.recoverForcePowers(); }
+  static #onRecoverPowers(event, target) { this.actor.recoverForcePowers(target.dataset.kind || undefined); }
 
   static #onTogglePowerSpent(event, target) {
     const item = SWSEActorSheet.#item.call(this, target);

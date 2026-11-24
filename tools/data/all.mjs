@@ -35,18 +35,26 @@ import snvClasses from "./snv/classes.mjs";
 import snvFeats from "./snv/feats.mjs";
 import snvTalents, { CLASS_TREES as SNV_TREES } from "./snv/talents.mjs";
 import * as snvGear from "./snv/gear.mjs";
+// Starships of the Galaxy
+import sotgTalents, { CLASS_TREES as SOTG_TREES, feats as sotgFeats } from "./sotg/talents.mjs";
+import sotgManeuvers from "./sotg/maneuvers.mjs";
+import * as sotgSystems from "./sotg/systems.mjs";
 export const extraDroidSystems = [...sgdSystems.systems, ...sgdSystems.armor];
 
 export const species = [...coreSpecies, ...gawSpecies, ...goiSpecies, ...jatmSpecies, ...sgdSpecies, ...snvSpecies];
 export const classes = [...patchClassesJATM(patchClassesGoI(patchCoreClasses(coreClasses))), ...gawClasses, ...snvClasses].map(c => {
   const t = SNV_TREES[c.system.key];
   if (t && c.system.source !== "Scum and Villainy") c.system.talentTrees = [...new Set([...c.system.talentTrees, ...t])];
+  const s = SOTG_TREES[c.system.key];
+  if (s) c.system.talentTrees = [...new Set([...c.system.talentTrees, ...s])];
   return c;
 });
-export const feats = [...coreFeats, ...gawFeats, ...goiFeats, ...jatmFeats, ...sgdFeats, ...snvFeats];
-export const talents = [...coreTalents, ...gawTalents, ...goiTalents, ...jatmTalents, ...sgdTalents, ...snvTalents];
-export const forcePowers = [...corePowers, ...jatmPowers];
+export const feats = [...coreFeats, ...gawFeats, ...goiFeats, ...jatmFeats, ...sgdFeats, ...snvFeats, ...sotgFeats];
+export const talents = [...coreTalents, ...gawTalents, ...goiTalents, ...jatmTalents, ...sgdTalents, ...snvTalents, ...sotgTalents];
+export const forcePowers = [...corePowers, ...jatmPowers, ...sotgManeuvers];
 export const weapons = [...coreGear.weapons, ...gawGear.weapons, ...goiGear.weapons, ...jatmGear.weapons, ...snvGear.weapons];
 export const armor = [...coreGear.armor, ...gawGear.armor, ...jatmGear.armor, ...snvGear.armor];
 export const equipment = [...coreGear.equipment, ...gawGear.equipment, ...gawGear.cybernetics, ...goiGear.equipment, ...goiGear.poisons, ...goiGear.misc,
-  ...jatmGear.equipment, ...jatmGear.poisons, ...jatmGear.crystals, ...jatmGear.accessories, ...snvGear.equipment];
+  ...jatmGear.equipment, ...jatmGear.poisons, ...jatmGear.crystals, ...jatmGear.accessories, ...snvGear.equipment, ...sotgSystems.systems];
+// Armas de nave (Starships of the Galaxy, Tabela 3-5): itens vehicleWeapon para arrastar à ficha de veículos
+export const shipWeapons = sotgSystems.shipWeapons;

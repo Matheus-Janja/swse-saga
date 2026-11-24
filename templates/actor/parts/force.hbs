@@ -2,7 +2,7 @@
   <div class="panel">
     <h3>{{localize "SWSE.ForcePowers"}}
       {{#if editable}}<a class="ctl" data-action="openCompendium" data-pack="force-powers"><i class="fa-solid fa-book-atlas"></i></a>
-      <a class="ctl" data-action="recoverPowers" data-tooltip="{{localize 'SWSE.Force.Recover'}}"><i class="fa-solid fa-rotate"></i></a>{{/if}}</h3>
+      <a class="ctl" data-action="recoverPowers" data-kind="force" data-tooltip="{{localize 'SWSE.Force.Recover'}}"><i class="fa-solid fa-rotate"></i></a>{{/if}}</h3>
     {{#unless derived.forceSensitive}}<p class="hint warn">{{localize "SWSE.Warn.NeedForceSensitivity"}}</p>{{/unless}}
     <p class="hint">{{localize "SWSE.Force.Hint"}} · Use the Force: <strong>{{swseSigned system.skills.useTheForce.total}}</strong> · {{localize "SWSE.Force.Known"}}: {{forcePowers.length}} / {{derived.forcePowersAllowed}}</p>
     <table class="item-table">
@@ -21,6 +21,29 @@
       </tbody>
     </table>
   </div>
+  {{#if (or maneuvers.length derived.maneuversAllowed)}}
+  <div class="panel">
+    <h3>{{localize "SWSE.Maneuvers"}}
+      {{#if editable}}<a class="ctl" data-action="openCompendium" data-pack="force-powers"><i class="fa-solid fa-book-atlas"></i></a>
+      <a class="ctl" data-action="recoverPowers" data-kind="maneuver" data-tooltip="{{localize 'SWSE.Force.Recover'}}"><i class="fa-solid fa-rotate"></i></a>{{/if}}</h3>
+    <p class="hint">{{localize "SWSE.ManeuverHint"}} · Pilot: <strong>{{swseSigned system.skills.pilot.total}}</strong> · {{localize "SWSE.Force.Known"}}: {{maneuvers.length}} / {{derived.maneuversAllowed}}</p>
+    <table class="item-table">
+      <thead><tr><th></th><th>{{localize "SWSE.Name"}}</th><th>{{localize "SWSE.Force.Time"}}</th><th>{{localize "SWSE.Force.Suite"}}</th><th></th></tr></thead>
+      <tbody>
+      {{#each maneuvers as |p|}}
+        <tr class="item" data-item-id="{{p.item.id}}">
+          <td><img src="{{p.item.img}}" data-action="useItem" class="rollable"></td>
+          <td><a data-action="useItem">{{p.item.name}}</a> <small>{{p.descriptors}}</small></td>
+          <td>{{p.item.system.time}}</td>
+          <td class="pips">{{#swseTimes p.item.system.uses}}<a class="pip {{#if (lt this ../remaining)}}full{{/if}}" data-action="togglePowerSpent" data-index="{{this}}"></a>{{/swseTimes}}</td>
+          <td class="ctls"><a data-action="itemToChat"><i class="fa-solid fa-comment"></i></a><a data-action="editItem"><i class="fa-solid fa-pen"></i></a>
+            {{#if @root.editable}}<a data-action="deleteItem"><i class="fa-solid fa-trash"></i></a>{{/if}}</td>
+        </tr>
+      {{/each}}
+      </tbody>
+    </table>
+  </div>
+  {{/if}}
   <div class="grid-2">
     <div class="panel">
       <h3>{{localize "SWSE.ForceTechniques"}}</h3>

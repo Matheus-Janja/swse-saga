@@ -10,7 +10,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { compilePack } from "@foundryvtt/foundryvtt-cli";
 
-import { species, classes, feats, talents, forcePowers, weapons, armor, equipment, extraDroidSystems } from "./data/all.mjs";
+import { species, classes, feats, talents, forcePowers, weapons, armor, equipment, extraDroidSystems, shipWeapons } from "./data/all.mjs";
 import macros from "./data/macros.mjs";
 import { droidSpecies, droidSystems, DROID_FOLDERS } from "./data/droids.mjs";
 import { buildNpcs } from "./build-npcs.mjs";
@@ -77,7 +77,7 @@ function itemDoc(pack, data, folder = null) {
   delete data.system.img;
   delete data.folder;
   if (["feat", "talent"].includes(data.type)) markAutomation(data);
-  const _id = makeId(`${pack}:${data.type}:${data.system.tree ?? ""}:${data.name}`);
+  const _id = makeId(`${pack}:${data.type}:${data.system.tree ?? (data.system.descriptors?.includes("maneuver") ? "maneuver" : "")}:${data.name}`);
   return {
     _id, _key: `!items!${_id}`, name: data.name, type: data.type, img: iconFor(data.type, data.system),
     system: data.system, effects: [], folder, sort: 0, flags: {}, ownership: { default: 0 }, _stats: stats
@@ -128,10 +128,12 @@ packs.feats = bySource("feats", feats);
   const fSec = folderDoc("force-powers", "Segredos da Força", "Item", 3);
   const fForm = folderDoc("force-powers", "Poderes de Forma de Sabre", "Item", 4);
   const fReg = folderDoc("force-powers", "Regimes da Força", "Item", 5);
-  packs["force-powers"] = [fPow, fTech, fSec, fForm, fReg,
+  const fMan = folderDoc("force-powers", "Manobras de Nave", "Item", 6);
+  packs["force-powers"] = [fPow, fTech, fSec, fForm, fReg, fMan,
     ...forcePowers.filter(d => !d.folder || d.folder === "Poderes da Força").map(d => itemDoc("force-powers", d, fPow._id)),
     ...forcePowers.filter(d => d.folder === "Poderes de Forma de Sabre").map(d => itemDoc("force-powers", d, fForm._id)),
     ...forcePowers.filter(d => d.folder === "Regimes da Força").map(d => itemDoc("force-powers", d, fReg._id)),
+    ...forcePowers.filter(d => d.folder === "Manobras de Nave").map(d => itemDoc("force-powers", d, fMan._id)),
     ...talents.filter(t => t.system.category === "forceTechnique").map(d => itemDoc("force-powers", d, fTech._id)),
     ...talents.filter(t => t.system.category === "forceSecret").map(d => itemDoc("force-powers", d, fSec._id))];
 }
@@ -142,9 +144,11 @@ packs.feats = bySource("feats", feats);
 }
 packs.armor = bySource("armor", armor);
 {
-  const cats = { communication: "Comunicação", computer: "Computadores", detection: "Detecção", lifeSupport: "Suporte de Vida", medical: "Médico", survival: "Sobrevivência", tools: "Ferramentas", accessory: "Acessórios", cybernetic: "Cibernéticos", poison: "Venenos e Doenças", crystal: "Cristais de Sabre" };
+  const cats = { communication: "Comunicação", computer: "Computadores", detection: "Detecção", lifeSupport: "Suporte de Vida", medical: "Médico", survival: "Sobrevivência", tools: "Ferramentas", accessory: "Acessórios", cybernetic: "Cibernéticos", poison: "Venenos e Doenças", crystal: "Cristais de Sabre", starship: "Sistemas de Nave" };
   const folders = Object.fromEntries(Object.entries(cats).map(([k, n], i) => [k, folderDoc("equipment", n, "Item", i)]));
-  packs.equipment = [...Object.values(folders), ...equipment.map(d => itemDoc("equipment", d, folders[d.system.category]._id))];
+  const fShip = folderDoc("equipment", "Armas de Nave", "Item", Object.keys(cats).length);
+  packs.equipment = [...Object.values(folders), fShip, ...equipment.map(d => itemDoc("equipment", d, folders[d.system.category]._id)),
+    ...shipWeapons.map(d => itemDoc("equipment", d, fShip._id))];
 }
 packs.macros = macros.map(m => {
   const _id = makeId(`macros:${m.name}`);

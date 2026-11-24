@@ -62,8 +62,11 @@ export async function vehicleAttack(vehicle, weapon, { skipDialog = false } = {}
   }
 
   const mods = [];
-  const band = SWSE.rangeBands[f.range] ?? SWSE.rangeBands.pointBlank;
-  if (band.penalty) mods.push([L(band.label), band.penalty]);
+  // Great Shot (Gunner, Starships of the Galaxy): a distância conta como uma categoria menor
+  const bandKeys = Object.keys(SWSE.rangeBands);
+  const greatShot = gunner?.features?.includes("great-shot") && bandKeys.indexOf(f.range) > 0;
+  const band = SWSE.rangeBands[greatShot ? bandKeys[bandKeys.indexOf(f.range) - 1] : f.range] ?? SWSE.rangeBands.pointBlank;
+  if (band.penalty || greatShot) mods.push([`${L(band.label)}${greatShot ? " (Great Shot)" : ""}`, band.penalty ?? 0]);
   if (f.autofire) mods.push(["Autofire", -5]);
   if (f.attackRun) {
     mods.push([L("SWSE.Maneuver.attackRun"), 2]);
