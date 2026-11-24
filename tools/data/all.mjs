@@ -43,9 +43,13 @@ import * as sotgSystems from "./sotg/systems.mjs";
 import turSpecies from "./tur/species.mjs";
 import turTalents, { CLASS_TREES as TUR_TREES, feats as turFeats, CLASS_BONUS_FEATS as TUR_BONUS } from "./tur/talents.mjs";
 import * as turGear from "./tur/gear.mjs";
+// Threats of the Galaxy
+import totgSpecies from "./totg/species.mjs";
+import * as totgGear from "./totg/gear.mjs";
+import totgTalents, { CLASS_TREES as TOTG_TREES, feats as totgFeats } from "./totg/talents.mjs";
 export const extraDroidSystems = [...sgdSystems.systems, ...sgdSystems.armor];
 
-export const species = [...coreSpecies, ...gawSpecies, ...goiSpecies, ...jatmSpecies, ...sgdSpecies, ...snvSpecies, ...turSpecies];
+export const species = [...coreSpecies, ...gawSpecies, ...goiSpecies, ...jatmSpecies, ...sgdSpecies, ...snvSpecies, ...turSpecies, ...totgSpecies];
 export const classes = [...patchClassesJATM(patchClassesGoI(patchCoreClasses(coreClasses))), ...gawClasses, ...snvClasses].map(c => {
   const t = SNV_TREES[c.system.key];
   if (t && c.system.source !== "Scum and Villainy") c.system.talentTrees = [...new Set([...c.system.talentTrees, ...t])];
@@ -53,16 +57,18 @@ export const classes = [...patchClassesJATM(patchClassesGoI(patchCoreClasses(cor
   if (s) c.system.talentTrees = [...new Set([...c.system.talentTrees, ...s])];
   const u = TUR_TREES[c.system.key];
   if (u) c.system.talentTrees = [...new Set([...c.system.talentTrees, ...u])];
+  const tt = TOTG_TREES[c.system.key];
+  if (tt) c.system.talentTrees = [...new Set([...c.system.talentTrees, ...tt])];
   const bf = TUR_BONUS[c.system.key];
   if (bf) c.system.bonusFeats = [...new Set([...c.system.bonusFeats, ...bf])];
   return c;
 });
-export const feats = [...coreFeats, ...gawFeats, ...goiFeats, ...jatmFeats, ...sgdFeats, ...snvFeats, ...sotgFeats, ...turFeats];
-export const talents = [...coreTalents, ...gawTalents, ...goiTalents, ...jatmTalents, ...sgdTalents, ...snvTalents, ...sotgTalents, ...turTalents];
+export const feats = [...coreFeats, ...gawFeats, ...goiFeats, ...jatmFeats, ...sgdFeats, ...snvFeats, ...sotgFeats, ...turFeats, ...totgFeats];
+export const talents = [...coreTalents, ...gawTalents, ...goiTalents, ...jatmTalents, ...sgdTalents, ...snvTalents, ...sotgTalents, ...turTalents, ...totgTalents];
 export const forcePowers = [...corePowers, ...jatmPowers, ...sotgManeuvers];
-export const weapons = [...coreGear.weapons, ...gawGear.weapons, ...goiGear.weapons, ...jatmGear.weapons, ...snvGear.weapons, ...turGear.weapons];
+export const weapons = [...coreGear.weapons, ...gawGear.weapons, ...goiGear.weapons, ...jatmGear.weapons, ...snvGear.weapons, ...turGear.weapons, ...totgGear.weapons];
 export const armor = [...coreGear.armor, ...gawGear.armor, ...jatmGear.armor, ...snvGear.armor];
 export const equipment = [...coreGear.equipment, ...gawGear.equipment, ...gawGear.cybernetics, ...goiGear.equipment, ...goiGear.poisons, ...goiGear.misc,
-  ...jatmGear.equipment, ...jatmGear.poisons, ...jatmGear.crystals, ...jatmGear.accessories, ...snvGear.equipment, ...sotgSystems.systems, ...turGear.equipment];
+  ...jatmGear.equipment, ...jatmGear.poisons, ...jatmGear.crystals, ...jatmGear.accessories, ...snvGear.equipment, ...sotgSystems.systems, ...turGear.equipment, ...totgGear.equipment];
 // Armas de nave (Starships of the Galaxy, Tabela 3-5): itens vehicleWeapon para arrastar à ficha de veículos
-export const shipWeapons = sotgSystems.shipWeapons;
+export const shipWeapons = [...sotgSystems.shipWeapons, ...totgGear.shipWeapons];

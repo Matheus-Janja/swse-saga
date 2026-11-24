@@ -138,7 +138,22 @@ t("Veículos do livro batem com os blocos de estatística", () => {
   let i = 0;
   const { actors, report } = buildVehicles(() => `v${i++}`.padEnd(16, "x"), {});
   assert.deepEqual(report, []);
-  assert.equal(actors.length, 156); // 18 do Livro Básico + 9 GaW + 7 GoI + 97 Starships of the Galaxy + 25 Unknown Regions
+  assert.equal(actors.length, 161); // 18 do Livro Básico + 9 GaW + 7 GoI + 97 SotG + 25 Unknown Regions + 5 Threats of the Galaxy
+});
+
+t("Threats of the Galaxy: PdMs, espécies, árvores, feats e equipamento", async () => {
+  const { default: totgNpcs } = await import("./data/totg/npcs.mjs");
+  const { shipWeapons } = await import("./data/all.mjs");
+  assert.equal(totgNpcs.length, 153);
+  for (const k of ["chistori", "miraluka", "mantellian-savrip", "utai"]) assert.ok(species.some(s => s.system.key === k), k);
+  const cls = key => classes.find(c => c.system.key === key).system;
+  assert.ok(cls("scoundrel").talentTrees.includes("Malkite Poisoner"));
+  assert.ok(cls("soldier").talentTrees.includes("Mercenary"));
+  assert.ok(cls("elite-trooper").talentTrees.includes("Master of Teräs Käsi"));
+  for (const k of ["drain-knowledge", "stolen-form", "hard-target", "vehicle-evasion", "combined-fire-mercenary"]) assert.ok(talents.some(t => t.system.key === k), k);
+  for (const k of ["suppression-fire", "a-few-maneuvers", "momentum-strike", "mounted-defense"]) assert.ok(feats.some(x => x.system.key === k), k);
+  for (const k of ["datadagger", "sith-sword", "sonic-stunner", "riot-shield"]) assert.ok(weapons.some(w => w.system.key === k), k);
+  assert.ok(shipWeapons.some(w => w.system.key === "discord-missile-launcher"));
 });
 
 t("The Unknown Regions: espécies, feats bônus de classe, árvores, perigos e veículo Médio", async () => {

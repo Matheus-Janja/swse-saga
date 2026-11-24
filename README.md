@@ -169,6 +169,18 @@ Conteúdo mecânico dos capítulos 1, 3, 4 e das feras do capítulo 6 (pastas "J
 - **25 veículos e naves**: speeders, rodas e esteiras, entre eles veículos de tamanho Médio, que agora são suportados; naves de exploração (JumpMaster 5000, Vaya, SkyBlind, Star Seeder…); e naves das ameaças (Killik Dartship, Royal Fortune, Surfeik Cruiser).
 - Fora dos compêndios: Cap. 3 (campanhas, geradores de planetas e criaturas), os textos dos planetas e o Cap. 7 (aventuras).
 
+### Suplemento: Threats of the Galaxy
+- **153 PdMs** prontos para usar, conferidos com os blocos do livro, em três pastas "Threats":
+  - **Personagens** (arquétipos e nomes famosos): Force Adept, Dathomiri Witch, Assassin, Malkite Poisoner, Bounty Hunter, Aurra Sing, Bossk, Jango Fett, Commandos, Crime Lord, Black Sun Vigos, Hutt, Dark Jedi, Jerec, Desann, Reborn, Jedi (Padawan a Mestre), Imperial Knight, Jensaarai, Teräs Käsi, mercenários, pilotos, piratas, policiais, políticos, Bail Organa, Sector Rangers, sabotadores, Ship Captain, Sith Apprentice, Darth Maul, Sith Lords, Lumiya, Darth Bane, slicers, contrabandistas, Talon Karrde, soldados, Commander Cody, espiões, swoop gangs e outros.
+  - **Criaturas**: banshee bird, sand panther, dragonsnake, gundark, katarn, krayt dragons, rancors, sarlacc, varactyl, vornskr, womp rats (e as regras de matilhas/enxames), ysalamiri e outras.
+  - **Droides**: VX, ASN-121, astromecânicos R2-R/R3/R4/R5/R7, B3, IG lancer, buzz droid, EVS, GRZ-6B, 3PX, TO-D, GH-7, power droid, DRK-1, protocolo, Guri, WSB-15, 501-Z, seeker, sentry, SD-6, Sith warbot e PK.
+- **4 espécies**: Chistori, Miraluka, Mantellian Savrip e Utai.
+- **Talentos**: árvores Malkite Poisoner (Scoundrel), Mercenary (Soldier) e Master of Teräs Käsi (Elite Trooper), além de Drain Knowledge, Stolen Form, Hard Target e Vehicle Evasion.
+- **4 feats**: A Few Maneuvers, Suppression Fire, Momentum Strike e Mounted Defense.
+- **Equipamento**: datadagger, espada Sith, sonic stunner, escudo antimotim, manopla de cortosis, lança-mísseis de concussão leve, ferramentas de slicer, medisensor, FastFlesh medpac e o lançador de mísseis discord (pasta Armas de Nave).
+- **5 veículos**: Hound's Tooth, Bloodfin, VCX-350, Raptor speeder bike e swoop Nebulon-Q.
+- Talentos de outros livros (Adept Spellcaster, Command Beast, Flight, Attune Armor) aparecem nas notas dos PdMs que os usam.
+
 ### Compêndios
 Espécies (21, incluindo Aqualish, Hutt, Neimoidian e Yuuzhan Vong do Cap. 16), classes heroicas, de prestígio e não heroica, 69 feats, todas as árvores de talento do livro básico (classes, Força e prestígio), 16 poderes da Força, técnicas e segredos, armas, armaduras, equipamentos e macros. Erratas oficiais de out/2008 aplicadas.
 
