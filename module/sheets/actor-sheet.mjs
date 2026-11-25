@@ -101,6 +101,7 @@ export class SWSEActorSheet extends HandlebarsApplicationMixin(foundry.applicati
     context.derived = d;
     context.config = SWSE;
     context.isNPC = actor.type === "npc";
+    context.followerTemplates = { "": "—", aggressive: "Agressivo", defensive: "Defensivo", utility: "Utilitário" };
     context.editable = this.isEditable;
     context.tabs = this._prepareTabs("primary");
 

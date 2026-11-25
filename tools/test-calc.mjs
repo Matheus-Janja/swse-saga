@@ -138,7 +138,35 @@ t("Veículos do livro batem com os blocos de estatística", () => {
   let i = 0;
   const { actors, report } = buildVehicles(() => `v${i++}`.padEnd(16, "x"), {});
   assert.deepEqual(report, []);
-  assert.equal(actors.length, 161); // 18 do Livro Básico + 9 GaW + 7 GoI + 97 SotG + 25 Unknown Regions + 5 Threats of the Galaxy
+  assert.equal(actors.length, 230); // 18 Básico + 9 GaW + 7 GoI + 97 SotG + 25 TUR + 5 Threats + 69 Clone Wars CG
+});
+
+t("Clone Wars Campaign Guide: seguidores, esquadrões, classes, poderes e feats", async () => {
+  const { FOLLOWER_TEMPLATES } = await import("../module/rules/calc.mjs");
+  const { squadChanges, attritionNumbers } = await import("../module/helpers/squads.mjs");
+  // Gamma-383 "Trench": seguidor defensivo de nível 7, Des 12, armadura de clone (+6)
+  const sys = { isNPC: true, npcLevel: 7, follower: { template: "defensive", level: 7 },
+    abilities: { str: { base: 10 }, dex: { base: 12 }, con: { base: 10 }, int: { base: 10 }, wis: { base: 10 }, cha: { base: 10 } },
+    skills: {}, hp: { base: 0, misc: 0 }, defenses: {}, damageThreshold: {}, condition: { step: 0 }, size: "medium" };
+  const d = computeActor(sys, []);
+  assert.equal(d.bab, 5);
+  assert.equal(d.defenses.reflex.total, 20); // 10 + 7 + 1 (Des) + 2 (modelo)
+  assert.equal(d.defenses.will.total, 17);
+  assert.equal(d.hpMax, 17);
+  assert.equal(FOLLOWER_TEMPLATES.aggressive.bab, "full");
+  // Unidade: PV ×4, Limiar = Fortitude + 50, RD 15, atrito
+  const u = squadChanges({ size: "medium", hpMax: 22, fort: 13, dt: 13 }, "unit");
+  assert.equal(u.hp, 88);
+  assert.deepEqual(attritionNumbers(82), [62, 42, 22]);
+  assert.ok(u.modifiers.some(m => m.target === "damageThreshold" && m.value === "50"));
+  const sq = squadChanges({ size: "medium", hpMax: 10, fort: 11, dt: 11 }, "squad");
+  assert.equal(sq.newSize, "large");
+  for (const k of ["droid-commander", "military-engineer", "vanguard"]) assert.ok(classes.some(c => c.system.key === k), k);
+  for (const k of ["cloak", "levitate", "malacia", "morichro", "phase", "rend", "shatterpoint", "technometry"]) assert.ok(forcePowers.some(p => p.system.key === k), k);
+  for (const k of ["droid-hunter", "grand-army-of-the-republic-training", "wary-defender"]) assert.ok(feats.some(x => x.system.key === k), k);
+  assert.ok(classes.find(c => c.system.key === "soldier").system.bonusFeats.includes("flood-of-fire"));
+  for (const k of ["dug", "gendai", "kaminoan", "nautolan", "geonosian", "chagrian", "republic-clone"]) assert.ok(species.some(x => x.system.key === k), k);
+  assert.ok(talents.some(t => t.system.tree === "Korunnai Adept" && t.system.category === "forceTalent"));
 });
 
 t("Threats of the Galaxy: PdMs, espécies, árvores, feats e equipamento", async () => {

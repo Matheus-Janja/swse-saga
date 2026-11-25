@@ -78,6 +78,7 @@
       <div class="stat"><span>{{localize "SWSE.DarkSideScore"}}</span><input type="number" name="system.darkSide.value" value="{{system.darkSide.value}}"></div>
       {{#if isNPC}}
       <div class="stat"><span>{{localize "SWSE.NPCLevel"}}</span><input type="number" name="system.npcLevel" value="{{system.npcLevel}}"></div>
+      <div class="stat" data-tooltip="Seguidor (The Clone Wars Campaign Guide): nível, defesas, PV e BBA seguem o modelo e o nível heroico do líder"><span>Seguidor</span><select name="system.follower.template">{{selectOptions followerTemplates selected=system.follower.template}}</select></div>
       <div class="stat"><span>{{localize "SWSE.BaseHP"}}</span><input type="number" name="system.hp.base" value="{{system.hp.base}}"></div>
       <div class="stat"><span>{{localize "SWSE.BABBonus"}}</span><input type="number" name="system.babBonus" value="{{system.babBonus}}"></div>
       <div class="stat"><span>{{localize "SWSE.SizeLabel"}}</span><select name="system.size">{{selectOptions sizes selected=system.size localize=true}}</select></div>

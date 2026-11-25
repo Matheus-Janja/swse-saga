@@ -4,7 +4,7 @@
 //      atk, dmg, x: multiplicador, area, auto: autofire, ion, pen: penetração, grp: agarrar, count, ammo }
 const notes = o => Object.entries(o).map(([k, v]) => `<p><strong>${k}:</strong> ${v}</p>`).join("");
 
-export const FOLDERS = ["Walkers", "Speeders", "Airspeeders", "Caças Estelares", "Transportes", "Naves Capitais"];
+export const FOLDERS = ["Walkers", "Speeders", "Airspeeders", "Caças Estelares", "Transportes", "Naves Capitais", "Armas Fixas (Emplacements)"];
 
 const v = (name, folder, o) => ({ name, folder, ...o });
 

@@ -56,7 +56,7 @@ push(
 );
 
 /* Classes de prestígio de droide (Clone Wars Campaign Guide / Force Unleashed Campaign Guide — classes não incluídas) */
-const PREST = "Talento para a classe de prestígio Droid Commander (The Clone Wars Campaign Guide), que ainda não está no sistema.";
+const PREST = "Talento para a classe de prestígio Droid Commander (The Clone Wars Campaign Guide).";
 const PREST2 = "Talento para a classe de prestígio Independent Droid (The Force Unleashed Campaign Guide), que ainda não está no sistema.";
 tree("Override");
 push(

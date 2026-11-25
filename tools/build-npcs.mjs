@@ -16,8 +16,9 @@ import sgdNpcs, { F as SGD_F } from "./data/sgd/npcs.mjs";
 import snvNpcs, { F as SNV_F } from "./data/snv/npcs.mjs";
 import turNpcs, { F as TUR_F } from "./data/tur/npcs.mjs";
 import totgNpcs, { F as TOTG_F } from "./data/totg/npcs.mjs";
-const npcs = [...coreNpcs, ...gawNpcs, ...goiNpcs, ...jatmNpcs, ...jatmDark, ...sgdNpcs, ...snvNpcs, ...turNpcs, ...totgNpcs];
-const FOLDERS = [...CORE_FOLDERS, ...Object.values(GAW_F), ...Object.values(GOI_F), ...Object.values(JATM_F), ...Object.values(JATM_D), ...Object.values(SGD_F), ...Object.values(SNV_F), ...Object.values(TUR_F), ...Object.values(TOTG_F)];
+import cwcgNpcs, { F as CWCG_F } from "./data/cwcg/npcs.mjs";
+const npcs = [...coreNpcs, ...gawNpcs, ...goiNpcs, ...jatmNpcs, ...jatmDark, ...sgdNpcs, ...snvNpcs, ...turNpcs, ...totgNpcs, ...cwcgNpcs];
+const FOLDERS = [...CORE_FOLDERS, ...Object.values(GAW_F), ...Object.values(GOI_F), ...Object.values(JATM_F), ...Object.values(JATM_D), ...Object.values(SGD_F), ...Object.values(SNV_F), ...Object.values(TUR_F), ...Object.values(TOTG_F), ...Object.values(CWCG_F)];
 import { iconFor } from "./build-packs-icons.mjs";
 
 const ABIL = ["str", "dex", "con", "int", "wis", "cha"];
@@ -25,7 +26,7 @@ const clone = x => structuredClone(x);
 
 const TOKEN_SIZE = { fine: 0.5, diminutive: 0.5, tiny: 0.5, small: 1, medium: 1, large: 2, huge: 3, gargantuan: 4, colossal: 6 };
 const BEAST_FOLDERS = new Set(["Feras", GAW_F.beasts, GOI_F.beasts, JATM_F.beasts]);
-const HOSTILE = new Set(["Império Galáctico", "Fringe", JATM_D.darksiders, SNV_F.fringe, TUR_F.threats, TOTG_F.creatures, ...BEAST_FOLDERS]);
+const HOSTILE = new Set(["Império Galáctico", "Fringe", JATM_D.darksiders, SNV_F.fringe, TUR_F.threats, TOTG_F.creatures, CWCG_F.cis, CWCG_F.beasts, ...BEAST_FOLDERS]);
 const A = n => `systems/swse-saga/assets/icons/${n}.svg`;
 const IMG = { force: A("npc-force"), droid: A("npc-droid"), beast: A("npc-beast"), trooper: A("npc-trooper"), default: A("npc") };
 const TROOPERS = /trooper|stormtrooper/i;
@@ -234,7 +235,7 @@ export function buildNpcs(data, makeId, stats) {
     // Documento do ator
     const actorId = makeId(`npcs:actor:${npc.name}`);
     const forceUser = (npc.feats ?? []).includes("force-sensitivity");
-    const img = npc.droid ? IMG.droid : BEAST_FOLDERS.has(npc.folder) || npc.folder === TUR_F.mounts || npc.folder === TOTG_F.creatures ? IMG.beast : forceUser ? IMG.force : TROOPERS.test(npc.name) ? IMG.trooper : IMG.default;
+    const img = npc.droid ? IMG.droid : BEAST_FOLDERS.has(npc.folder) || npc.folder === TUR_F.mounts || npc.folder === TOTG_F.creatures || npc.folder === CWCG_F.beasts ? IMG.beast : forceUser ? IMG.force : TROOPERS.test(npc.name) ? IMG.trooper : IMG.default;
     const tsize = TOKEN_SIZE[size] ?? 1;
     for (const i of items) delete i.system.img;
     const embedded = items.map((i, idx) => {

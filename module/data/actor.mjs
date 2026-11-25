@@ -104,6 +104,11 @@ class SWSEActorData extends foundry.abstract.TypeDataModel {
     const items = actor.items.map(i => ({ type: i.type, name: i.name, system: i.system }));
     const src = this.toObject(false);
     src.isNPC = this.isNPC;
+    // Seguidor: acompanha o nível heroico do líder (The Clone Wars Campaign Guide)
+    if (src.follower?.leader) {
+      const lv = game.actors?.get(src.follower.leader)?.system?.derived?.heroicLevel;
+      if (lv) src.follower.level = lv;
+    }
     const { statuses, effects } = collectEffects(actor);
     const d = computeActor(src, items, { statuses, effects });
     Object.assign(this, { derived: d });
@@ -151,6 +156,12 @@ export class NpcData extends SWSEActorData {
     const schema = super.defineSchema();
     schema.npcLevel = num(1, { min: 0 });
     schema.challengeLevel = num(1, { min: 0 });
+    // Seguidor (The Clone Wars Campaign Guide): nível = nível heroico do herói; modelo agressivo/defensivo/utilitário
+    schema.follower = new fields.SchemaField({
+      template: new fields.StringField({ blank: true, initial: "" }),
+      level: num(0, { min: 0 }),
+      leader: new fields.StringField({ blank: true, initial: "" })
+    });
     return schema;
   }
   get isNPC() { return true; }

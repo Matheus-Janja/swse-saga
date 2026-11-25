@@ -7,6 +7,13 @@ import { bestAppendage, locomotionSpeed } from "./droid.mjs";
 import { statusEffects } from "./effects.mjs";
 import { computeRank } from "./rank.mjs";
 
+/** Modelos de seguidor (The Clone Wars Campaign Guide). */
+export const FOLLOWER_TEMPLATES = {
+  aggressive: { label: "Agressivo", bab: "full", defense: "fortitude", abilities: ["str", "con"], skill: "endurance", feats: ["weapon-proficiency-pistols"] },
+  defensive: { label: "Defensivo", bab: "threeQuarter", defense: "reflex", abilities: ["dex", "wis"], skill: "endurance", feats: ["armor-proficiency-light"] },
+  utility: { label: "Utilitário", bab: "threeQuarter", defense: "will", abilities: ["int", "cha"], skill: "", feats: [] }
+};
+
 export const abilityMod = score => Math.floor((Number(score) - 10) / 2);
 
 /** BBA por classe conforme progressão. */
@@ -118,12 +125,20 @@ export function computeActor(sys, items, opts = {}) {
     characterLevel = Number(sys.npcLevel) || 1;
     heroicLevel = 0;
   }
+  // Seguidor: nível do herói; BBA de soldier (agressivo) ou scoundrel (defensivo/utilitário)
+  const followerTpl = FOLLOWER_TEMPLATES[sys.follower?.template] ? sys.follower.template : "";
+  const followerLevel = followerTpl ? Math.max(1, Number(sys.follower.level) || 1) : 0;
+  if (followerTpl) {
+    characterLevel = followerLevel;
+    bab = babFor(FOLLOWER_TEMPLATES[followerTpl].bab, followerLevel);
+  }
   bab += Number(sys.babBonus) || 0;
   d.heroicLevel = heroicLevel;
   d.level = characterLevel;
   d.halfLevel = Math.floor(characterLevel / 2);
   // Dano: ½ nível heroico (níveis não heroicos não contam; feras somam ½ nível de fera nas armas naturais)
   d.damageHalfLevel = Math.floor((heroicLevel + (classLevels.beast ?? 0)) / 2);
+  d.follower = followerTpl ? { template: followerTpl, level: followerLevel } : null;
   d.classLevels = classLevels;
   d.bab = bab;
 
@@ -243,7 +258,8 @@ export function computeActor(sys, items, opts = {}) {
   // Knowledge and Defense (Jedi Academy): sem Destreza, soma o bônus de Sabedoria
   if (st.noDex && has("knowledge-and-defense")) dexToReflex += Math.max(0, d.abilities.wis.mod);
   let levelOrArmor = heroicLevel;
-  if (d.armor) {
+  if (followerTpl) levelOrArmor = Math.max(followerLevel, d.armor?.reflexBonus ?? 0);
+  else if (d.armor) {
     const ab = d.armor.reflexBonus;
     if (armorProficient && has("improved-armored-defense")) levelOrArmor = Math.max(heroicLevel + Math.floor(ab / 2), ab);
     else if (armorProficient && has("armored-defense")) levelOrArmor = Math.max(heroicLevel, ab);
@@ -252,7 +268,9 @@ export function computeActor(sys, items, opts = {}) {
   const allDef = mod("defenses.all");
   const misc = k => Number(sys.defenses?.[k]?.misc) || 0;
   const dodgeAll = (agg["defenses.reflex"]?.parts ?? []).concat(agg["defenses.all"]?.parts ?? []).filter(p => p.type === "dodge").reduce((a, p) => a + p.value, 0);
-  const reflexParts = { base: 10, level: levelOrArmor, ability: dexToReflex, class: classDef.reflex, size: size.reflex, mods: mod("defenses.reflex") + allDef - (st.noDex ? dodgeAll : 0), misc: misc("reflex"), condition: d.conditionPenalty };
+  const fDef = followerTpl ? FOLLOWER_TEMPLATES[followerTpl].defense : null;
+  const fBonus = k => (fDef === k ? 2 : 0);
+  const reflexParts = { base: 10, level: levelOrArmor, ability: dexToReflex, class: classDef.reflex + fBonus("reflex"), size: size.reflex, mods: mod("defenses.reflex") + allDef - (st.noDex ? dodgeAll : 0), misc: misc("reflex"), condition: d.conditionPenalty };
   // Resilient Strength (Galaxy at War): For ou Con na Fortitude
   let fortAbility = isDroid ? d.abilities.str.mod : d.abilities.con.mod;
   if (has("resilient-strength")) fortAbility = Math.max(fortAbility, d.abilities.str.mod);
@@ -261,8 +279,8 @@ export function computeActor(sys, items, opts = {}) {
   // Strength of Conviction (Zygerrian): Car no lugar de Sab; Force of Personality: o maior entre Sab e Car
   let willAbility = species?.system.key === "zygerrian" ? d.abilities.cha.mod : d.abilities.wis.mod;
   if (has("force-of-personality")) willAbility = Math.max(d.abilities.wis.mod, d.abilities.cha.mod);
-  const fortParts = { base: 10, level: heroicLevel, ability: fortAbility, class: classDef.fortitude, equipment: d.armor?.fortBonus ?? 0, mods: mod("defenses.fortitude") + allDef, misc: misc("fortitude"), condition: d.conditionPenalty };
-  const willParts = { base: 10, level: heroicLevel, ability: willAbility, class: classDef.will, mods: mod("defenses.will") + allDef, misc: misc("will"), condition: d.conditionPenalty };
+  const fortParts = { base: 10, level: followerTpl ? followerLevel : heroicLevel, ability: fortAbility, class: classDef.fortitude + fBonus("fortitude"), equipment: d.armor?.fortBonus ?? 0, mods: mod("defenses.fortitude") + allDef, misc: misc("fortitude"), condition: d.conditionPenalty };
+  const willParts = { base: 10, level: followerTpl ? followerLevel : heroicLevel, ability: willAbility, class: classDef.will + fBonus("will"), mods: mod("defenses.will") + allDef, misc: misc("will"), condition: d.conditionPenalty };
   const sum = o => Object.values(o).reduce((a, b) => a + (Number(b) || 0), 0);
   const dodge = st.noDex ? 0 : dodgeAll;
   d.defenses = {
@@ -284,6 +302,7 @@ export function computeActor(sys, items, opts = {}) {
     for (const r of c.system.hpRolls ?? []) hpMax += Math.max(1, (Number(r) || 0) + conMod);
   }
   if (sys.isNPC && !classes.length) hpMax = Number(sys.hp?.base) || 0;
+  if (followerTpl) hpMax = 10 + followerLevel;
   hpMax += mod("hp.max") + (Number(sys.hp?.misc) || 0);
   d.hpMax = Math.max(hpMax, 1);
 

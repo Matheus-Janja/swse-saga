@@ -120,7 +120,7 @@ Conteúdo mecânico dos capítulos 1, 3, 4 e das feras do capítulo 6 (pastas "J
 
 ### Suplemento: Scavenger's Guide to Droids
 - **8 chassis de droide padrão** (astromecânico, batalha, trabalho, mecânico, médico, sonda, protocolo e serviço) na pasta de droides heróis das espécies, com perícias embutidas (Hardwired Design) marcadas como treinadas automaticamente e feats condicionais.
-- **Talentos de droide por grau** (1º a 5º): o assistente de criação e de subida de nível mostra automaticamente a árvore do grau do droide. Também as árvores das classes de prestígio Droid Commander e Independent Droid (as classes ainda não estão no sistema). Automáticos: *Science Analyzer*, *Heavy-Duty Actuators*; botões ⚡ para *Target Acquisition*, *Weapons Power Surge* e *Just a Scratch*.
+- **Talentos de droide por grau** (1º a 5º): o assistente de criação e de subida de nível mostra automaticamente a árvore do grau do droide. Também as árvores das classes de prestígio Droid Commander (classe incluída com o The Clone Wars Campaign Guide) e Independent Droid (classe do Force Unleashed Campaign Guide, ainda não incluída). Automáticos: *Science Analyzer*, *Heavy-Duty Actuators*; botões ⚡ para *Target Acquisition*, *Weapons Power Surge* e *Just a Scratch*.
 - **17 feats de droide**, com pré-requisito "ser droide" e de locomoção verificados. *Aiming Accuracy* (+5, com *Pinpoint Accuracy* −1 passo) e *Slammer* no diálogo de ataque; *Mechanical Martial Arts* aplica −5 ao ferir; *Ion Shielding* reduz o efeito dos íons; botões para *Distracting Droid*, *Erratic Target* e *Tool Frenzy*.
 - **Sistemas de droide**: 65 acessórios, sensores, processadores, apêndices, locomoções extras, estações e 4 armaduras novas no compêndio de sistemas.
 - **Codex de Droides: 45 droides** com fichas conferidas com o livro (incluindo Annihilator, Droideka Mk II, IG/HK, SD-9, YVH, Shadow Droid, X-1 Viper).
@@ -180,6 +180,21 @@ Conteúdo mecânico dos capítulos 1, 3, 4 e das feras do capítulo 6 (pastas "J
 - **Equipamento**: datadagger, espada Sith, sonic stunner, escudo antimotim, manopla de cortosis, lança-mísseis de concussão leve, ferramentas de slicer, medisensor, FastFlesh medpac e o lançador de mísseis discord (pasta Armas de Nave).
 - **5 veículos**: Hound's Tooth, Bloodfin, VCX-350, Raptor speeder bike e swoop Nebulon-Q.
 - Talentos de outros livros (Adept Spellcaster, Command Beast, Flight, Attune Armor) aparecem nas notas dos PdMs que os usam.
+
+### Campaign Guide: The Clone Wars
+- **12 espécies**: Dug, Gen'Dai, Iktotchi, Kaleesh, Kaminoan, Kerkoiden, Nautolan, Nelvaanian, Vurk, Republic Clone, Chagrian e Geonosian.
+- **3 classes de prestígio**: Droid Commander, Military Engineer e Vanguard (com as árvores próprias).
+- **Talentos**:
+  - Árvores novas: Collaborator e Loyal Protector (Noble), Opportunist (Scoundrel), Reconnaissance e Surveillance (Scout), Trooper e Squad Leader (Soldier), Melee Specialist e Republic Commando (Elite Trooper), Jedi Archivist e Jedi Healer (Jedi Knight).
+  - Força: Light Side, as tradições Bando Gora Captain, Believer Disciple e Korunnai Adept, 8 técnicas e 3 segredos novos.
+- **8 poderes da Força**: cloak, levitate, malacia, morichro, phase, rend, shatterpoint e technometry.
+- **21 feats**, incluídos nas listas de feats bônus das classes.
+- **Seguidores**: a macro *Criar Seguidor* cria um PdM ligado ao herói do token, com modelo agressivo, defensivo ou utilitário. O nível acompanha o nível heroico do líder; defesas, PV e BBA seguem as regras do livro; feats concedidos pelos talentos do líder (Commanding Officer, Undying Loyalty etc.) entram automaticamente. A ficha de PdM ganhou o campo "Seguidor".
+- **Esquadrões e combate em massa**: a macro *Criar Esquadrão / Unidade* cria uma cópia do PdM selecionado transformada em esquadrão (tamanho +1, PV ×2, Limiar +10, +4 no ataque) ou em unidade de combate em massa (Colossal, PV ×4, Limiar = Fortitude + 50, RD 15, números de atrito), com as regras especiais na biografia.
+- **Equipamento**: vibroknucklers, vibrorapier, garrote, snap baton, wrist rocket launcher, pistolas e rifles da época (DH-17 "Outback", DT-12, "DeathHammer", Firelance, DLT-20A...), granada EMP, armaduras (thinsuit, camo armor, vacuum pod) e equipamentos.
+- **95 PdMs** em seis pastas "Clone Wars", conferidos com o livro: droides (médicos, astromecânicos, dróides de batalha e de comando da Confederação, A-DSD, JK-13, IG-110...), Jedi (do Serviço Jedi a Yoda, Mace Windu, Ahsoka, Kit Fisto, Plo Koon, Aayla Secura, Quinlan Vos...), República (clones de todos os tipos, Rex, Alpha-17, Argyus, Yularen, Mas Amedda, Sly Moore), Confederação (Dooku, Asajj Ventress, Durge, Loathsom, geonosianos, trandoshanos), Orla (Boba Fett jovem, Cavik Toth, Chewbacca, Tarfful, Nym, Ziro) e feras (kybuck, dactillion, horax).
+- **69 veículos e naves**: transportes e caças da época, naves Jedi (variantes do Delta-7 e do Eta-2, Azure Angel), veículos da República (AT-TE, AT-RT, AT-AP, BARC, LAAT/c, SPHA, TX-130, UT-AT...), da Confederação (Hailfire, MTT, OG-9, Persuader, Tri-Droid, Providence, Invisible Hand, Subjugator...) e as armas fixas LR1K e AV-7 (nova pasta "Armas Fixas").
+- Fora dos compêndios: o Gazetteer (Cap. 8, planetas) e as estruturas de comando dos exércitos.
 
 ### Compêndios
 Espécies (21, incluindo Aqualish, Hutt, Neimoidian e Yuuzhan Vong do Cap. 16), classes heroicas, de prestígio e não heroica, 69 feats, todas as árvores de talento do livro básico (classes, Força e prestígio), 16 poderes da Força, técnicas e segredos, armas, armaduras, equipamentos e macros. Erratas oficiais de out/2008 aplicadas.

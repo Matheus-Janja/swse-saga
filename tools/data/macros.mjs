@@ -54,5 +54,11 @@ sp.use();`),
   M("Subir de Nível", "icons/magic/symbols/chevron-elipse-circle-blue.webp",
 `const actor = canvas.tokens.controlled[0]?.actor ?? game.user.character;
 if (!actor) return ui.notifications.warn("Selecione um token ou defina seu personagem.");
-game.swse.openLevelUp(actor);`)
+game.swse.openLevelUp(actor);`),
+  M("Criar Esquadrão / Unidade", "icons/environment/people/infantry-army.webp",
+`// The Clone Wars Campaign Guide: transforma o PdM do token selecionado em esquadrão ou unidade de combate em massa (cria uma cópia).
+game.swse.squadPrompt(canvas.tokens.controlled[0]?.actor);`),
+  M("Criar Seguidor", "icons/environment/people/commoner.webp",
+`// The Clone Wars Campaign Guide: cria um seguidor ligado ao herói do token selecionado (ou ao seu personagem).
+game.swse.createFollower(canvas.tokens.controlled[0]?.actor ?? game.user.character);`)
 ];

@@ -74,3 +74,5 @@ export async function useItemMacro(name, uuid) {
   if (!item) return ui.notifications.warn(game.i18n.format("SWSE.Warn.ItemNotFound", { name }));
   return item.use();
 }
+export { squadPrompt, makeSquad } from "./squads.mjs";
+export { createFollower } from "./followers.mjs";
