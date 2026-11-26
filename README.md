@@ -196,6 +196,20 @@ Conteúdo mecânico dos capítulos 1, 3, 4 e das feras do capítulo 6 (pastas "J
 - **69 veículos e naves**: transportes e caças da época, naves Jedi (variantes do Delta-7 e do Eta-2, Azure Angel), veículos da República (AT-TE, AT-RT, AT-AP, BARC, LAAT/c, SPHA, TX-130, UT-AT...), da Confederação (Hailfire, MTT, OG-9, Persuader, Tri-Droid, Providence, Invisible Hand, Subjugator...) e as armas fixas LR1K e AV-7 (nova pasta "Armas Fixas").
 - Fora dos compêndios: o Gazetteer (Cap. 8, planetas) e as estruturas de comando dos exércitos.
 
+### Campaign Guide: Knights of the Old Republic
+- **11 espécies**: Arkanian, Arkanian Offshoot, Cathar, Draethos, Feeorin, Khil, Kissai, Massassi, Rakata, Selkath e Snivvian.
+- **3 classes de prestígio**: Corporate Agent, Gladiator e Melee Duelist (com as árvores próprias).
+- **Talentos**:
+  - Árvores novas: Fencing (Noble), Run and Gun (Scoundrel), Rocket Jumper (Soldier), Mandalorian Warrior (Elite Trooper), Jedi Battlemaster, Jedi Shadow e Jedi Watchman (Jedi Knight), além de talentos novos nas árvores existentes.
+  - Força: Alter, Control, técnicas novas e as tradições Jal Shey, Keetael, The Krath, Luka Sene e Order of Shasa.
+- **10 poderes da Força**: energy resistance, fear, force scream, force whirlwind, ionize, kinetic combat, resist force, slow, valor e wound.
+- **20 feats**, incluídos nas listas de feats bônus das classes (Sith/Republic Military Training, Mandalorian Training, Flurry, Withdrawal Strike...).
+- **Equipamento**: armas antigas (vibrolâminas, espadas de guerra, shockstaff, lanvarok, pulse-wave, sônicas, carbonite rifle, machado do Mitossauro), armaduras (fiber, mesh, weave, matrix, armaduras da República e Neo-Crusader mandalorianas), escudos de energia, visores, implantes, acessórios e 23 modelos de equipamento (nova categoria "Modelos de Equipamento").
+- **100 PdMs** em seis pastas "KotOR", conferidos com o livro: droides (HK-24/47/50, T3-M4, GO-TO, Mark I/IV, Krath, Rakatan), Jedi e República (Bastila, Jolee, Juhani, Vandar, o Exilado, Carth, Atton, Bao-Dur, oficiais e soldados da República), Império Sith (Revan, Malak, Exar Kun, Traya, Sion, Nihilus, Bandon, Karath, soldados e assassinos Sith, Krath), Mandalorianos (Crusaders, Neo-Crusaders, Cassus Fett, Demagol, Canderous, os Mandalores), Orla (Calo Nord, Mission, Zaalbar, os Moomo, Gryph, Jarael, Mira) e feras (kath hound, rakghoul).
+- **39 veículos e naves**: speeders, transportes (Ebon Hawk, Herald, Lethisk...), caças (Aurek, Chela, Davaab, interceptador Sith, Chaos), naves capitais da República, dos Sith e dos Mandalorianos (Hammerhead, Inexpugnable, Interdictor, Centurion, Kandosii...) e o droide de guerra Basilisk.
+- Talentos de outros livros (Force Valor, Language Rip, Improved Wound...) aparecem nas notas dos PdMs que os usam.
+- Fora dos compêndios: o Gazetteer (Cap. 8, planetas).
+
 ### Compêndios
 Espécies (21, incluindo Aqualish, Hutt, Neimoidian e Yuuzhan Vong do Cap. 16), classes heroicas, de prestígio e não heroica, 69 feats, todas as árvores de talento do livro básico (classes, Força e prestígio), 16 poderes da Força, técnicas e segredos, armas, armaduras, equipamentos e macros. Erratas oficiais de out/2008 aplicadas.
 

@@ -145,7 +145,7 @@ packs.feats = bySource("feats", feats);
 }
 packs.armor = bySource("armor", armor);
 {
-  const cats = { communication: "Comunicação", computer: "Computadores", detection: "Detecção", lifeSupport: "Suporte de Vida", medical: "Médico", survival: "Sobrevivência", tools: "Ferramentas", accessory: "Acessórios", cybernetic: "Cibernéticos", poison: "Venenos e Doenças", crystal: "Cristais de Sabre", starship: "Sistemas de Nave" };
+  const cats = { communication: "Comunicação", computer: "Computadores", detection: "Detecção", lifeSupport: "Suporte de Vida", medical: "Médico", survival: "Sobrevivência", tools: "Ferramentas", accessory: "Acessórios", cybernetic: "Cibernéticos", poison: "Venenos e Doenças", crystal: "Cristais de Sabre", starship: "Sistemas de Nave", gearTemplate: "Modelos de Equipamento (KotOR)" };
   const folders = Object.fromEntries(Object.entries(cats).map(([k, n], i) => [k, folderDoc("equipment", n, "Item", i)]));
   const fShip = folderDoc("equipment", "Armas de Nave", "Item", Object.keys(cats).length);
   packs.equipment = [...Object.values(folders), fShip, ...equipment.map(d => itemDoc("equipment", d, folders[d.system.category]._id)),

@@ -10,7 +10,8 @@ import sotgVehicles from "./data/sotg/vehicles.mjs";
 import turVehicles from "./data/tur/vehicles.mjs";
 import totgVehicles from "./data/totg/vehicles.mjs";
 import cwcgVehicles from "./data/cwcg/vehicles.mjs";
-const vehicles = [...coreVehicles, ...gawVehicles, ...goiVehicles, ...sotgVehicles, ...turVehicles, ...totgVehicles, ...cwcgVehicles];
+import kotorVehicles from "./data/kotor/vehicles.mjs";
+const vehicles = [...coreVehicles, ...gawVehicles, ...goiVehicles, ...sotgVehicles, ...turVehicles, ...totgVehicles, ...cwcgVehicles, ...kotorVehicles];
 import { ICON } from "./build-packs-icons.mjs";
 
 const TOKEN = { large: 2, huge: 3, gargantuan: 4, colossal: 6, colossalFrigate: 8, colossalCruiser: 10, colossalStation: 12 };

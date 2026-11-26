@@ -138,7 +138,22 @@ t("Veículos do livro batem com os blocos de estatística", () => {
   let i = 0;
   const { actors, report } = buildVehicles(() => `v${i++}`.padEnd(16, "x"), {});
   assert.deepEqual(report, []);
-  assert.equal(actors.length, 230); // 18 Básico + 9 GaW + 7 GoI + 97 SotG + 25 TUR + 5 Threats + 69 Clone Wars CG
+  assert.equal(actors.length, 269); // 18 Básico + 9 GaW + 7 GoI + 97 SotG + 25 TUR + 5 Threats + 69 Clone Wars CG + 39 KotOR CG
+});
+
+t("Knights of the Old Republic Campaign Guide: espécies, classes, árvores, feats, poderes e equipamento", async () => {
+  const { default: kotorNpcs } = await import("./data/kotor/npcs.mjs");
+  assert.equal(kotorNpcs.length, 100);
+  for (const k of ["arkanian", "arkanian-offshoot", "cathar", "draethos", "feeorin", "khil", "kissai", "massassi", "rakata", "selkath", "snivvian"]) assert.ok(species.some(s => s.system.key === k), k);
+  for (const k of ["corporate-agent", "gladiator", "melee-duelist"]) assert.ok(classes.some(c => c.system.key === k), k);
+  const cls = key => classes.find(c => c.system.key === key).system;
+  assert.ok(cls("noble").talentTrees.includes("Fencing"));
+  assert.ok(cls("jedi-knight").talentTrees.includes("Jedi Watchman"));
+  assert.ok(cls("elite-trooper").talentTrees.includes("Mandalorian Warrior"));
+  for (const k of ["sith-military-training", "republic-military-training", "mandalorian-training", "flurry"]) assert.ok(feats.some(x => x.system.key === k), k);
+  for (const k of ["fear", "force-scream", "ionize", "kinetic-combat", "slow", "valor", "wound"]) assert.ok(forcePowers.some(p => p.system.key === k), k);
+  for (const k of ["mythosaur-axe", "commando-special-rifle", "remote-grenade", "shockstaff"]) assert.ok(weapons.some(w => w.system.key === k), k);
+  for (const k of ["neo-crusader-assault-armor", "republic-heavy-armor", "mandalorian-combat-suit"]) assert.ok(armor.some(a => a.system.key === k), k);
 });
 
 t("Clone Wars Campaign Guide: seguidores, esquadrões, classes, poderes e feats", async () => {
