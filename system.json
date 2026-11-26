@@ -1,8 +1,8 @@
 {
   "id": "swse-saga",
   "title": "Star Wars RPG - Saga Edition",
-  "description": "Sistema não oficial para Star Wars Roleplaying Game: Saga Edition. Ficha automatizada, criação de personagem guiada, subida de nível, ataques automatizados por armas, feats e talentos, e compêndios com o conteúdo do Livro Básico e dos suplementos Galaxy at War, Galaxy of Intrigue, Jedi Academy Training Manual, Scavenger's Guide to Droids, Scum and Villainy, Starships of the Galaxy, The Unknown Regions e Threats of the Galaxy, e dos Campaign Guides The Clone Wars e Knights of the Old Republic.",
-  "version": "0.17.0",
+  "description": "Sistema não oficial para Star Wars Roleplaying Game: Saga Edition. Ficha automatizada, criação de personagem guiada, subida de nível, ataques automatizados por armas, feats e talentos, e compêndios com o conteúdo do Livro Básico e dos suplementos Galaxy at War, Galaxy of Intrigue, Jedi Academy Training Manual, Scavenger's Guide to Droids, Scum and Villainy, Starships of the Galaxy, The Unknown Regions e Threats of the Galaxy, e dos Campaign Guides The Clone Wars, Knights of the Old Republic e The Force Unleashed.",
+  "version": "0.18.0",
   "compatibility": {
     "minimum": "13",
     "verified": "14.370"
@@ -278,6 +278,6 @@
   "initiative": "1d20 + @skills.initiative.total",
   "url": "https://github.com/Matheus-Janja/swse-saga",
   "manifest": "https://github.com/Matheus-Janja/swse-saga/releases/latest/download/system.json",
-  "download": "https://github.com/Matheus-Janja/swse-saga/releases/download/v0.17.0/swse-saga.zip",
+  "download": "https://github.com/Matheus-Janja/swse-saga/releases/download/v0.18.0/swse-saga.zip",
   "license": "LICENSE"
 }

@@ -120,7 +120,7 @@ Conteúdo mecânico dos capítulos 1, 3, 4 e das feras do capítulo 6 (pastas "J
 
 ### Suplemento: Scavenger's Guide to Droids
 - **8 chassis de droide padrão** (astromecânico, batalha, trabalho, mecânico, médico, sonda, protocolo e serviço) na pasta de droides heróis das espécies, com perícias embutidas (Hardwired Design) marcadas como treinadas automaticamente e feats condicionais.
-- **Talentos de droide por grau** (1º a 5º): o assistente de criação e de subida de nível mostra automaticamente a árvore do grau do droide. Também as árvores das classes de prestígio Droid Commander (classe incluída com o The Clone Wars Campaign Guide) e Independent Droid (classe do Force Unleashed Campaign Guide, ainda não incluída). Automáticos: *Science Analyzer*, *Heavy-Duty Actuators*; botões ⚡ para *Target Acquisition*, *Weapons Power Surge* e *Just a Scratch*.
+- **Talentos de droide por grau** (1º a 5º): o assistente de criação e de subida de nível mostra automaticamente a árvore do grau do droide. Também as árvores das classes de prestígio Droid Commander (classe incluída com o The Clone Wars Campaign Guide) e Independent Droid (classe incluída com o The Force Unleashed Campaign Guide). Automáticos: *Science Analyzer*, *Heavy-Duty Actuators*; botões ⚡ para *Target Acquisition*, *Weapons Power Surge* e *Just a Scratch*.
 - **17 feats de droide**, com pré-requisito "ser droide" e de locomoção verificados. *Aiming Accuracy* (+5, com *Pinpoint Accuracy* −1 passo) e *Slammer* no diálogo de ataque; *Mechanical Martial Arts* aplica −5 ao ferir; *Ion Shielding* reduz o efeito dos íons; botões para *Distracting Droid*, *Erratic Target* e *Tool Frenzy*.
 - **Sistemas de droide**: 65 acessórios, sensores, processadores, apêndices, locomoções extras, estações e 4 armaduras novas no compêndio de sistemas.
 - **Codex de Droides: 45 droides** com fichas conferidas com o livro (incluindo Annihilator, Droideka Mk II, IG/HK, SD-9, YVH, Shadow Droid, X-1 Viper).
@@ -209,6 +209,36 @@ Conteúdo mecânico dos capítulos 1, 3, 4 e das feras do capítulo 6 (pastas "J
 - **39 veículos e naves**: speeders, transportes (Ebon Hawk, Herald, Lethisk...), caças (Aurek, Chela, Davaab, interceptador Sith, Chaos), naves capitais da República, dos Sith e dos Mandalorianos (Hammerhead, Inexpugnable, Interdictor, Centurion, Kandosii...) e o droide de guerra Basilisk.
 - Talentos de outros livros (Force Valor, Language Rip, Improved Wound...) aparecem nas notas dos PdMs que os usam.
 - Fora dos compêndios: o Gazetteer (Cap. 8, planetas).
+
+### Campaign Guide: The Force Unleashed
+- **11 espécies**: Aleena, Caamasi, Felucian, Gran, Nosaurian, Talz, Togorian, Togruta, Whiphid, Yarkora e Noghri.
+- **5 classes de prestígio**: Enforcer, Independent Droid, Infiltrator, Medic e Saboteur, com as árvores próprias. O Master Privateer, que já vinha do Scum and Villainy, ganhou a árvore Privateer.
+- **Talentos**:
+  - Árvores novas: Ideologue (Noble), Smuggling (Scoundrel), Spy (Scout) e Imperial Inquisitor (Force Adept).
+  - Talentos novos nas árvores existentes, inclusive Mercenary, Bounty Hunter, Critical Master e Duelist.
+  - Talentos de droide de 1º a 5º grau.
+- **Força**:
+  - 4 poderes novos: corruption, Force blast, Force shield e repulse.
+  - Talentos de Alter, Control, Dark Side e Sense, 9 técnicas e 5 segredos.
+  - As tradições Agents of Ossus e Felucian Shamans.
+- **20 feats**, incluídos nas listas de feats bônus das classes.
+- **Habilidades Unleashed**: o feat *Unleashed* e 26 habilidades, inclusive as Force Unleashed. Ficam na pasta "Habilidades Unleashed" do compêndio de feats e se ativam gastando um Ponto de Destino.
+- **Equipamento**:
+  - armas: power hammer, vibrosword, skullblade, ryyk blade, pistola e rifle Bryar, disruptores, incinerator rifle e spray stick Stokhli;
+  - minas e o arsenal imperial: chicote neurônico, CR-1, lança-mísseis E-Web, lança-flechettes e arma detonadora de trilho;
+  - holoshroud, jet pack Hush-About e outros equipamentos.
+- **70 PdMs** em seis pastas "Force Unleashed", conferidos com o livro:
+  - droides: Q7, BD-3000, droides de sucata, IT-O, RA-7, PROXY, R-1 e MSE-6;
+  - tropas e agentes do Império: 501ª, Royal e Shadow Guard, Sovereign Protector, clones veteranos e Spaarti, Dark Trooper Phase Zero, EVO, Jumptrooper, Radtrooper, ISB, CompForce, Inquisidores, Sentinel, Emperor's Hand e Noghri;
+  - personalidades imperiais: o aprendiz secreto de Vader, Juno Eclipse, Tarkin, Thrawn, Tremayne, Isard, Madine, Pellaeon, Sturn, Veers, Yularen e Dodonna;
+  - aliados: Bail Organa, Mon Mothma, Garm Bel Iblis, Sabé, Rahm Kota e a milícia dele, Kazdan Paratus, Shaak Ti, Maris Brood, felucianos, a gangue de Drexl Roosh, jawas, ugnaughts e wookiees berserkers;
+  - feras: o rancor touro e o ripper feluciano.
+- **33 veículos e naves**:
+  - terrestres: groundcar, Arrow-23, swoops, Freerunner, A5 Juggernaut, AT-KT, AT-CT e TX-130T imperial;
+  - caças: H-60, Scyk, NovaSword, R-41, Toscan, Zebra, A-7 Hunter e TIE Prototype;
+  - transportes: Hwk-290, Maka-Eekai, Guardian, Rogue Shadow e Sentinel;
+  - naves capitais: Neutron Star, Escort Carrier, Gladiator, Tartan, Venator e Victory I.
+- Fora dos compêndios: as organizações (Cap. 4, regras de pontuação de organização para o Mestre), a aventura e as diretrizes de campanha (Cap. 8) e o Gazetteer (Cap. 9).
 
 ### Compêndios
 Espécies (21, incluindo Aqualish, Hutt, Neimoidian e Yuuzhan Vong do Cap. 16), classes heroicas, de prestígio e não heroica, 69 feats, todas as árvores de talento do livro básico (classes, Força e prestígio), 16 poderes da Força, técnicas e segredos, armas, armaduras, equipamentos e macros. Erratas oficiais de out/2008 aplicadas.

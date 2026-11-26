@@ -138,7 +138,24 @@ t("Veículos do livro batem com os blocos de estatística", () => {
   let i = 0;
   const { actors, report } = buildVehicles(() => `v${i++}`.padEnd(16, "x"), {});
   assert.deepEqual(report, []);
-  assert.equal(actors.length, 269); // 18 Básico + 9 GaW + 7 GoI + 97 SotG + 25 TUR + 5 Threats + 69 Clone Wars CG + 39 KotOR CG
+  assert.equal(actors.length, 301); // 18 Básico + 9 GaW + 7 GoI + 97 SotG + 25 TUR + 5 Threats + 69 Clone Wars CG + 39 KotOR CG + 32 Force Unleashed CG
+});
+
+t("The Force Unleashed Campaign Guide: espécies, classes, árvores, Unleashed, poderes e equipamento", async () => {
+  const { default: tfuNpcs } = await import("./data/tfu/npcs.mjs");
+  assert.equal(tfuNpcs.length, 70);
+  for (const k of ["aleena", "caamasi", "felucian", "gran", "nosaurian", "talz", "togorian", "togruta", "whiphid", "yarkora", "noghri"]) assert.ok(species.some(s => s.system.key === k), k);
+  for (const k of ["enforcer", "independent-droid", "infiltrator", "medic", "saboteur"]) assert.ok(classes.some(c => c.system.key === k), k);
+  assert.equal(classes.filter(c => c.system.key === "master-privateer").length, 1);
+  const cls = key => classes.find(c => c.system.key === key).system;
+  assert.ok(cls("master-privateer").talentTrees.includes("Privateer"));
+  assert.ok(cls("scout").talentTrees.includes("Spy"));
+  assert.ok(cls("force-adept").talentTrees.includes("Imperial Inquisitor"));
+  assert.ok(cls("soldier").bonusFeats.includes("strafe"));
+  for (const k of ["unleashed", "unleashed-charge", "unleashed-force-blast", "advantageous-attack", "bad-feeling"]) assert.ok(feats.some(x => x.system.key === k), k);
+  for (const k of ["corruption", "force-blast", "force-shield", "repulse"]) assert.ok(forcePowers.some(p => p.system.key === k), k);
+  for (const k of ["wrath-of-the-dark-side", "pure-power", "buried-presence", "detonate", "blaster-turret-i", "medical-droid"]) assert.ok(talents.some(t => t.system.key === k), k);
+  for (const k of ["dxr-6-disruptor-rifle", "bryar-pistol", "neuronic-whip", "rail-detonator-gun", "proximity-mine"]) assert.ok(weapons.some(w => w.system.key === k), k);
 });
 
 t("Knights of the Old Republic Campaign Guide: espécies, classes, árvores, feats, poderes e equipamento", async () => {

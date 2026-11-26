@@ -61,10 +61,17 @@ import kotorTalents, { CLASS_TREES as KOTOR_TREES } from "./kotor/talents.mjs";
 import kotorFeats, { CLASS_BONUS_FEATS as KOTOR_BONUS } from "./kotor/feats.mjs";
 import * as kotorForce from "./kotor/force.mjs";
 import * as kotorGear from "./kotor/gear.mjs";
+// The Force Unleashed Campaign Guide
+import tfuSpecies from "./tfu/species.mjs";
+import tfuClasses from "./tfu/classes.mjs";
+import tfuTalents, { CLASS_TREES as TFU_TREES } from "./tfu/talents.mjs";
+import tfuFeats, { CLASS_BONUS_FEATS as TFU_BONUS } from "./tfu/feats.mjs";
+import * as tfuForce from "./tfu/force.mjs";
+import * as tfuGear from "./tfu/gear.mjs";
 export const extraDroidSystems = [...sgdSystems.systems, ...sgdSystems.armor];
 
-export const species = [...coreSpecies, ...gawSpecies, ...goiSpecies, ...jatmSpecies, ...sgdSpecies, ...snvSpecies, ...turSpecies, ...totgSpecies, ...cwcgSpecies, ...kotorSpecies];
-export const classes = [...patchClassesJATM(patchClassesGoI(patchCoreClasses(coreClasses))), ...gawClasses, ...snvClasses, ...cwcgClasses, ...kotorClasses].map(c => {
+export const species = [...coreSpecies, ...gawSpecies, ...goiSpecies, ...jatmSpecies, ...sgdSpecies, ...snvSpecies, ...turSpecies, ...totgSpecies, ...cwcgSpecies, ...kotorSpecies, ...tfuSpecies];
+export const classes = [...patchClassesJATM(patchClassesGoI(patchCoreClasses(coreClasses))), ...gawClasses, ...snvClasses, ...cwcgClasses, ...kotorClasses, ...tfuClasses].map(c => {
   const t = SNV_TREES[c.system.key];
   if (t && c.system.source !== "Scum and Villainy") c.system.talentTrees = [...new Set([...c.system.talentTrees, ...t])];
   const s = SOTG_TREES[c.system.key];
@@ -81,16 +88,20 @@ export const classes = [...patchClassesJATM(patchClassesGoI(patchCoreClasses(cor
   if (cw) c.system.talentTrees = [...new Set([...c.system.talentTrees, ...cw])];
   const cwb = CWCG_BONUS[c.system.key];
   if (cwb) c.system.bonusFeats = [...new Set([...c.system.bonusFeats, ...cwb])];
+  const ft = TFU_TREES[c.system.key];
+  if (ft) c.system.talentTrees = [...new Set([...c.system.talentTrees, ...ft])];
+  const fb = TFU_BONUS[c.system.key];
+  if (fb) c.system.bonusFeats = [...new Set([...c.system.bonusFeats, ...fb])];
   const bf = TUR_BONUS[c.system.key];
   if (bf) c.system.bonusFeats = [...new Set([...c.system.bonusFeats, ...bf])];
   return c;
 });
-export const feats = [...coreFeats, ...gawFeats, ...goiFeats, ...jatmFeats, ...sgdFeats, ...snvFeats, ...sotgFeats, ...turFeats, ...totgFeats, ...cwcgFeats, ...kotorFeats];
-export const talents = [...coreTalents, ...gawTalents, ...goiTalents, ...jatmTalents, ...sgdTalents, ...snvTalents, ...sotgTalents, ...turTalents, ...totgTalents, ...cwcgTalents, ...cwcgForce.talents, ...kotorTalents, ...kotorForce.talents];
-export const forcePowers = [...corePowers, ...jatmPowers, ...sotgManeuvers, ...cwcgForce.powers, ...kotorForce.powers];
-export const weapons = [...coreGear.weapons, ...gawGear.weapons, ...goiGear.weapons, ...jatmGear.weapons, ...snvGear.weapons, ...turGear.weapons, ...totgGear.weapons, ...cwcgGear.weapons, ...kotorGear.weapons];
+export const feats = [...coreFeats, ...gawFeats, ...goiFeats, ...jatmFeats, ...sgdFeats, ...snvFeats, ...sotgFeats, ...turFeats, ...totgFeats, ...cwcgFeats, ...kotorFeats, ...tfuFeats];
+export const talents = [...coreTalents, ...gawTalents, ...goiTalents, ...jatmTalents, ...sgdTalents, ...snvTalents, ...sotgTalents, ...turTalents, ...totgTalents, ...cwcgTalents, ...cwcgForce.talents, ...kotorTalents, ...kotorForce.talents, ...tfuTalents, ...tfuForce.talents];
+export const forcePowers = [...corePowers, ...jatmPowers, ...sotgManeuvers, ...cwcgForce.powers, ...kotorForce.powers, ...tfuForce.powers];
+export const weapons = [...coreGear.weapons, ...gawGear.weapons, ...goiGear.weapons, ...jatmGear.weapons, ...snvGear.weapons, ...turGear.weapons, ...totgGear.weapons, ...cwcgGear.weapons, ...kotorGear.weapons, ...tfuGear.weapons];
 export const armor = [...coreGear.armor, ...gawGear.armor, ...jatmGear.armor, ...snvGear.armor, ...cwcgGear.armor, ...kotorGear.armor];
 export const equipment = [...coreGear.equipment, ...gawGear.equipment, ...gawGear.cybernetics, ...goiGear.equipment, ...goiGear.poisons, ...goiGear.misc,
-  ...jatmGear.equipment, ...jatmGear.poisons, ...jatmGear.crystals, ...jatmGear.accessories, ...snvGear.equipment, ...sotgSystems.systems, ...turGear.equipment, ...totgGear.equipment, ...cwcgGear.equipment, ...kotorGear.equipment, ...kotorGear.templates];
+  ...jatmGear.equipment, ...jatmGear.poisons, ...jatmGear.crystals, ...jatmGear.accessories, ...snvGear.equipment, ...sotgSystems.systems, ...turGear.equipment, ...totgGear.equipment, ...cwcgGear.equipment, ...kotorGear.equipment, ...kotorGear.templates, ...tfuGear.equipment];
 // Armas de nave (Starships of the Galaxy, Tabela 3-5): itens vehicleWeapon para arrastar à ficha de veículos
 export const shipWeapons = [...sotgSystems.shipWeapons, ...totgGear.shipWeapons];

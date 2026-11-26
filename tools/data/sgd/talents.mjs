@@ -55,9 +55,9 @@ push(
   t("Task Optimization", "task-optimization", `Escolha uma perícia treinada: 1/encontro, uma aplicação dela leva uma ação a menos (mín. rápida). Repetível. ${NOTE}`, {}, { choice: "skill", repeatable: true })
 );
 
-/* Classes de prestígio de droide (Clone Wars Campaign Guide / Force Unleashed Campaign Guide — classes não incluídas) */
+/* Classes de prestígio de droide (Clone Wars Campaign Guide / Force Unleashed Campaign Guide) */
 const PREST = "Talento para a classe de prestígio Droid Commander (The Clone Wars Campaign Guide).";
-const PREST2 = "Talento para a classe de prestígio Independent Droid (The Force Unleashed Campaign Guide), que ainda não está no sistema.";
+const PREST2 = "Talento para a classe de prestígio Independent Droid (The Force Unleashed Campaign Guide).";
 tree("Override");
 push(
   t("Directed Action", "directed-action", `Ação padrão: um droide que o ouça e entenda faz imediatamente, como ação livre, um teste de Deception, Mechanics, Persuasion, Pilot, Treat Injury ou Use Computer, podendo usar o seu mod. de Inteligência. ${PREST}`, pre("", { droidOnly: false })),
